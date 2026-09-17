@@ -1,0 +1,48 @@
+# K16 Architecture
+
+## Design philosophy
+
+K16 is a maker-first 16-bit computer. The architecture should expose interesting computer-engineering concepts instead of hiding them behind a modern microcontroller.
+
+The machine is divided into cooperating subsystems:
+
+    CPU
+     |
+    K16 system bus
+     |
+    +----------+----------+
+    |          |          |
+   RAM        VPU        I/O
+              |
+       +------+------+------+
+       |      |      |      |
+    Copper Blitter Audio  DMA
+
+## Initial CPU candidate
+
+The first CPU candidate is the WDC W65C816S.
+
+This is a candidate, not yet a frozen architectural dependency. M1 must evaluate electrical interface, bus timing, DMA interaction, interrupt behavior, C compiler suitability, assembly ergonomics, availability, and maker-friendly packaging.
+
+## Custom hardware
+
+K16 should use FPGA logic for the custom hardware rather than requiring a large collection of difficult-to-source custom ICs.
+
+The FPGA-based VPU is expected to contain video timing, palette logic, sprites, scrolling, Copper, Blitter, video DMA, audio, audio DMA, and interrupt sources.
+
+## Maker-first principle
+
+Component selection must prioritize:
+
+1. Hand assembly and rework
+2. Understandable schematics
+3. Repairability
+4. Testability
+5. Long-term component availability
+6. Reasonable cost
+
+Cost optimization must not make the machine substantially harder to build or understand.
+
+## Emulator-first development
+
+Architectural behavior should be specified so emulator, RTL, and physical hardware can be tested against the same conformance suite.
