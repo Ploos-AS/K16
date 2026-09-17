@@ -37,12 +37,14 @@
 - [ ] freeze register encoding after simulation/bandwidth qualification
 
 ## M4 — Audio
-- [ ] voice architecture
-- [ ] wavetable/sample playback
-- [ ] envelopes
-- [ ] stereo mixer
-- [ ] audio DMA
-- [ ] physical audio output
+- [x] 8-voice baseline architecture
+- [x] tracker PCM + wavetable/synth model
+- [x] optional per-voice ADSR
+- [x] stereo mixer and modulation architecture
+- [x] deterministic audio DMA
+- [x] audiovisual/Copper synchronization model
+- [x] maker-friendly physical output requirements
+- [ ] freeze exact sample rates/DAC after RTL and bandwidth qualification
 
 ## M5 — Emulator
 - [ ] CPU emulation
