@@ -26,14 +26,15 @@
 - [ ] physical prototype qualification and bandwidth gate
 
 ## M3 — VPU architecture
-- [ ] Video timing
-- [ ] framebuffer modes
-- [ ] palette
-- [ ] sprites
-- [ ] scrolling
-- [ ] Copper
-- [ ] Blitter
-- [ ] video DMA
+- [x] Video timing model
+- [x] chunky + planar/tile framebuffer model
+- [x] raster-visible palette model
+- [x] sprite/object engine architecture
+- [x] hardware scrolling architecture
+- [x] Copper instruction architecture
+- [x] Blitter operation architecture
+- [x] deterministic video DMA model
+- [ ] freeze register encoding after simulation/bandwidth qualification
 
 ## M4 — Audio
 - [ ] voice architecture
