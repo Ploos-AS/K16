@@ -39,9 +39,9 @@ K16 is a hardware and software computer project inspired by classic machines suc
 
 ## Status
 
-**M0 — Architecture foundation**
+**M1 — System architecture**
 
-The repository establishes the project scope, design principles, initial CPU candidate, and documentation structure. No hardware or ISA is frozen yet.
+The system architecture now defines the reference bus model, 24-bit logical memory map, interrupt policy, two-level DMA arbitration, expansion resources, and deterministic timing requirements. Electrical implementation details remain for M2.
 
 ## Non-goals
 
