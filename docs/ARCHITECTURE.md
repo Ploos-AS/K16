@@ -2,7 +2,7 @@
 
 ## Design philosophy
 
-K16 is a maker-first 16-bit computer. The architecture should expose interesting computer-engineering concepts instead of hiding them behind a modern microcontroller.
+K16 is a purpose-built 16-bit demo computer. Its first priority is ultimate demo-machine capability; maker friendliness comes second, architectural elegance/learnability third, and cost fourth. The architecture should expose interesting computer-engineering concepts instead of hiding them behind a modern microcontroller.
 
 The machine is divided into cooperating subsystems:
 
