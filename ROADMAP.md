@@ -6,16 +6,16 @@
 - [x] Define initial CPU candidate
 - [x] Define major hardware blocks
 - [x] Establish documentation structure
-- [ ] Freeze architectural requirements
+- [x] Freeze architectural requirements
 
 ## M1 — System architecture
-- [ ] CPU and bus specification
-- [ ] Address-space model
-- [ ] Memory map
-- [ ] Interrupt model
-- [ ] DMA ownership/arbitration
-- [ ] Expansion bus
-- [ ] Timing model
+- [x] CPU and bus specification
+- [x] Address-space model
+- [x] Memory map
+- [x] Interrupt model
+- [x] DMA ownership/arbitration
+- [x] Expansion bus
+- [x] Timing model
 
 ## M2 — CPU platform
 - [ ] W65C816S evaluation
