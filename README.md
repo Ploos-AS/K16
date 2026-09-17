@@ -39,9 +39,9 @@ K16 is a hardware and software computer project inspired by classic machines suc
 
 ## Status
 
-**M3 — VPU architecture (logical model)**
+**M4 — Audio architecture (logical model)**
 
-The logical VPU architecture now defines deterministic video timing, chunky and planar/tile graphics, raster-visible palettes, sprites/objects, hardware scrolling, Copper, Blitter and observable video DMA. Register encodings and physical bandwidth limits remain subject to simulation and prototype qualification.
+The video and audio coprocessor architecture is now defined at the logical level. Audio adds an 8-voice baseline with tracker-friendly PCM, wavetable/synth capability, ADSR, stereo mixing, modulation, deterministic DMA, and hardware audiovisual synchronization. Exact sample rates, DAC and physical bandwidth limits remain subject to RTL/prototype qualification.
 
 ## Non-goals
 
