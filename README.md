@@ -1,1 +1,52 @@
 # K16
+
+**A maker-first 16-bit computer for learning, C/assembly programming, and demo coding.**
+
+K16 is a hardware and software computer project inspired by classic machines such as the Amiga, C64, and Atari ST: a capable CPU working alongside dedicated hardware for graphics, audio, DMA, and timing.
+
+> **Maker friendly first, cost second.**
+
+## Goals
+
+- 16-bit CPU architecture with a strong assembly programming model
+- First CPU candidate: WDC W65C816S
+- Maker-friendly PCB and through-hole construction wherever practical
+- Socketed replaceable components where practical
+- FPGA-based custom video/audio/DMA hardware
+- Copper-style raster sequencer
+- Hardware blitter
+- Sprites, scrolling, palettes, and raster effects
+- Multi-channel hardware audio and sample DMA
+- Interrupts and DMA as first-class architectural features
+- SD/storage and serial I/O
+- Emulator before the first production PCB
+- Native assembler, linker, C toolchain, SDK, debugger, and demo examples
+- Identical software targets for emulator, FPGA, and physical hardware
+- Complete documentation of the architecture and schematics
+
+## Structure
+
+- docs — architecture and design documentation
+- hardware — schematics and PCB designs
+- fpga — custom hardware RTL
+- emulator — K16 emulator
+- assembler — assembler and linker tooling
+- compiler — C toolchain integration
+- sdk — headers, libraries, examples, and build tools
+- firmware — low-level firmware
+- demos — demo-scene examples
+- tests — architectural and hardware verification
+
+## Status
+
+**M0 — Architecture foundation**
+
+The repository establishes the project scope, design principles, initial CPU candidate, and documentation structure. No hardware or ISA is frozen yet.
+
+## Non-goals
+
+K16 is not intended to be a commercial PC replacement or a highly integrated modern embedded computer. Its purpose is to make computer architecture, low-level programming, custom hardware, and demo coding tangible.
+
+## License
+
+Project licensing will be selected during the foundation phase.
