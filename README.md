@@ -39,9 +39,9 @@ K16 is a hardware and software computer project inspired by classic machines suc
 
 ## Status
 
-**M1 — System architecture**
+**M3 — VPU architecture (logical model)**
 
-The system architecture now defines the reference bus model, 24-bit logical memory map, interrupt policy, two-level DMA arbitration, expansion resources, and deterministic timing requirements. Electrical implementation details remain for M2.
+The logical VPU architecture now defines deterministic video timing, chunky and planar/tile graphics, raster-visible palettes, sprites/objects, hardware scrolling, Copper, Blitter and observable video DMA. Register encodings and physical bandwidth limits remain subject to simulation and prototype qualification.
 
 ## Non-goals
 
