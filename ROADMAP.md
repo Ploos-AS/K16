@@ -18,11 +18,12 @@
 - [x] Timing model
 
 ## M2 — CPU platform
-- [ ] W65C816S evaluation
-- [ ] CPU support circuitry
-- [ ] clock/reset design
-- [ ] SRAM interface
-- [ ] prototype CPU board
+- [x] W65C816S evaluation
+- [x] CPU support circuitry
+- [x] clock/reset design
+- [x] SRAM interface
+- [x] prototype CPU board architecture
+- [ ] physical prototype qualification and bandwidth gate
 
 ## M3 — VPU architecture
 - [ ] Video timing
