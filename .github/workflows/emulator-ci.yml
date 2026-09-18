@@ -1,0 +1,21 @@
+name: Emulator CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  emulator:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: emulator
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build and run emulator tests
+        run: make clean check
