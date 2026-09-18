@@ -80,7 +80,7 @@
 - [x] shared I/O interrupt-controller foundation
 - [x] Ethernet RX/TX memory DMA foundation
 - [x] peripheral event wiring into shared IRQ controller
-- [ ] cycle-arbitrated I/O DMA
+- [x] cycle-arbitrated Ethernet I/O DMA foundation
 - [ ] debugger-visible I/O state
 
 ## M6 — Toolchain
