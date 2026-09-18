@@ -64,6 +64,9 @@
   - [x] absolute-long memory access foundation
   - [x] SBC/CMP/CPX/CPY immediate foundation
   - [x] INX/DEX/INY/DEY foundation
+  - [x] direct-page LDA/STA foundation
+  - [x] absolute LDX/LDY/STX/STY foundation
+  - [x] absolute-indexed LDA/STA foundation
 - [x] executable raster timing + raster IRQ foundation
 - [x] executable deterministic DMA priority arbiter
 - [x] executable Copper WAIT/MOVE/JUMP foundation
