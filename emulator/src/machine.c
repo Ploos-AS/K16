@@ -11,11 +11,15 @@ int k16_machine_uart_transmit(k16_machine_t*m,uint8_t*b){int r=k16_uart_transmit
 int k16_machine_ethernet_receive(k16_machine_t*m,const uint8_t*d,uint16_t n){int r=k16_ethernet_receive(&m->ethernet,&m->memory,d,n);if(!r)k16_irq_raise(&m->irq,K16_IRQ_ETH_RX);return r;}
 int k16_machine_ethernet_rx_dma(k16_machine_t*m,uint32_t a){int r=k16_ethernet_rx_dma(&m->ethernet,&m->memory,a);if(!r)k16_irq_raise(&m->irq,K16_IRQ_ETH_RX);return r;}
 int k16_machine_ethernet_tx_dma(k16_machine_t*m,uint32_t a,uint16_t n){int r=k16_ethernet_tx_dma(&m->ethernet,&m->memory,a,n);if(!r)k16_irq_raise(&m->irq,K16_IRQ_ETH_TX);return r;}
+int k16_machine_ethernet_start_rx_dma(k16_machine_t*m,uint32_t a){return k16_ethernet_start_rx_dma(&m->ethernet,a);}
+int k16_machine_ethernet_start_tx_dma(k16_machine_t*m,uint32_t a,uint16_t n){return k16_ethernet_start_tx_dma(&m->ethernet,a,n);}
 static void custom_tick(k16_machine_t *m){
  uint8_t display=(m->vpu.x<320u && m->vpu.y<200u)?1u:0u;
  uint8_t copper=k16_copper_wants_slot(&m->copper,m->vpu.x,m->vpu.y);
- k16_dma_owner_t owner=k16_dma_grant(&m->dma,display,0,copper,0,0,0);
+ uint8_t general=k16_ethernet_dma_wants_slot(&m->ethernet);
+ k16_dma_owner_t owner=k16_dma_grant(&m->dma,display,0,copper,0,0,general);
  if(owner==K16_DMA_COPPER)k16_copper_step(&m->copper,&m->memory,m->vpu.x,m->vpu.y);
+ if(owner==K16_DMA_GENERAL&&k16_ethernet_dma_step(&m->ethernet,&m->memory))k16_irq_raise(&m->irq,m->ethernet.dma_tx?K16_IRQ_ETH_TX:K16_IRQ_ETH_RX);
  k16_vpu_step(&m->vpu,&m->memory,&m->cpu,1);k16_irq_step(&m->irq,&m->memory,&m->cpu);
 }
 uint32_t k16_machine_step(k16_machine_t *m){
