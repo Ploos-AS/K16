@@ -84,6 +84,8 @@
   - [x] PHD/PLD/PHK stack foundation
   - [x] decimal-mode ADC/SBC foundation (8/16-bit)
   - [x] establish 256-opcode implementation coverage matrix (89/256 execution cases at M5.18)
+  - [x] branch/jump control-flow foundation (M5.19)
+  - [x] refresh opcode coverage: 100/256 execution cases after M5.19
   - [ ] complete opcode implementation coverage
   - [ ] complete semantic/mode/addressing conformance
   - [ ] complete cycle/timing conformance
