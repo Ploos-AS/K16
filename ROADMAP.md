@@ -62,6 +62,8 @@
 - [ ] complete W65C816S instruction set and interrupt semantics
   - [x] IRQ/NMI/BRK/COP/RTI foundation
   - [x] absolute-long memory access foundation
+  - [x] SBC/CMP/CPX/CPY immediate foundation
+  - [x] INX/DEX/INY/DEY foundation
 - [x] executable raster timing + raster IRQ foundation
 - [x] executable deterministic DMA priority arbiter
 - [x] executable Copper WAIT/MOVE/JUMP foundation
