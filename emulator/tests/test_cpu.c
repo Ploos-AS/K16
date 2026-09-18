@@ -52,5 +52,11 @@ int main(void)
     assert(k16_cpu_step(&cpu,&mem)==3);assert(k16_read8(&mem,0x0210)==0x55);assert(k16_cpu_step(&cpu,&mem)==2);assert(k16_cpu_step(&cpu,&mem)==3);assert((cpu.a&0xff)==0x55);
     assert(k16_cpu_step(&cpu,&mem)==5);assert(k16_read8(&mem,0x0302)==0x55);cpu.a=0;assert(k16_cpu_step(&cpu,&mem)==4);assert((cpu.a&0xff)==0x55);
     assert(k16_cpu_step(&cpu,&mem)==4);assert(k16_read8(&mem,0x0310)==2);assert(k16_cpu_step(&cpu,&mem)==4);assert(k16_read8(&mem,0x0312)==3);
+    /* indirect direct-page addressing foundation */
+    cpu.emulation=0;cpu.p=(uint8_t)(K16_P_M|K16_P_X);cpu.d=0x0200;cpu.dbr=0;cpu.x=2;cpu.y=3;cpu.pc=0xc600;cpu.stopped=0;
+    k16_write8(&mem,0x0220,0x00);k16_write8(&mem,0x0221,0x04);k16_write8(&mem,0x0222,0x10);k16_write8(&mem,0x0223,0x04);
+    k16_write8(&mem,0x0400,0x61);k16_write8(&mem,0x0403,0x62);k16_write8(&mem,0x0410,0x63);
+    rom[0x600]=0xb2;rom[0x601]=0x20;rom[0x602]=0xb1;rom[0x603]=0x20;rom[0x604]=0xa1;rom[0x605]=0x20;rom[0x606]=0xdb;k16_rom_load(&mem,rom,sizeof(rom));
+    assert(k16_cpu_step(&cpu,&mem)==5);assert((cpu.a&0xff)==0x61);assert(k16_cpu_step(&cpu,&mem)==5);assert((cpu.a&0xff)==0x62);assert(k16_cpu_step(&cpu,&mem)==6);assert((cpu.a&0xff)==0x63);
     k16_memory_destroy(&mem);return 0;
 }
