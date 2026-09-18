@@ -110,6 +110,8 @@
   - [x] refresh opcode coverage: 242/256 execution cases after M5.30
   - [x] close remaining memory/compare/control-flow foundation gaps (M5.31)
   - [x] refresh opcode coverage: 254/256 execution cases after M5.31
+  - [x] implement MVN/MVP block-move foundation (M5.32)
+  - [x] reach 256/256 opcode execution-case coverage (M5.32)
   - [ ] complete opcode implementation coverage
   - [ ] complete semantic/mode/addressing conformance
   - [ ] complete cycle/timing conformance
