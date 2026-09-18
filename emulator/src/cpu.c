@@ -130,7 +130,21 @@ uint32_t k16_cpu_step(k16_cpu_t *c,k16_memory_t *m)
     case 0xf9:{uint16_t a=(uint16_t)(fetch16(c,m)+c->y);uint32_t e=((uint32_t)c->dbr<<16)|a;if(c->p&K16_P_M){sbc8(c,k16_read8(m,e));return 4;}sbc16(c,read16(m,e));return 5;} /* SBC abs,Y */
     case 0xfd:{uint16_t a=(uint16_t)(fetch16(c,m)+c->x);uint32_t e=((uint32_t)c->dbr<<16)|a;if(c->p&K16_P_M){sbc8(c,k16_read8(m,e));return 4;}sbc16(c,read16(m,e));return 5;} /* SBC abs,X */
     case 0xff:{uint16_t a=fetch16(c,m);uint32_t e=((((uint32_t)fetch8(c,m)<<16)|a)+c->x)&K16_ADDRESS_MASK;if(c->p&K16_P_M){sbc8(c,k16_read8(m,e));return 5;}sbc16(c,read16(m,e));return 6;} /* SBC long,X */
+    case 0xc1:{uint16_t p=(uint16_t)(c->d+fetch8(c,m)+c->x);uint16_t a=read16(m,p);uint32_t e=((uint32_t)c->dbr<<16)|a;if(c->p&K16_P_M){cmp8(c,(uint8_t)c->a,k16_read8(m,e));return 6;}cmp16(c,c->a,read16(m,e));return 7;} /* CMP (dp,X) */
+    case 0xc3:{uint16_t e=(uint16_t)(c->sp+fetch8(c,m));if(c->p&K16_P_M){cmp8(c,(uint8_t)c->a,k16_read8(m,e));return 4;}cmp16(c,c->a,read16(m,e));return 5;} /* CMP sr,S */
+    case 0xc5:{uint16_t e=(uint16_t)(c->d+fetch8(c,m));if(c->p&K16_P_M){cmp8(c,(uint8_t)c->a,k16_read8(m,e));return 3;}cmp16(c,c->a,read16(m,e));return 4;} /* CMP dp */
+    case 0xc7:{uint16_t p=(uint16_t)(c->d+fetch8(c,m));uint32_t e=(uint32_t)k16_read8(m,p)|((uint32_t)k16_read8(m,(uint16_t)(p+1u))<<8)|((uint32_t)k16_read8(m,(uint16_t)(p+2u))<<16);if(c->p&K16_P_M){cmp8(c,(uint8_t)c->a,k16_read8(m,e));return 6;}cmp16(c,c->a,read16(m,e));return 7;} /* CMP [dp] */
     case 0xc9:if(c->p&K16_P_M){cmp8(c,(uint8_t)c->a,fetch8(c,m));return 2;}else{cmp16(c,c->a,fetch16(c,m));return 3;} /* CMP # */
+    case 0xcd:{uint16_t a=fetch16(c,m);uint32_t e=((uint32_t)c->dbr<<16)|a;if(c->p&K16_P_M){cmp8(c,(uint8_t)c->a,k16_read8(m,e));return 4;}cmp16(c,c->a,read16(m,e));return 5;} /* CMP abs */
+    case 0xcf:{uint16_t a=fetch16(c,m);uint32_t e=((uint32_t)fetch8(c,m)<<16)|a;if(c->p&K16_P_M){cmp8(c,(uint8_t)c->a,k16_read8(m,e));return 5;}cmp16(c,c->a,read16(m,e));return 6;} /* CMP long */
+    case 0xd1:{uint16_t p=(uint16_t)(c->d+fetch8(c,m));uint16_t a=(uint16_t)(read16(m,p)+c->y);uint32_t e=((uint32_t)c->dbr<<16)|a;if(c->p&K16_P_M){cmp8(c,(uint8_t)c->a,k16_read8(m,e));return 5;}cmp16(c,c->a,read16(m,e));return 6;} /* CMP (dp),Y */
+    case 0xd2:{uint16_t p=(uint16_t)(c->d+fetch8(c,m));uint16_t a=read16(m,p);uint32_t e=((uint32_t)c->dbr<<16)|a;if(c->p&K16_P_M){cmp8(c,(uint8_t)c->a,k16_read8(m,e));return 5;}cmp16(c,c->a,read16(m,e));return 6;} /* CMP (dp) */
+    case 0xd3:{uint16_t p=(uint16_t)(c->sp+fetch8(c,m));uint16_t a=(uint16_t)(read16(m,p)+c->y);uint32_t e=((uint32_t)c->dbr<<16)|a;if(c->p&K16_P_M){cmp8(c,(uint8_t)c->a,k16_read8(m,e));return 7;}cmp16(c,c->a,read16(m,e));return 8;} /* CMP (sr,S),Y */
+    case 0xd5:{uint16_t e=(uint16_t)(c->d+fetch8(c,m)+c->x);if(c->p&K16_P_M){cmp8(c,(uint8_t)c->a,k16_read8(m,e));return 4;}cmp16(c,c->a,read16(m,e));return 5;} /* CMP dp,X */
+    case 0xd7:{uint16_t p=(uint16_t)(c->d+fetch8(c,m));uint32_t e=(uint32_t)k16_read8(m,p)|((uint32_t)k16_read8(m,(uint16_t)(p+1u))<<8)|((uint32_t)k16_read8(m,(uint16_t)(p+2u))<<16);e=(e+c->y)&K16_ADDRESS_MASK;if(c->p&K16_P_M){cmp8(c,(uint8_t)c->a,k16_read8(m,e));return 6;}cmp16(c,c->a,read16(m,e));return 7;} /* CMP [dp],Y */
+    case 0xd9:{uint16_t a=(uint16_t)(fetch16(c,m)+c->y);uint32_t e=((uint32_t)c->dbr<<16)|a;if(c->p&K16_P_M){cmp8(c,(uint8_t)c->a,k16_read8(m,e));return 4;}cmp16(c,c->a,read16(m,e));return 5;} /* CMP abs,Y */
+    case 0xdd:{uint16_t a=(uint16_t)(fetch16(c,m)+c->x);uint32_t e=((uint32_t)c->dbr<<16)|a;if(c->p&K16_P_M){cmp8(c,(uint8_t)c->a,k16_read8(m,e));return 4;}cmp16(c,c->a,read16(m,e));return 5;} /* CMP abs,X */
+    case 0xdf:{uint16_t a=fetch16(c,m);uint32_t e=((((uint32_t)fetch8(c,m)<<16)|a)+c->x)&K16_ADDRESS_MASK;if(c->p&K16_P_M){cmp8(c,(uint8_t)c->a,k16_read8(m,e));return 5;}cmp16(c,c->a,read16(m,e));return 6;} /* CMP long,X */
     case 0xe0:if(c->p&K16_P_X){cmp8(c,(uint8_t)c->x,fetch8(c,m));return 2;}else{cmp16(c,c->x,fetch16(c,m));return 3;} /* CPX # */
     case 0xc0:if(c->p&K16_P_X){cmp8(c,(uint8_t)c->y,fetch8(c,m));return 2;}else{cmp16(c,c->y,fetch16(c,m));return 3;} /* CPY # */
     case 0xe8:if(c->p&K16_P_X){c->x=(uint8_t)(c->x+1u);nz8(c,(uint8_t)c->x);}else{c->x++;nz16(c,c->x);}return 2; /* INX */
