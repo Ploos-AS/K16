@@ -66,6 +66,7 @@
 - [x] executable deterministic DMA priority arbiter
 - [x] executable Copper WAIT/MOVE/JUMP foundation
 - [x] first Copper-driven multi-raster palette test
+- [x] M5.7 integrate CPU + VPU + Copper + DMA on shared machine clock
 - [x] first CPU-driven raster palette effect integration test
 - [ ] interactive frontend
 
