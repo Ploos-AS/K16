@@ -64,5 +64,11 @@ int main(void)
     rom[0x700]=0xa3;rom[0x701]=0x10;rom[0x702]=0xb3;rom[0x703]=0x20;rom[0x704]=0x83;rom[0x705]=0x30;rom[0x706]=0xdb;k16_rom_load(&mem,rom,sizeof(rom));
     assert(k16_cpu_step(&cpu,&mem)==4);assert((cpu.a&0xff)==0x71);assert(k16_cpu_step(&cpu,&mem)==7);assert((cpu.a&0xff)==0x72);
     assert(k16_cpu_step(&cpu,&mem)==4);assert(k16_read8(&mem,0x0530)==0x72);
+    /* register-transfer and stack instruction foundation */
+    cpu.emulation=0;cpu.p=(uint8_t)(K16_P_M|K16_P_X);cpu.sp=0x0700;cpu.a=0x0044;cpu.x=0;cpu.y=0;cpu.pc=0xc800;cpu.stopped=0;
+    rom[0x800]=0xaa;rom[0x801]=0xa8;rom[0x802]=0xda;rom[0x803]=0x5a;rom[0x804]=0xa2;rom[0x805]=0;rom[0x806]=0xfa;rom[0x807]=0x7a;rom[0x808]=0xdb;k16_rom_load(&mem,rom,sizeof(rom));
+    assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.x==0x44);assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.y==0x44);
+    assert(k16_cpu_step(&cpu,&mem)==3);assert(k16_cpu_step(&cpu,&mem)==3);assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.x==0);
+    assert(k16_cpu_step(&cpu,&mem)==4);assert(cpu.x==0x44);assert(k16_cpu_step(&cpu,&mem)==4);assert(cpu.y==0x44);assert(cpu.sp==0x0700);
     k16_memory_destroy(&mem);return 0;
 }
