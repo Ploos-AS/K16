@@ -16,7 +16,11 @@ typedef struct {
     uint16_t d;
     uint8_t emulation;
     uint8_t stopped;
+    uint8_t irq_line;
+    uint8_t nmi_pending;
 } k16_cpu_t;
 void k16_cpu_reset(k16_cpu_t *cpu, k16_memory_t *mem);
 uint32_t k16_cpu_step(k16_cpu_t *cpu, k16_memory_t *mem);
+void k16_cpu_irq(k16_cpu_t *cpu, uint8_t level);
+void k16_cpu_nmi(k16_cpu_t *cpu);
 #endif
