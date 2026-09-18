@@ -28,3 +28,7 @@ A headless conformance frontend is allowed for CI, while an interactive frontend
 ## First executable target
 
 M5.1 should boot a tiny ROM, execute CPU instructions, access RAM/register space and emit a deterministic trace. Video/audio rendering follows from the same state model.
+
+## Host display frontend foundation
+
+M5.8 defines a deterministic 320x200 ARGB framebuffer interface. The core produces pixels without depending on a windowing toolkit or host wall clock; SDL, Wayland, X11 or other interactive presentation layers can consume the same framebuffer later. The initial renderer intentionally exposes the current palette state while the executable layer/tile/planar pixel pipeline is developed in subsequent VPU work.
