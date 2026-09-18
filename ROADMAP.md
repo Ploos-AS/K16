@@ -57,8 +57,10 @@
 - [x] demo-debugger architecture
 - [x] deterministic trace architecture
 - [x] buildable core skeleton + smoke test
-- [ ] W65C816S execution core
-- [ ] executable MMIO/raster/DMA models
+- [x] W65C816S execution-core foundation (reset + initial opcode subset)
+- [x] executable 24-bit RAM/ROM/MMIO bus foundation
+- [ ] complete W65C816S instruction set and interrupt semantics
+- [ ] executable raster/DMA models
 - [ ] interactive frontend
 
 ## M6 — Toolchain
