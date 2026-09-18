@@ -177,5 +177,21 @@ int main(void)
     cpu.p=0;cpu.a=0x8001;cpu.pc=0xc420;cpu.stopped=0;rom[0x420]=0x0a;rom[0x421]=0x6a;k16_rom_load(&mem,rom,sizeof(rom));
     assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.a==0x0002);assert(cpu.p&K16_P_C);
     assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.a==0x8001);assert(!(cpu.p&K16_P_C));assert(cpu.p&K16_P_N);
+    /* M5.27 INC/DEC accumulator and memory coverage */
+    cpu.emulation=0;cpu.p=(uint8_t)(K16_P_M|K16_P_X);cpu.pbr=0;cpu.dbr=0;cpu.d=0x0200;cpu.x=2;cpu.a=0x00ff;cpu.pc=0xc500;cpu.stopped=0;
+    k16_write8(&mem,0x0210,0xff);k16_write8(&mem,0x0212,0x00);k16_write8(&mem,0x0300,0x7f);k16_write8(&mem,0x0302,0x80);
+    rom[0x500]=0x1a;rom[0x501]=0x3a;rom[0x502]=0xe6;rom[0x503]=0x10;rom[0x504]=0xd6;rom[0x505]=0x10;rom[0x506]=0xee;rom[0x507]=0x00;rom[0x508]=0x03;rom[0x509]=0xde;rom[0x50a]=0x00;rom[0x50b]=0x03;k16_rom_load(&mem,rom,sizeof(rom));
+    assert(k16_cpu_step(&cpu,&mem)==2);assert((cpu.a&0xff)==0x00);assert(cpu.p&K16_P_Z);
+    assert(k16_cpu_step(&cpu,&mem)==2);assert((cpu.a&0xff)==0xff);assert(cpu.p&K16_P_N);
+    assert(k16_cpu_step(&cpu,&mem)==5);assert(k16_read8(&mem,0x0210)==0x00);assert(cpu.p&K16_P_Z);
+    assert(k16_cpu_step(&cpu,&mem)==6);assert(k16_read8(&mem,0x0212)==0xff);assert(cpu.p&K16_P_N);
+    assert(k16_cpu_step(&cpu,&mem)==6);assert(k16_read8(&mem,0x0300)==0x80);assert(cpu.p&K16_P_N);
+    assert(k16_cpu_step(&cpu,&mem)==7);assert(k16_read8(&mem,0x0302)==0x7f);assert(!(cpu.p&K16_P_N));
+    /* 16-bit INC/DEC width and wrap */
+    cpu.p=0;cpu.a=0xffff;cpu.pc=0xc520;cpu.stopped=0;k16_write8(&mem,0x0320,0x00);k16_write8(&mem,0x0321,0x00);
+    rom[0x520]=0x1a;rom[0x521]=0x3a;rom[0x522]=0xce;rom[0x523]=0x20;rom[0x524]=0x03;k16_rom_load(&mem,rom,sizeof(rom));
+    assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.a==0x0000);assert(cpu.p&K16_P_Z);
+    assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.a==0xffff);assert(cpu.p&K16_P_N);
+    assert(k16_cpu_step(&cpu,&mem)==8);assert(k16_read8(&mem,0x0320)==0xff);assert(k16_read8(&mem,0x0321)==0xff);assert(cpu.p&K16_P_N);
     k16_memory_destroy(&mem);return 0;
 }
