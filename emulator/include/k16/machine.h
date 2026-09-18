@@ -5,7 +5,8 @@
 #include "k16/vpu.h"
 #include "k16/copper.h"
 #include "k16/dma.h"
-typedef struct {k16_memory_t memory;k16_cpu_t cpu;k16_vpu_t vpu;k16_copper_t copper;k16_dma_t dma;uint64_t ticks;} k16_machine_t;
+#include "k16/input.h"
+typedef struct {k16_memory_t memory;k16_cpu_t cpu;k16_vpu_t vpu;k16_copper_t copper;k16_dma_t dma;k16_input_t input;uint64_t ticks;} k16_machine_t;
 int k16_machine_init(k16_machine_t *m,size_t ram_size);
 void k16_machine_destroy(k16_machine_t *m);
 void k16_machine_reset(k16_machine_t *m);
