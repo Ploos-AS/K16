@@ -100,6 +100,8 @@
   - [x] refresh opcode coverage: 184/256 execution cases after M5.25
   - [x] complete ASL/LSR/ROL/ROR accumulator + memory foundation (M5.26)
   - [x] refresh opcode coverage: 204/256 execution cases after M5.26
+  - [x] complete INC/DEC accumulator + memory foundation (M5.27)
+  - [x] refresh opcode coverage: 214/256 execution cases after M5.27
   - [ ] complete opcode implementation coverage
   - [ ] complete semantic/mode/addressing conformance
   - [ ] complete cycle/timing conformance
