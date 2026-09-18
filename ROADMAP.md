@@ -74,7 +74,7 @@
 - [x] Freeze Rev.1 baseline I/O requirements
 - [ ] host display frontend
 - [ ] PS/2 keyboard controller model
-- [ ] dual DE-9 joystick model
+- [ ] dual DE-9 joystick + quadrature mouse model
 - [ ] UART/RS-232 controller model
 - [ ] Ethernet controller model
 - [ ] I/O interrupts and DMA integration
@@ -106,7 +106,7 @@
 - [ ] BOM
 - [ ] display output circuitry/connectors
 - [ ] PS/2 keyboard port
-- [ ] 2x DE-9 joystick ports
+- [ ] 2x DE-9 multifunction joystick/mouse ports
 - [ ] RS-232 DE-9 + TTL debug UART
 - [ ] Ethernet PHY/controller + connector
 
