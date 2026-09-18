@@ -86,6 +86,8 @@
   - [x] establish 256-opcode implementation coverage matrix (89/256 execution cases at M5.18)
   - [x] branch/jump control-flow foundation (M5.19)
   - [x] refresh opcode coverage: 100/256 execution cases after M5.19
+  - [x] complete ADC addressing-family foundation (M5.20)
+  - [x] refresh opcode coverage: 114/256 execution cases after M5.20
   - [ ] complete opcode implementation coverage
   - [ ] complete semantic/mode/addressing conformance
   - [ ] complete cycle/timing conformance
