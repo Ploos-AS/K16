@@ -79,7 +79,7 @@ int main(void)
     cpu.emulation=1;cpu.p=(uint8_t)(K16_P_M|K16_P_X);cpu.pc=0xc920;cpu.stopped=0;rom[0x920]=0xc2;rom[0x921]=0x30;k16_rom_load(&mem,rom,sizeof(rom));
     assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.p&K16_P_M);assert(cpu.p&K16_P_X);
     /* extended status/transfer/stack foundation */
-    cpu.emulation=0;cpu.p=K16_P_V;cpu.sp=0x0900;cpu.a=0x1234;cpu.d=0x5678;cpu.pbr=0x2a;cpu.pc=0xca00;cpu.stopped=0;
+    cpu.emulation=0;cpu.p=K16_P_V;cpu.sp=0x0900;cpu.a=0x1234;cpu.d=0x5678;cpu.pbr=0;cpu.pc=0xca00;cpu.stopped=0;
     rom[0xa00]=0xf8;rom[0xa01]=0xd8;rom[0xa02]=0xb8;rom[0xa03]=0x5b;rom[0xa04]=0x7b;rom[0xa05]=0x0b;rom[0xa06]=0x2b;rom[0xa07]=0xdb;k16_rom_load(&mem,rom,sizeof(rom));
     assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.p&K16_P_D);assert(k16_cpu_step(&cpu,&mem)==2);assert(!(cpu.p&K16_P_D));
     assert(k16_cpu_step(&cpu,&mem)==2);assert(!(cpu.p&K16_P_V));assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.d==0x1234);
