@@ -199,7 +199,7 @@ int main(void)
     rom[0x600]=0x89;rom[0x601]=0x0f;rom[0x602]=0x24;rom[0x603]=0x10;rom[0x604]=0x2c;rom[0x605]=0x00;rom[0x606]=0x03;rom[0x607]=0x14;rom[0x608]=0x10;rom[0x609]=0x04;rom[0x60a]=0x12;rom[0x60b]=0x0c;rom[0x60c]=0x00;rom[0x60d]=0x03;k16_rom_load(&mem,rom,sizeof(rom));
     assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.p&K16_P_Z);
     assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.p&K16_P_V);assert(!(cpu.p&K16_P_N));
-    assert(k16_cpu_step(&cpu,&mem)==4);assert(cpu.p&K16_P_N);assert(cpu.p&K16_P_V);
+    assert(k16_cpu_step(&cpu,&mem)==4);assert(cpu.p&K16_P_N);assert(!(cpu.p&K16_P_V));
     assert(k16_cpu_step(&cpu,&mem)==5);assert(k16_read8(&mem,0x0210)==0x00);assert(cpu.p&K16_P_Z);
     assert(k16_cpu_step(&cpu,&mem)==5);assert(k16_read8(&mem,0x0212)==0x01);
     assert(k16_cpu_step(&cpu,&mem)==6);assert(k16_read8(&mem,0x0300)==0x80);
