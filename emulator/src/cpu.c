@@ -115,7 +115,21 @@ uint32_t k16_cpu_step(k16_cpu_t *c,k16_memory_t *m)
     case 0x79:{uint16_t a=(uint16_t)(fetch16(c,m)+c->y);uint32_t e=((uint32_t)c->dbr<<16)|a;if(c->p&K16_P_M){adc8(c,k16_read8(m,e));return 4;}adc16(c,read16(m,e));return 5;} /* ADC abs,Y */
     case 0x7d:{uint16_t a=(uint16_t)(fetch16(c,m)+c->x);uint32_t e=((uint32_t)c->dbr<<16)|a;if(c->p&K16_P_M){adc8(c,k16_read8(m,e));return 4;}adc16(c,read16(m,e));return 5;} /* ADC abs,X */
     case 0x7f:{uint16_t a=fetch16(c,m);uint32_t e=((((uint32_t)fetch8(c,m)<<16)|a)+c->x)&K16_ADDRESS_MASK;if(c->p&K16_P_M){adc8(c,k16_read8(m,e));return 5;}adc16(c,read16(m,e));return 6;} /* ADC long,X */
+    case 0xe1:{uint16_t p=(uint16_t)(c->d+fetch8(c,m)+c->x);uint16_t a=read16(m,p);uint32_t e=((uint32_t)c->dbr<<16)|a;if(c->p&K16_P_M){sbc8(c,k16_read8(m,e));return 6;}sbc16(c,read16(m,e));return 7;} /* SBC (dp,X) */
+    case 0xe3:{uint16_t e=(uint16_t)(c->sp+fetch8(c,m));if(c->p&K16_P_M){sbc8(c,k16_read8(m,e));return 4;}sbc16(c,read16(m,e));return 5;} /* SBC sr,S */
+    case 0xe5:{uint16_t e=(uint16_t)(c->d+fetch8(c,m));if(c->p&K16_P_M){sbc8(c,k16_read8(m,e));return 3;}sbc16(c,read16(m,e));return 4;} /* SBC dp */
+    case 0xe7:{uint16_t p=(uint16_t)(c->d+fetch8(c,m));uint32_t e=(uint32_t)k16_read8(m,p)|((uint32_t)k16_read8(m,(uint16_t)(p+1u))<<8)|((uint32_t)k16_read8(m,(uint16_t)(p+2u))<<16);if(c->p&K16_P_M){sbc8(c,k16_read8(m,e));return 6;}sbc16(c,read16(m,e));return 7;} /* SBC [dp] */
     case 0xe9:if(c->p&K16_P_M){sbc8(c,fetch8(c,m));return 2;}else{sbc16(c,fetch16(c,m));return 3;} /* SBC # */
+    case 0xed:{uint16_t a=fetch16(c,m);uint32_t e=((uint32_t)c->dbr<<16)|a;if(c->p&K16_P_M){sbc8(c,k16_read8(m,e));return 4;}sbc16(c,read16(m,e));return 5;} /* SBC abs */
+    case 0xef:{uint16_t a=fetch16(c,m);uint32_t e=((uint32_t)fetch8(c,m)<<16)|a;if(c->p&K16_P_M){sbc8(c,k16_read8(m,e));return 5;}sbc16(c,read16(m,e));return 6;} /* SBC long */
+    case 0xf1:{uint16_t p=(uint16_t)(c->d+fetch8(c,m));uint16_t a=(uint16_t)(read16(m,p)+c->y);uint32_t e=((uint32_t)c->dbr<<16)|a;if(c->p&K16_P_M){sbc8(c,k16_read8(m,e));return 5;}sbc16(c,read16(m,e));return 6;} /* SBC (dp),Y */
+    case 0xf2:{uint16_t p=(uint16_t)(c->d+fetch8(c,m));uint16_t a=read16(m,p);uint32_t e=((uint32_t)c->dbr<<16)|a;if(c->p&K16_P_M){sbc8(c,k16_read8(m,e));return 5;}sbc16(c,read16(m,e));return 6;} /* SBC (dp) */
+    case 0xf3:{uint16_t p=(uint16_t)(c->sp+fetch8(c,m));uint16_t a=(uint16_t)(read16(m,p)+c->y);uint32_t e=((uint32_t)c->dbr<<16)|a;if(c->p&K16_P_M){sbc8(c,k16_read8(m,e));return 7;}sbc16(c,read16(m,e));return 8;} /* SBC (sr,S),Y */
+    case 0xf5:{uint16_t e=(uint16_t)(c->d+fetch8(c,m)+c->x);if(c->p&K16_P_M){sbc8(c,k16_read8(m,e));return 4;}sbc16(c,read16(m,e));return 5;} /* SBC dp,X */
+    case 0xf7:{uint16_t p=(uint16_t)(c->d+fetch8(c,m));uint32_t e=(uint32_t)k16_read8(m,p)|((uint32_t)k16_read8(m,(uint16_t)(p+1u))<<8)|((uint32_t)k16_read8(m,(uint16_t)(p+2u))<<16);e=(e+c->y)&K16_ADDRESS_MASK;if(c->p&K16_P_M){sbc8(c,k16_read8(m,e));return 6;}sbc16(c,read16(m,e));return 7;} /* SBC [dp],Y */
+    case 0xf9:{uint16_t a=(uint16_t)(fetch16(c,m)+c->y);uint32_t e=((uint32_t)c->dbr<<16)|a;if(c->p&K16_P_M){sbc8(c,k16_read8(m,e));return 4;}sbc16(c,read16(m,e));return 5;} /* SBC abs,Y */
+    case 0xfd:{uint16_t a=(uint16_t)(fetch16(c,m)+c->x);uint32_t e=((uint32_t)c->dbr<<16)|a;if(c->p&K16_P_M){sbc8(c,k16_read8(m,e));return 4;}sbc16(c,read16(m,e));return 5;} /* SBC abs,X */
+    case 0xff:{uint16_t a=fetch16(c,m);uint32_t e=((((uint32_t)fetch8(c,m)<<16)|a)+c->x)&K16_ADDRESS_MASK;if(c->p&K16_P_M){sbc8(c,k16_read8(m,e));return 5;}sbc16(c,read16(m,e));return 6;} /* SBC long,X */
     case 0xc9:if(c->p&K16_P_M){cmp8(c,(uint8_t)c->a,fetch8(c,m));return 2;}else{cmp16(c,c->a,fetch16(c,m));return 3;} /* CMP # */
     case 0xe0:if(c->p&K16_P_X){cmp8(c,(uint8_t)c->x,fetch8(c,m));return 2;}else{cmp16(c,c->x,fetch16(c,m));return 3;} /* CPX # */
     case 0xc0:if(c->p&K16_P_X){cmp8(c,(uint8_t)c->y,fetch8(c,m));return 2;}else{cmp16(c,c->y,fetch16(c,m));return 3;} /* CPY # */
