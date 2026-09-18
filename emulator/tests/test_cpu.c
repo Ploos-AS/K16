@@ -21,5 +21,13 @@ int main(void)
     assert(k16_cpu_step(&cpu,&mem)==3);assert(!(cpu.p&K16_P_M));assert(!(cpu.p&K16_P_X));
     assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.a==0x1234);assert(k16_cpu_step(&cpu,&mem)==5);
     assert(k16_read8(&mem,0x0100)==0x34);assert(k16_read8(&mem,0x0101)==0x12);
+    /* native stack + JSR/RTS + ADC */
+    cpu.stopped=0;cpu.pc=0xc200;cpu.pbr=0;cpu.sp=0x1ff0;cpu.emulation=0;cpu.p&=(uint8_t)~K16_P_M;
+    rom[0x200]=0xa9;rom[0x201]=1;rom[0x202]=0;rom[0x203]=0x20;rom[0x204]=0x0a;rom[0x205]=0xc2;rom[0x206]=0xdb;
+    rom[0x20a]=0x18;rom[0x20b]=0x69;rom[0x20c]=2;rom[0x20d]=0;rom[0x20e]=0x60;
+    k16_rom_load(&mem,rom,sizeof(rom));
+    assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.a==1);assert(k16_cpu_step(&cpu,&mem)==6);
+    assert(cpu.pc==0xc20a);assert(k16_cpu_step(&cpu,&mem)==2);assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.a==3);
+    assert(k16_cpu_step(&cpu,&mem)==6);assert(cpu.pc==0xc206);assert(cpu.sp==0x1ff0);
     k16_memory_destroy(&mem);return 0;
 }
