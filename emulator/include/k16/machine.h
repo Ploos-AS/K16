@@ -14,5 +14,13 @@ int k16_machine_init(k16_machine_t *m,size_t ram_size);
 void k16_machine_destroy(k16_machine_t *m);
 void k16_machine_reset(k16_machine_t *m);
 void k16_machine_start_copper(k16_machine_t *m,uint32_t address);
+int k16_machine_key(k16_machine_t *m,uint8_t scancode);
+void k16_machine_joystick(k16_machine_t *m,unsigned port,uint8_t state);
+void k16_machine_mouse(k16_machine_t *m,unsigned port,int16_t dx,int16_t dy,uint8_t buttons);
+int k16_machine_uart_receive(k16_machine_t *m,uint8_t byte);
+int k16_machine_uart_transmit(k16_machine_t *m,uint8_t *byte);
+int k16_machine_ethernet_receive(k16_machine_t *m,const uint8_t *data,uint16_t len);
+int k16_machine_ethernet_rx_dma(k16_machine_t *m,uint32_t address);
+int k16_machine_ethernet_tx_dma(k16_machine_t *m,uint32_t address,uint16_t len);
 uint32_t k16_machine_step(k16_machine_t *m);
 #endif
