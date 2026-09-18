@@ -108,6 +108,8 @@
   - [x] refresh opcode coverage: 228/256 execution cases after M5.29
   - [x] complete remaining LDX/LDY/STX/STY + STZ foundation (M5.30)
   - [x] refresh opcode coverage: 242/256 execution cases after M5.30
+  - [x] close remaining memory/compare/control-flow foundation gaps (M5.31)
+  - [x] refresh opcode coverage: 254/256 execution cases after M5.31
   - [ ] complete opcode implementation coverage
   - [ ] complete semantic/mode/addressing conformance
   - [ ] complete cycle/timing conformance
