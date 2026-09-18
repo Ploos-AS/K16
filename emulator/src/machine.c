@@ -24,5 +24,7 @@ static void custom_tick(k16_machine_t *m){
 }
 uint32_t k16_machine_step(k16_machine_t *m){
  uint32_t n,t=k16_cpu_step(&m->cpu,&m->memory);if(!t)return 0;
- for(n=0;n<t;n++)custom_tick(m);m->ticks+=t;return t;
+ for(n=0;n<t;n++) custom_tick(m);
+ m->ticks+=t;
+ return t;
 }
