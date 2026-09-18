@@ -201,7 +201,7 @@ int main(void)
     assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.p&K16_P_V);assert(!(cpu.p&K16_P_N));
     assert(k16_cpu_step(&cpu,&mem)==4);assert(cpu.p&K16_P_N);assert(!(cpu.p&K16_P_V));
     assert(k16_cpu_step(&cpu,&mem)==5);assert(k16_read8(&mem,0x0210)==0x00);assert(!(cpu.p&K16_P_Z));
-    assert(k16_cpu_step(&cpu,&mem)==5);assert(k16_read8(&mem,0x0212)==0x01);
+    assert(k16_cpu_step(&cpu,&mem)==5);assert(k16_read8(&mem,0x0212)==0xf0);assert(cpu.p&K16_P_Z);
     assert(k16_cpu_step(&cpu,&mem)==6);assert(k16_read8(&mem,0x0300)==0x80);
     /* 16-bit BIT/TRB/TSB */
     cpu.p=0;cpu.a=0x4001;cpu.pc=0xc620;cpu.stopped=0;k16_write8(&mem,0x0320,0x01);k16_write8(&mem,0x0321,0x40);
