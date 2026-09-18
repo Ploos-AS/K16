@@ -303,6 +303,11 @@ uint32_t k16_cpu_step(k16_cpu_t *c,k16_memory_t *m)
     case 0xe4:{uint32_t e=(uint16_t)(c->d+fetch8(c,m));if(c->p&K16_P_X){cmp8(c,(uint8_t)c->x,k16_read8(m,e));return 3;}cmp16(c,c->x,read16(m,e));return 4;} /* CPX dp */
     case 0xec:{uint16_t a=fetch16(c,m);uint32_t e=((uint32_t)c->dbr<<16)|a;if(c->p&K16_P_X){cmp8(c,(uint8_t)c->x,k16_read8(m,e));return 4;}cmp16(c,c->x,read16(m,e));return 5;} /* CPX abs */
     case 0xfc:{uint16_t a=fetch16(c,m);uint16_t p=(uint16_t)(a+c->x);push16(c,m,(uint16_t)(c->pc-1u));c->pc=read16(m,p);return 8;} /* JSR (abs,X) */
+    /* M5.32 65C816 block moves. One byte is transferred per execution;
+       PC rewinds while A has not wrapped through FFFF, matching the
+       interruptible/restartable instruction model. */
+    case 0x54:{uint8_t dst=fetch8(c,m),src=fetch8(c,m);uint32_t s=((uint32_t)src<<16)|c->x,d=((uint32_t)dst<<16)|c->y;k16_write8(m,d,k16_read8(m,s));c->dbr=dst;c->x++;c->y++;c->a--;if(c->a!=0xffffu)c->pc=(uint16_t)(c->pc-3u);return 7;} /* MVN */
+    case 0x44:{uint8_t dst=fetch8(c,m),src=fetch8(c,m);uint32_t s=((uint32_t)src<<16)|c->x,d=((uint32_t)dst<<16)|c->y;k16_write8(m,d,k16_read8(m,s));c->dbr=dst;c->x--;c->y--;c->a--;if(c->a!=0xffffu)c->pc=(uint16_t)(c->pc-3u);return 7;} /* MVP */
     case 0x42:fetch8(c,m);return 2; /* WDM reserved */
     case 0xcb:c->stopped=1;return 3; /* WAI foundation: resume on interrupt */
     case 0xad:{uint16_t a=fetch16(c,m);uint32_t d=((uint32_t)c->dbr<<16)|a;if(c->p&K16_P_M){uint8_t v=k16_read8(m,d);c->a=(uint16_t)((c->a&0xff00u)|v);nz8(c,v);return 4;}else{c->a=read16(m,d);nz16(c,c->a);return 5;}} /* LDA abs */
