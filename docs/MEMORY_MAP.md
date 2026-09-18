@@ -29,7 +29,10 @@ Bank 00, 8000-BFFF is divided into coarse blocks:
 | 9000-93FF | audio |
 | 9400-97FF | DMA |
 | 9800-9BFF | storage |
-| 9C00-9FFF | serial/input |
+| 9C00-9CFF | keyboard + dual joystick input |
+| 9D00-9DFF | UART / serial |
+| 9E00-9EFF | Ethernet control |
+| 9F00-9FFF | baseline I/O reserved |
 | A000-AFFF | expansion I/O |
 | B000-BFFF | reserved |
 
