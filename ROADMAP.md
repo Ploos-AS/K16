@@ -128,6 +128,13 @@
 - [ ] audio demos
 - [ ] Copper demos
 - [ ] combined demos
+- [x] define showcase demo suite
+- [ ] Raster Storm showcase
+- [ ] Sprite City showcase
+- [ ] Blitter Lab showcase
+- [ ] Tracker Eight showcase
+- [ ] Copper Orchestra showcase
+- [ ] K16 Megademo Rev.1 showcase
 
 ## M9.5 — Documentation and learning
 - [ ] complete hardware reference manual
