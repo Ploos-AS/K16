@@ -83,6 +83,10 @@
   - [x] TCS/TSC/TCD/TDC/XBA transfer foundation
   - [x] PHD/PLD/PHK stack foundation
   - [x] decimal-mode ADC/SBC foundation (8/16-bit)
+  - [x] establish 256-opcode implementation coverage matrix (89/256 execution cases at M5.18)
+  - [ ] complete opcode implementation coverage
+  - [ ] complete semantic/mode/addressing conformance
+  - [ ] complete cycle/timing conformance
 - [x] executable raster timing + raster IRQ foundation
 - [x] executable deterministic DMA priority arbiter
 - [x] executable Copper WAIT/MOVE/JUMP foundation
