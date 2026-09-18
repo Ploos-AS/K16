@@ -88,6 +88,8 @@
   - [x] refresh opcode coverage: 100/256 execution cases after M5.19
   - [x] complete ADC addressing-family foundation (M5.20)
   - [x] refresh opcode coverage: 114/256 execution cases after M5.20
+  - [x] complete SBC addressing-family foundation (M5.21)
+  - [x] refresh opcode coverage: 128/256 execution cases after M5.21
   - [ ] complete opcode implementation coverage
   - [ ] complete semantic/mode/addressing conformance
   - [ ] complete cycle/timing conformance
