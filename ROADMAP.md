@@ -77,7 +77,9 @@
 - [x] dual DE-9 joystick + quadrature mouse model foundation
 - [x] UART/RS-232 controller model foundation
 - [x] Ethernet controller model foundation
-- [ ] I/O interrupts and DMA integration
+- [x] shared I/O interrupt-controller foundation
+- [x] Ethernet RX/TX memory DMA foundation
+- [ ] peripheral event wiring + cycle-arbitrated I/O DMA
 - [ ] debugger-visible I/O state
 
 ## M6 — Toolchain
