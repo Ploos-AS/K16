@@ -12,7 +12,7 @@ int main(void)
     assert(cpu.pc==0xc000);assert(k16_cpu_step(&cpu,&mem)==2);assert((cpu.a&0xff)==0x42);
     assert(k16_cpu_step(&cpu,&mem)==4);assert(k16_read8(&mem,0x8000)==0x42);
     assert(k16_cpu_step(&cpu,&mem)==3);assert(k16_cpu_step(&cpu,&mem)==2);assert(k16_cpu_step(&cpu,&mem)==4);
-    assert((cpu.a&0xff)==0x42);assert(k16_cpu_step(&cpu,&mem)==3);assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.stopped);
+    assert((cpu.a&0xff)==0x42);assert(k16_cpu_step(&cpu,&mem)==3);assert(k16_cpu_step(&cpu,&mem)==2);assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.stopped);
     /* enter native mode, select 16-bit A/X and verify 16-bit immediate/store */
     cpu.stopped=0;cpu.pc=0xc100;rom[0x100]=0x18;rom[0x101]=0xfb;rom[0x102]=0xc2;rom[0x103]=0x30;
     rom[0x104]=0xa9;rom[0x105]=0x34;rom[0x106]=0x12;rom[0x107]=0x8d;rom[0x108]=0x00;rom[0x109]=0x01;rom[0x10a]=0xdb;
