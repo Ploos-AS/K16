@@ -73,6 +73,9 @@
   - [x] direct-page long-indirect indexed-Y LDA/STA foundation
   - [x] stack-relative LDA/STA foundation
   - [x] stack-relative indirect indexed-Y LDA/STA foundation
+  - [x] TAX/TAY/TXA/TYA/TSX/TXS transfer foundation
+  - [x] PHX/PLX/PHY/PLY stack foundation
+  - [x] PHP/PLP and PHB/PLB foundation
 - [x] executable raster timing + raster IRQ foundation
 - [x] executable deterministic DMA priority arbiter
 - [x] executable Copper WAIT/MOVE/JUMP foundation
