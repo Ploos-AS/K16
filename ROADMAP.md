@@ -69,6 +69,16 @@
 - [x] first CPU-driven raster palette effect integration test
 - [ ] interactive frontend
 
+## M5.8 — Baseline I/O emulation
+- [x] Freeze Rev.1 baseline I/O requirements
+- [ ] host display frontend
+- [ ] PS/2 keyboard controller model
+- [ ] dual DE-9 joystick model
+- [ ] UART/RS-232 controller model
+- [ ] Ethernet controller model
+- [ ] I/O interrupts and DMA integration
+- [ ] debugger-visible I/O state
+
 ## M6 — Toolchain
 - [ ] assembler
 - [ ] linker
@@ -93,6 +103,11 @@
 - [ ] silkscreen documentation
 - [ ] bring-up procedure
 - [ ] BOM
+- [ ] display output circuitry/connectors
+- [ ] PS/2 keyboard port
+- [ ] 2x DE-9 joystick ports
+- [ ] RS-232 DE-9 + TTL debug UART
+- [ ] Ethernet PHY/controller + connector
 
 ## M9 — Demo platform
 - [ ] demo framework
