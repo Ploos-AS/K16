@@ -254,8 +254,3 @@ int main(void)
     assert(k16_cpu_step(&cpu,&mem)==7);assert(k16_read8(&mem,0x042100)==0xdd);assert(cpu.a==0xffff);assert(cpu.pc==0xca13);
     k16_memory_destroy(&mem);return 0;
 }
-}
-}
-}
-}
-}
