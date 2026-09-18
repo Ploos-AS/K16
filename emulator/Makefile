@@ -6,7 +6,7 @@ CORE_SRC = src/core.c src/memory.c src/cpu.c
 
 .PHONY: all check clean
 
-all: build/test_core build/test_memory build/test_cpu build/test_raster_irq
+all: build/test_core build/test_memory build/test_cpu build/test_raster_irq build/test_copper_dma
 
 build:
 	mkdir -p build
@@ -23,11 +23,15 @@ build/test_cpu: src/cpu.c src/memory.c tests/test_cpu.c include/k16/cpu.h includ
 build/test_raster_irq: src/cpu.c src/memory.c src/vpu.c src/machine.c tests/test_raster_irq.c include/k16/vpu.h include/k16/machine.h | build
 	$(CC) $(CPPFLAGS) $(CFLAGS) src/cpu.c src/memory.c src/vpu.c src/machine.c tests/test_raster_irq.c -o $@
 
+build/test_copper_dma: src/copper.c src/dma.c src/memory.c tests/test_copper_dma.c include/k16/copper.h include/k16/dma.h | build
+	$(CC) $(CPPFLAGS) $(CFLAGS) src/copper.c src/dma.c src/memory.c tests/test_copper_dma.c -o $@
+
 check: all
 	./build/test_core
 	./build/test_memory
 	./build/test_cpu
 	./build/test_raster_irq
+	./build/test_copper_dma
 
 clean:
 	rm -rf build
