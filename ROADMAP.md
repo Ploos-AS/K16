@@ -47,14 +47,19 @@
 - [ ] freeze exact sample rates/DAC after RTL and bandwidth qualification
 
 ## M5 — Emulator
-- [ ] CPU emulation
-- [ ] memory/bus model
-- [ ] video emulation
-- [ ] Copper emulation
-- [ ] Blitter emulation
-- [ ] audio emulation
-- [ ] debugger
-- [ ] trace facilities
+- [x] deterministic core architecture
+- [x] CPU integration boundary
+- [x] memory/bus model specification
+- [x] video/raster model specification
+- [x] Copper model specification
+- [x] Blitter model specification
+- [x] audio model specification
+- [x] demo-debugger architecture
+- [x] deterministic trace architecture
+- [x] buildable core skeleton + smoke test
+- [ ] W65C816S execution core
+- [ ] executable MMIO/raster/DMA models
+- [ ] interactive frontend
 
 ## M6 — Toolchain
 - [ ] assembler
