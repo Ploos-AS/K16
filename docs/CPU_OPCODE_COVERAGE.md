@@ -7,14 +7,14 @@ This matrix tracks **emulator implementation coverage**, not final conformance.
 - Implemented does **not** imply cycle-exact or fully qualified behavior.
 - Addressing, emulation/native-mode edge cases, flags, decimal behavior, interrupts and timing still require conformance qualification.
 
-Current execution cases: **204/256 (79.7%)**.
+Current execution cases: **214/256 (83.6%)**.
 
 | | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | A | B | C | D | E | F |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 0x | I | I | I | I | — | I | I | I | I | I | I | I | — | I | I | I |
-| 1x | I | I | I | I | — | I | I | I | I | I | — | I | — | I | I | I |
+| 1x | I | I | I | I | — | I | I | I | I | I | I | I | — | I | I | I |
 | 2x | I | I | I | I | — | I | I | I | I | I | I | I | — | I | I | I |
-| 3x | I | I | I | I | — | I | I | I | I | I | — | I | — | I | I | I |
+| 3x | I | I | I | I | — | I | I | I | I | I | I | I | — | I | I | I |
 | 4x | I | I | — | I | — | I | I | I | I | I | I | I | I | I | I | I |
 | 5x | I | I | I | I | — | I | I | I | I | I | I | I | I | I | I | I |
 | 6x | I | I | — | I | — | I | I | I | I | I | I | I | I | I | I | I |
@@ -23,10 +23,10 @@ Current execution cases: **204/256 (79.7%)**.
 | 9x | I | I | I | I | — | — | — | I | I | — | I | — | — | I | — | — |
 | Ax | I | I | I | I | — | I | — | I | I | I | I | I | I | I | I | I |
 | Bx | I | I | I | I | — | — | — | I | I | I | I | — | — | I | — | — |
-| Cx | I | I | I | I | — | I | — | I | I | I | I | — | — | I | — | I |
-| Dx | I | I | I | I | — | I | — | I | I | I | I | I | I | I | — | I |
-| Ex | I | I | I | I | — | I | — | I | I | I | I | I | — | I | — | I |
-| Fx | I | I | I | I | — | I | — | I | I | I | I | I | — | I | — | I |
+| Cx | I | I | I | I | — | I | I | I | I | I | I | — | — | I | I | I |
+| Dx | I | I | I | I | — | I | I | I | I | I | I | I | I | I | I | I |
+| Ex | I | I | I | I | — | I | I | I | I | I | I | I | — | I | I | I |
+| Fx | I | I | I | I | — | I | I | I | I | I | I | I | — | I | I | I |
 
 ## Qualification levels
 
