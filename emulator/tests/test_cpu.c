@@ -70,5 +70,13 @@ int main(void)
     assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.x==0x44);assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.y==0x44);
     assert(k16_cpu_step(&cpu,&mem)==3);assert(k16_cpu_step(&cpu,&mem)==3);assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.x==0);
     assert(k16_cpu_step(&cpu,&mem)==4);assert(cpu.x==0x44);assert(k16_cpu_step(&cpu,&mem)==4);assert(cpu.y==0x44);assert(cpu.sp==0x0700);
+    /* width/emulation fidelity: 16-bit PHA/PLA, X narrowing, emulation-forced M/X */
+    cpu.emulation=0;cpu.p=0;cpu.sp=0x0800;cpu.a=0x1234;cpu.x=0xabcd;cpu.y=0x9876;cpu.pc=0xc900;cpu.stopped=0;
+    rom[0x900]=0x48;rom[0x901]=0xa9;rom[0x902]=0;rom[0x903]=0;rom[0x904]=0x68;rom[0x905]=0xe2;rom[0x906]=K16_P_X;rom[0x907]=0xdb;k16_rom_load(&mem,rom,sizeof(rom));
+    assert(k16_cpu_step(&cpu,&mem)==4);assert(cpu.sp==0x07fe);assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.a==0);
+    assert(k16_cpu_step(&cpu,&mem)==5);assert(cpu.a==0x1234);assert(cpu.sp==0x0800);
+    assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.x==0x00cd);assert(cpu.y==0x0076);
+    cpu.emulation=1;cpu.p=(uint8_t)(K16_P_M|K16_P_X);cpu.pc=0xc920;cpu.stopped=0;rom[0x920]=0xc2;rom[0x921]=0x30;k16_rom_load(&mem,rom,sizeof(rom));
+    assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.p&K16_P_M);assert(cpu.p&K16_P_X);
     k16_memory_destroy(&mem);return 0;
 }
