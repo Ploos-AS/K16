@@ -93,5 +93,14 @@ int main(void)
     cpu.p=(uint8_t)(K16_P_D|K16_P_C);cpu.a=0x9999;cpu.pc=0xcb20;cpu.stopped=0;rom[0xb20]=0x69;rom[0xb21]=0x01;rom[0xb22]=0x00;rom[0xb23]=0xe9;rom[0xb24]=0x01;rom[0xb25]=0x00;k16_rom_load(&mem,rom,sizeof(rom));
     assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.a==0x0001);assert(cpu.p&K16_P_C);
     assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.a==0x0000);assert(cpu.p&K16_P_C);assert(cpu.p&K16_P_Z);
+    /* branch and jump control-flow family */
+    cpu.emulation=0;cpu.p=0;cpu.pbr=0;cpu.x=2;cpu.pc=0xcc00;cpu.stopped=0;
+    rom[0xc00]=0x10;rom[0xc01]=0x02;rom[0xc04]=0x90;rom[0xc05]=0x02;rom[0xc08]=0x82;rom[0xc09]=0x02;rom[0xc0a]=0x00;rom[0xc0d]=0x4c;rom[0xc0e]=0x20;rom[0xc0f]=0xcc;
+    rom[0xc20]=0x6c;rom[0xc21]=0x30;rom[0xc22]=0xcc;rom[0xc30]=0x40;rom[0xc31]=0xcc;rom[0xc40]=0xdb;k16_rom_load(&mem,rom,sizeof(rom));
+    assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.pc==0xcc04);assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.pc==0xcc08);
+    assert(k16_cpu_step(&cpu,&mem)==4);assert(cpu.pc==0xcc0d);assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.pc==0xcc20);
+    assert(k16_cpu_step(&cpu,&mem)==5);assert(cpu.pc==0xcc40);
+    cpu.pc=0xcc50;cpu.p=K16_P_N;cpu.stopped=0;rom[0xc50]=0x30;rom[0xc51]=0xfe;k16_rom_load(&mem,rom,sizeof(rom));
+    assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.pc==0xcc50);
     k16_memory_destroy(&mem);return 0;
 }
