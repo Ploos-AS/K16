@@ -100,7 +100,21 @@ uint32_t k16_cpu_step(k16_cpu_t *c,k16_memory_t *m)
     case 0x60:c->pc=(uint16_t)(pull16(c,m)+1u);return 6; /* RTS */
     case 0x22:{uint16_t target=fetch16(c,m);uint8_t bank=fetch8(c,m);push8(c,m,c->pbr);push16(c,m,(uint16_t)(c->pc-1u));c->pbr=bank;c->pc=target;return 8;} /* JSL */
     case 0x6b:{uint16_t ret=pull16(c,m);c->pbr=pull8(c,m);c->pc=(uint16_t)(ret+1u);return 6;} /* RTL */
+    case 0x61:{uint16_t p=(uint16_t)(c->d+fetch8(c,m)+c->x);uint16_t a=read16(m,p);uint32_t e=((uint32_t)c->dbr<<16)|a;if(c->p&K16_P_M){adc8(c,k16_read8(m,e));return 6;}adc16(c,read16(m,e));return 7;} /* ADC (dp,X) */
+    case 0x63:{uint16_t e=(uint16_t)(c->sp+fetch8(c,m));if(c->p&K16_P_M){adc8(c,k16_read8(m,e));return 4;}adc16(c,read16(m,e));return 5;} /* ADC sr,S */
+    case 0x65:{uint16_t e=(uint16_t)(c->d+fetch8(c,m));if(c->p&K16_P_M){adc8(c,k16_read8(m,e));return 3;}adc16(c,read16(m,e));return 4;} /* ADC dp */
+    case 0x67:{uint16_t p=(uint16_t)(c->d+fetch8(c,m));uint32_t e=(uint32_t)k16_read8(m,p)|((uint32_t)k16_read8(m,(uint16_t)(p+1u))<<8)|((uint32_t)k16_read8(m,(uint16_t)(p+2u))<<16);if(c->p&K16_P_M){adc8(c,k16_read8(m,e));return 6;}adc16(c,read16(m,e));return 7;} /* ADC [dp] */
     case 0x69:if(c->p&K16_P_M){adc8(c,fetch8(c,m));return 2;}else{adc16(c,fetch16(c,m));return 3;} /* ADC # */
+    case 0x6d:{uint16_t a=fetch16(c,m);uint32_t e=((uint32_t)c->dbr<<16)|a;if(c->p&K16_P_M){adc8(c,k16_read8(m,e));return 4;}adc16(c,read16(m,e));return 5;} /* ADC abs */
+    case 0x6f:{uint16_t a=fetch16(c,m);uint32_t e=((uint32_t)fetch8(c,m)<<16)|a;if(c->p&K16_P_M){adc8(c,k16_read8(m,e));return 5;}adc16(c,read16(m,e));return 6;} /* ADC long */
+    case 0x71:{uint16_t p=(uint16_t)(c->d+fetch8(c,m));uint16_t a=(uint16_t)(read16(m,p)+c->y);uint32_t e=((uint32_t)c->dbr<<16)|a;if(c->p&K16_P_M){adc8(c,k16_read8(m,e));return 5;}adc16(c,read16(m,e));return 6;} /* ADC (dp),Y */
+    case 0x72:{uint16_t p=(uint16_t)(c->d+fetch8(c,m));uint16_t a=read16(m,p);uint32_t e=((uint32_t)c->dbr<<16)|a;if(c->p&K16_P_M){adc8(c,k16_read8(m,e));return 5;}adc16(c,read16(m,e));return 6;} /* ADC (dp) */
+    case 0x73:{uint16_t p=(uint16_t)(c->sp+fetch8(c,m));uint16_t a=(uint16_t)(read16(m,p)+c->y);uint32_t e=((uint32_t)c->dbr<<16)|a;if(c->p&K16_P_M){adc8(c,k16_read8(m,e));return 7;}adc16(c,read16(m,e));return 8;} /* ADC (sr,S),Y */
+    case 0x75:{uint16_t e=(uint16_t)(c->d+fetch8(c,m)+c->x);if(c->p&K16_P_M){adc8(c,k16_read8(m,e));return 4;}adc16(c,read16(m,e));return 5;} /* ADC dp,X */
+    case 0x77:{uint16_t p=(uint16_t)(c->d+fetch8(c,m));uint32_t e=(uint32_t)k16_read8(m,p)|((uint32_t)k16_read8(m,(uint16_t)(p+1u))<<8)|((uint32_t)k16_read8(m,(uint16_t)(p+2u))<<16);e=(e+c->y)&K16_ADDRESS_MASK;if(c->p&K16_P_M){adc8(c,k16_read8(m,e));return 6;}adc16(c,read16(m,e));return 7;} /* ADC [dp],Y */
+    case 0x79:{uint16_t a=(uint16_t)(fetch16(c,m)+c->y);uint32_t e=((uint32_t)c->dbr<<16)|a;if(c->p&K16_P_M){adc8(c,k16_read8(m,e));return 4;}adc16(c,read16(m,e));return 5;} /* ADC abs,Y */
+    case 0x7d:{uint16_t a=(uint16_t)(fetch16(c,m)+c->x);uint32_t e=((uint32_t)c->dbr<<16)|a;if(c->p&K16_P_M){adc8(c,k16_read8(m,e));return 4;}adc16(c,read16(m,e));return 5;} /* ADC abs,X */
+    case 0x7f:{uint16_t a=fetch16(c,m);uint32_t e=((((uint32_t)fetch8(c,m)<<16)|a)+c->x)&K16_ADDRESS_MASK;if(c->p&K16_P_M){adc8(c,k16_read8(m,e));return 5;}adc16(c,read16(m,e));return 6;} /* ADC long,X */
     case 0xe9:if(c->p&K16_P_M){sbc8(c,fetch8(c,m));return 2;}else{sbc16(c,fetch16(c,m));return 3;} /* SBC # */
     case 0xc9:if(c->p&K16_P_M){cmp8(c,(uint8_t)c->a,fetch8(c,m));return 2;}else{cmp16(c,c->a,fetch16(c,m));return 3;} /* CMP # */
     case 0xe0:if(c->p&K16_P_X){cmp8(c,(uint8_t)c->x,fetch8(c,m));return 2;}else{cmp16(c,c->x,fetch16(c,m));return 3;} /* CPX # */
