@@ -17,11 +17,15 @@ K16 Rev.1 includes the following user-facing I/O as baseline hardware. These are
 - Emulator maps the host keyboard onto the same K16 controller.
 - Modern USB keyboards may be supported through an external/simple adapter rather than making USB host complexity mandatory in the core machine.
 
-## Joysticks
+## Controller ports and mouse
 
-- Two native DE-9 digital joystick ports.
-- Direct memory-mapped direction/button state for low-latency demos and games.
-- Atari/Commodore/Amiga-style digital joystick compatibility is the baseline.
+- Two native DE-9 multifunction controller ports.
+- Each port supports a digital joystick or quadrature mouse; both ports may be used as joysticks simultaneously.
+- Direct memory-mapped direction/button state provides low-latency access for demos and games.
+- FPGA logic decodes mouse quadrature signals and maintains hardware X/Y counters plus button state, so software does not need to service every transition.
+- Either controller port may host the mouse; software and the emulator use the same register model.
+- Atari/Commodore/Amiga-style digital joystick compatibility is the baseline, with Amiga-style mouse compatibility where electrically practical.
+- The electrical design must protect FPGA/system logic from unsafe peripheral pin states and power/signalling conflicts.
 - Input changes may optionally generate interrupts, but polling must remain simple and deterministic.
 
 ## Serial
