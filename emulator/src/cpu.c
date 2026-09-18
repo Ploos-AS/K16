@@ -40,6 +40,14 @@ uint32_t k16_cpu_step(k16_cpu_t *c,k16_memory_t *m)
     if(c->stopped)return 0;op=fetch8(c,m);
     switch(op){
     case 0xea:return 2;
+    case 0xb8:c->p&=(uint8_t)~K16_P_V;return 2; /* CLV */
+    case 0xd8:c->p&=(uint8_t)~K16_P_D;return 2; /* CLD */
+    case 0xf8:c->p|=K16_P_D;return 2; /* SED */
+    case 0x1b:c->sp=c->a;return 2; /* TCS */
+    case 0x3b:c->a=c->sp;nz16(c,c->a);return 2; /* TSC */
+    case 0x5b:c->d=c->a;nz16(c,c->d);return 2; /* TCD */
+    case 0x7b:c->a=c->d;nz16(c,c->a);return 2; /* TDC */
+    case 0xeb:{uint8_t lo=(uint8_t)c->a;c->a=(uint16_t)(((uint16_t)lo<<8)|(c->a>>8));nz8(c,(uint8_t)c->a);return 3;} /* XBA */
     case 0x18:c->p&=(uint8_t)~K16_P_C;return 2; /* CLC */
     case 0x38:c->p|=K16_P_C;return 2; /* SEC */
     case 0x58:c->p&=(uint8_t)~K16_P_I;return 2; /* CLI */
@@ -113,6 +121,9 @@ uint32_t k16_cpu_step(k16_cpu_t *c,k16_memory_t *m)
     case 0x7a:if(c->p&K16_P_X){c->y=pull8(c,m);nz8(c,(uint8_t)c->y);return 4;}else{c->y=pull16(c,m);nz16(c,c->y);return 5;} /* PLY */
     case 0x08:push8(c,m,c->p);return 3; /* PHP */
     case 0x28:{uint8_t oldx=c->p&K16_P_X;c->p=pull8(c,m);if(c->emulation)c->p|=K16_P_M|K16_P_X;if(!oldx&&(c->p&K16_P_X)){c->x&=0x00ffu;c->y&=0x00ffu;}return 4;} /* PLP */
+    case 0x0b:push16(c,m,c->d);return 4; /* PHD */
+    case 0x2b:c->d=pull16(c,m);nz16(c,c->d);return 5; /* PLD */
+    case 0x4b:push8(c,m,c->pbr);return 3; /* PHK */
     case 0x8b:push8(c,m,c->dbr);return 3; /* PHB */
     case 0xab:c->dbr=pull8(c,m);nz8(c,c->dbr);return 4; /* PLB */
     case 0x48:if(c->p&K16_P_M){push8(c,m,(uint8_t)c->a);return 3;}else{push16(c,m,c->a);return 4;} /* PHA */
