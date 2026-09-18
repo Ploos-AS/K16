@@ -261,6 +261,12 @@ uint32_t k16_cpu_step(k16_cpu_t *c,k16_memory_t *m)
     case 0x7a:if(c->p&K16_P_X){c->y=pull8(c,m);nz8(c,(uint8_t)c->y);return 4;}else{c->y=pull16(c,m);nz16(c,c->y);return 5;} /* PLY */
     case 0x08:push8(c,m,c->p);return 3; /* PHP */
     case 0x28:{uint8_t oldx=c->p&K16_P_X;c->p=pull8(c,m);if(c->emulation)c->p|=K16_P_M|K16_P_X;if(!oldx&&(c->p&K16_P_X)){c->x&=0x00ffu;c->y&=0x00ffu;}return 4;} /* PLP */
+    /* M5.29 remaining stack/transfer foundation */
+    case 0xf4:{uint16_t v=fetch16(c,m);push16(c,m,v);return 5;} /* PEA */
+    case 0xd4:{uint16_t p=(uint16_t)(c->d+fetch8(c,m));push16(c,m,read16(m,p));return 6;} /* PEI */
+    case 0x62:{int16_t d=(int16_t)fetch16(c,m);push16(c,m,(uint16_t)(c->pc+d));return 6;} /* PER */
+    case 0x9b:if(c->p&K16_P_X){c->y=(uint8_t)c->x;nz8(c,(uint8_t)c->y);}else{c->y=c->x;nz16(c,c->y);}return 2; /* TXY */
+    case 0xbb:if(c->p&K16_P_X){c->x=(uint8_t)c->y;nz8(c,(uint8_t)c->x);}else{c->x=c->y;nz16(c,c->x);}return 2; /* TYX */
     case 0x0b:push16(c,m,c->d);return 4; /* PHD */
     case 0x2b:c->d=pull16(c,m);nz16(c,c->d);return 5; /* PLD */
     case 0x4b:push8(c,m,c->pbr);return 3; /* PHK */
