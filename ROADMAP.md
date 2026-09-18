@@ -62,7 +62,9 @@
 - [ ] complete W65C816S instruction set and interrupt semantics
   - [x] IRQ/NMI/BRK/COP/RTI foundation
   - [x] absolute-long memory access foundation
-- [ ] executable raster/DMA models
+- [x] executable raster timing + raster IRQ foundation
+- [ ] executable DMA arbitration model
+- [x] first CPU-driven raster palette effect integration test
 - [ ] interactive frontend
 
 ## M6 — Toolchain
