@@ -183,7 +183,7 @@ int main(void)
     rom[0x500]=0x1a;rom[0x501]=0x3a;rom[0x502]=0xe6;rom[0x503]=0x10;rom[0x504]=0xd6;rom[0x505]=0x10;rom[0x506]=0xee;rom[0x507]=0x00;rom[0x508]=0x03;rom[0x509]=0xde;rom[0x50a]=0x00;rom[0x50b]=0x03;k16_rom_load(&mem,rom,sizeof(rom));
     assert(k16_cpu_step(&cpu,&mem)==2);assert((cpu.a&0xff)==0x00);assert(cpu.p&K16_P_Z);
     assert(k16_cpu_step(&cpu,&mem)==2);assert((cpu.a&0xff)==0xff);assert(cpu.p&K16_P_N);
-    assert(k16_cpu_step(&cpu,&mem)==5);assert(k16_read8(&mem,0x0210)==0x00);assert(!(cpu.p&K16_P_Z));
+    assert(k16_cpu_step(&cpu,&mem)==5);assert(k16_read8(&mem,0x0210)==0x00);assert(cpu.p&K16_P_Z);
     assert(k16_cpu_step(&cpu,&mem)==6);assert(k16_read8(&mem,0x0212)==0xff);assert(cpu.p&K16_P_N);
     assert(k16_cpu_step(&cpu,&mem)==6);assert(k16_read8(&mem,0x0300)==0x80);assert(cpu.p&K16_P_N);
     assert(k16_cpu_step(&cpu,&mem)==7);assert(k16_read8(&mem,0x0302)==0x7f);assert(!(cpu.p&K16_P_N));
