@@ -44,9 +44,9 @@ uint32_t k16_cpu_step(k16_cpu_t *c,k16_memory_t *m)
     case 0x38:c->p|=K16_P_C;return 2; /* SEC */
     case 0x58:c->p&=(uint8_t)~K16_P_I;return 2; /* CLI */
     case 0x78:c->p|=K16_P_I;return 2; /* SEI */
-    case 0xc2:{uint8_t v=fetch8(c,m);c->p&=(uint8_t)~v;return 3;} /* REP */
-    case 0xe2:{uint8_t v=fetch8(c,m);c->p|=v;return 3;} /* SEP */
-    case 0xfb:{uint8_t oldc=c->p&K16_P_C;if(c->emulation)c->p|=K16_P_C;else c->p&=(uint8_t)~K16_P_C;c->emulation=oldc?1:0;if(c->emulation){c->p|=K16_P_M|K16_P_X;c->sp=(uint16_t)(0x0100u|(c->sp&0xffu));}return 2;} /* XCE */
+    case 0xc2:{uint8_t v=fetch8(c,m);c->p&=(uint8_t)~v;if(c->emulation)c->p|=K16_P_M|K16_P_X;return 3;} /* REP */
+    case 0xe2:{uint8_t v=fetch8(c,m);uint8_t oldx=c->p&K16_P_X;c->p|=v;if(!oldx&&(c->p&K16_P_X)){c->x&=0x00ffu;c->y&=0x00ffu;}return 3;} /* SEP */
+    case 0xfb:{uint8_t oldc=c->p&K16_P_C;if(c->emulation)c->p|=K16_P_C;else c->p&=(uint8_t)~K16_P_C;c->emulation=oldc?1:0;if(c->emulation){c->p|=K16_P_M|K16_P_X;c->x&=0x00ffu;c->y&=0x00ffu;c->sp=(uint16_t)(0x0100u|(c->sp&0xffu));}return 2;} /* XCE */
     case 0xa9: /* LDA # */
         if(c->p&K16_P_M){uint8_t v=fetch8(c,m);c->a=(uint16_t)((c->a&0xff00u)|v);nz8(c,v);return 2;}
         else {uint16_t v=fetch16(c,m);c->a=v;nz16(c,v);return 3;}
@@ -112,11 +112,11 @@ uint32_t k16_cpu_step(k16_cpu_t *c,k16_memory_t *m)
     case 0x5a:if(c->p&K16_P_X){push8(c,m,(uint8_t)c->y);return 3;}else{push16(c,m,c->y);return 4;} /* PHY */
     case 0x7a:if(c->p&K16_P_X){c->y=pull8(c,m);nz8(c,(uint8_t)c->y);return 4;}else{c->y=pull16(c,m);nz16(c,c->y);return 5;} /* PLY */
     case 0x08:push8(c,m,c->p);return 3; /* PHP */
-    case 0x28:c->p=pull8(c,m);if(c->emulation)c->p|=K16_P_M|K16_P_X;return 4; /* PLP */
+    case 0x28:{uint8_t oldx=c->p&K16_P_X;c->p=pull8(c,m);if(c->emulation)c->p|=K16_P_M|K16_P_X;if(!oldx&&(c->p&K16_P_X)){c->x&=0x00ffu;c->y&=0x00ffu;}return 4;} /* PLP */
     case 0x8b:push8(c,m,c->dbr);return 3; /* PHB */
     case 0xab:c->dbr=pull8(c,m);nz8(c,c->dbr);return 4; /* PLB */
-    case 0x48:push8(c,m,(uint8_t)c->a);return 3; /* PHA reset-mode */
-    case 0x68:{uint8_t v=pull8(c,m);c->a=(uint16_t)((c->a&0xff00u)|v);nz8(c,v);return 4;} /* PLA reset-mode */
+    case 0x48:if(c->p&K16_P_M){push8(c,m,(uint8_t)c->a);return 3;}else{push16(c,m,c->a);return 4;} /* PHA */
+    case 0x68:if(c->p&K16_P_M){uint8_t v=pull8(c,m);c->a=(uint16_t)((c->a&0xff00u)|v);nz8(c,v);return 4;}else{c->a=pull16(c,m);nz16(c,c->a);return 5;} /* PLA */
     case 0x00:fetch8(c,m);return interrupt_enter(c,m,c->emulation?0xfffeu:0xffe6u,1); /* BRK */
     case 0x02:fetch8(c,m);return interrupt_enter(c,m,c->emulation?0xfff4u:0xffe4u,1); /* COP */
     case 0x40:{c->p=pull8(c,m);c->pc=pull16(c,m);if(!c->emulation)c->pbr=pull8(c,m);return c->emulation?6:7;} /* RTI */
