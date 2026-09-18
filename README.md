@@ -49,4 +49,8 @@ K16 is not intended to be a commercial PC replacement or a highly integrated mod
 
 ## License
 
-Project licensing will be selected during the foundation phase.
+Hardware design materials — including schematics, PCB layouts, manufacturing files, and HDL/RTL that describes hardware — are licensed under the **CERN Open Hardware Licence Version 2 - Permissive (CERN-OHL-P-2.0)**. See [LICENSE-HARDWARE](LICENSE-HARDWARE).
+
+Software — including firmware, drivers, host tools, emulators, assemblers, compilers, utilities, and other executable code unless explicitly stated otherwise — is licensed under the **MIT License**. See [LICENSE-SOFTWARE](LICENSE-SOFTWARE).
+
+Files that incorporate third-party material remain subject to their respective licences and notices.
