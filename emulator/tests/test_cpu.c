@@ -37,5 +37,12 @@ int main(void)
     /* NMI vector */
     rom[0x3ffa]=0x20;rom[0x3ffb]=0xc3;rom[0x320]=0x40;k16_rom_load(&mem,rom,sizeof(rom));
     k16_cpu_nmi(&cpu);assert(k16_cpu_step(&cpu,&mem)==7);assert(cpu.pc==0xc320);assert(k16_cpu_step(&cpu,&mem)==6);
+    /* arithmetic/compare/index foundation */
+    cpu.emulation=0;cpu.p=(uint8_t)(K16_P_M|K16_P_X|K16_P_C);cpu.a=10;cpu.x=1;cpu.y=2;cpu.pc=0xc400;cpu.stopped=0;
+    rom[0x400]=0xe9;rom[0x401]=3;rom[0x402]=0xc9;rom[0x403]=7;rom[0x404]=0xe8;rom[0x405]=0xc8;rom[0x406]=0xca;rom[0x407]=0x88;rom[0x408]=0xdb;k16_rom_load(&mem,rom,sizeof(rom));
+    assert(k16_cpu_step(&cpu,&mem)==2);assert((cpu.a&0xff)==7);assert(cpu.p&K16_P_C);
+    assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.p&K16_P_Z);assert(cpu.p&K16_P_C);
+    assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.x==2);assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.y==3);
+    assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.x==1);assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.y==2);
     k16_memory_destroy(&mem);return 0;
 }
