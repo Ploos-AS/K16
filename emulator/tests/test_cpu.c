@@ -102,5 +102,15 @@ int main(void)
     assert(k16_cpu_step(&cpu,&mem)==5);assert(cpu.pc==0xcc40);
     cpu.pc=0xcc50;cpu.p=K16_P_N;cpu.stopped=0;rom[0xc50]=0x30;rom[0xc51]=0xfe;k16_rom_load(&mem,rom,sizeof(rom));
     assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.pc==0xcc50);
+    /* ADC addressing-family coverage */
+    cpu.emulation=0;cpu.p=(uint8_t)(K16_P_M|K16_P_X);cpu.a=1;cpu.d=0x0200;cpu.dbr=0;cpu.x=2;cpu.y=3;cpu.sp=0x0a00;cpu.pc=0xcd00;cpu.stopped=0;
+    k16_write8(&mem,0x0210,2);k16_write8(&mem,0x0212,3);k16_write8(&mem,0x0300,4);k16_write8(&mem,0x0303,5);
+    k16_write8(&mem,0x0220,0x00);k16_write8(&mem,0x0221,0x03);k16_write8(&mem,0x0222,0x10);k16_write8(&mem,0x0223,0x03);
+    k16_write8(&mem,0x0310,6);k16_write8(&mem,0x0a10,7);
+    rom[0xd00]=0x65;rom[0xd01]=0x10;rom[0xd02]=0x75;rom[0xd03]=0x10;rom[0xd04]=0x6d;rom[0xd05]=0x00;rom[0xd06]=0x03;
+    rom[0xd07]=0x71;rom[0xd08]=0x20;rom[0xd09]=0x61;rom[0xd0a]=0x20;rom[0xd0b]=0x63;rom[0xd0c]=0x10;rom[0xd0d]=0xdb;k16_rom_load(&mem,rom,sizeof(rom));
+    assert(k16_cpu_step(&cpu,&mem)==3);assert((cpu.a&0xff)==3);assert(k16_cpu_step(&cpu,&mem)==4);assert((cpu.a&0xff)==6);
+    assert(k16_cpu_step(&cpu,&mem)==4);assert((cpu.a&0xff)==10);assert(k16_cpu_step(&cpu,&mem)==5);assert((cpu.a&0xff)==15);
+    assert(k16_cpu_step(&cpu,&mem)==6);assert((cpu.a&0xff)==21);assert(k16_cpu_step(&cpu,&mem)==4);assert((cpu.a&0xff)==28);
     k16_memory_destroy(&mem);return 0;
 }
