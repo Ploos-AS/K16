@@ -85,5 +85,13 @@ int main(void)
     assert(k16_cpu_step(&cpu,&mem)==2);assert(!(cpu.p&K16_P_V));assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.d==0x1234);
     assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.a==0x1234);assert(k16_cpu_step(&cpu,&mem)==4);cpu.d=0;
     assert(k16_cpu_step(&cpu,&mem)==5);assert(cpu.d==0x1234);assert(cpu.sp==0x0900);
+    /* decimal ADC/SBC, 8-bit and 16-bit */
+    cpu.emulation=0;cpu.p=(uint8_t)(K16_P_M|K16_P_X|K16_P_D);cpu.a=0x0045;cpu.pc=0xcb00;cpu.pbr=0;cpu.stopped=0;
+    rom[0xb00]=0x18;rom[0xb01]=0x69;rom[0xb02]=0x55;rom[0xb03]=0xe9;rom[0xb04]=0x01;rom[0xb05]=0xdb;k16_rom_load(&mem,rom,sizeof(rom));
+    assert(k16_cpu_step(&cpu,&mem)==2);assert(k16_cpu_step(&cpu,&mem)==2);assert((cpu.a&0xff)==0x00);assert(cpu.p&K16_P_C);assert(cpu.p&K16_P_Z);
+    assert(k16_cpu_step(&cpu,&mem)==2);assert((cpu.a&0xff)==0x99);assert(!(cpu.p&K16_P_C));
+    cpu.p=(uint8_t)(K16_P_D|K16_P_C);cpu.a=0x9999;cpu.pc=0xcb20;cpu.stopped=0;rom[0xb20]=0x69;rom[0xb21]=0x01;rom[0xb22]=0x00;rom[0xb23]=0xe9;rom[0xb24]=0x01;rom[0xb25]=0x00;k16_rom_load(&mem,rom,sizeof(rom));
+    assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.a==0x0001);assert(cpu.p&K16_P_C);
+    assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.a==0x0000);assert(cpu.p&K16_P_C);assert(cpu.p&K16_P_Z);
     k16_memory_destroy(&mem);return 0;
 }
