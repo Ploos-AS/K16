@@ -101,6 +101,20 @@ uint32_t k16_cpu_step(k16_cpu_t *c,k16_memory_t *m)
     case 0x80:{int8_t d=(int8_t)fetch8(c,m);c->pc=(uint16_t)(c->pc+d);return 3;} /* BRA */
     case 0xd0:{int8_t d=(int8_t)fetch8(c,m);if(!(c->p&K16_P_Z)){c->pc=(uint16_t)(c->pc+d);return 3;}return 2;} /* BNE */
     case 0xf0:{int8_t d=(int8_t)fetch8(c,m);if(c->p&K16_P_Z){c->pc=(uint16_t)(c->pc+d);return 3;}return 2;} /* BEQ */
+    case 0xaa:if(c->p&K16_P_X){c->x=(uint8_t)c->a;nz8(c,(uint8_t)c->x);}else{c->x=c->a;nz16(c,c->x);}return 2; /* TAX */
+    case 0xa8:if(c->p&K16_P_X){c->y=(uint8_t)c->a;nz8(c,(uint8_t)c->y);}else{c->y=c->a;nz16(c,c->y);}return 2; /* TAY */
+    case 0x8a:if(c->p&K16_P_M){c->a=(uint16_t)((c->a&0xff00u)|(uint8_t)c->x);nz8(c,(uint8_t)c->a);}else{c->a=c->x;nz16(c,c->a);}return 2; /* TXA */
+    case 0x98:if(c->p&K16_P_M){c->a=(uint16_t)((c->a&0xff00u)|(uint8_t)c->y);nz8(c,(uint8_t)c->a);}else{c->a=c->y;nz16(c,c->a);}return 2; /* TYA */
+    case 0xba:if(c->p&K16_P_X){c->x=(uint8_t)c->sp;nz8(c,(uint8_t)c->x);}else{c->x=c->sp;nz16(c,c->x);}return 2; /* TSX */
+    case 0x9a:c->sp=c->emulation?(uint16_t)(0x0100u|(c->x&0xffu)):c->x;return 2; /* TXS */
+    case 0xda:if(c->p&K16_P_X){push8(c,m,(uint8_t)c->x);return 3;}else{push16(c,m,c->x);return 4;} /* PHX */
+    case 0xfa:if(c->p&K16_P_X){c->x=pull8(c,m);nz8(c,(uint8_t)c->x);return 4;}else{c->x=pull16(c,m);nz16(c,c->x);return 5;} /* PLX */
+    case 0x5a:if(c->p&K16_P_X){push8(c,m,(uint8_t)c->y);return 3;}else{push16(c,m,c->y);return 4;} /* PHY */
+    case 0x7a:if(c->p&K16_P_X){c->y=pull8(c,m);nz8(c,(uint8_t)c->y);return 4;}else{c->y=pull16(c,m);nz16(c,c->y);return 5;} /* PLY */
+    case 0x08:push8(c,m,c->p);return 3; /* PHP */
+    case 0x28:c->p=pull8(c,m);if(c->emulation)c->p|=K16_P_M|K16_P_X;return 4; /* PLP */
+    case 0x8b:push8(c,m,c->dbr);return 3; /* PHB */
+    case 0xab:c->dbr=pull8(c,m);nz8(c,c->dbr);return 4; /* PLB */
     case 0x48:push8(c,m,(uint8_t)c->a);return 3; /* PHA reset-mode */
     case 0x68:{uint8_t v=pull8(c,m);c->a=(uint16_t)((c->a&0xff00u)|v);nz8(c,v);return 4;} /* PLA reset-mode */
     case 0x00:fetch8(c,m);return interrupt_enter(c,m,c->emulation?0xfffeu:0xffe6u,1); /* BRK */
