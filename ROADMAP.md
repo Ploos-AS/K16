@@ -76,7 +76,7 @@
 - [x] PS/2 keyboard controller model foundation
 - [x] dual DE-9 joystick + quadrature mouse model foundation
 - [x] UART/RS-232 controller model foundation
-- [ ] Ethernet controller model
+- [x] Ethernet controller model foundation
 - [ ] I/O interrupts and DMA integration
 - [ ] debugger-visible I/O state
 
