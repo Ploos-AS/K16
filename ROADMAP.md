@@ -81,7 +81,7 @@
 - [x] Ethernet RX/TX memory DMA foundation
 - [x] peripheral event wiring into shared IRQ controller
 - [x] cycle-arbitrated Ethernet I/O DMA foundation
-- [ ] debugger-visible I/O state
+- [x] debugger-visible I/O state foundation
 
 ## M6 — Toolchain
 - [ ] assembler
