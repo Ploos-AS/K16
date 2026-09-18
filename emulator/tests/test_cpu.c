@@ -58,5 +58,11 @@ int main(void)
     k16_write8(&mem,0x0400,0x61);k16_write8(&mem,0x0403,0x62);k16_write8(&mem,0x0410,0x63);
     rom[0x600]=0xb2;rom[0x601]=0x20;rom[0x602]=0xb1;rom[0x603]=0x20;rom[0x604]=0xa1;rom[0x605]=0x20;rom[0x606]=0xdb;k16_rom_load(&mem,rom,sizeof(rom));
     assert(k16_cpu_step(&cpu,&mem)==5);assert((cpu.a&0xff)==0x61);assert(k16_cpu_step(&cpu,&mem)==5);assert((cpu.a&0xff)==0x62);assert(k16_cpu_step(&cpu,&mem)==6);assert((cpu.a&0xff)==0x63);
+    /* stack-relative addressing foundation */
+    cpu.emulation=0;cpu.p=(uint8_t)(K16_P_M|K16_P_X);cpu.sp=0x0500;cpu.dbr=0;cpu.y=3;cpu.a=0;cpu.pc=0xc700;cpu.stopped=0;
+    k16_write8(&mem,0x0510,0x71);k16_write8(&mem,0x0520,0x00);k16_write8(&mem,0x0521,0x06);k16_write8(&mem,0x0603,0x72);
+    rom[0x700]=0xa3;rom[0x701]=0x10;rom[0x702]=0xb3;rom[0x703]=0x20;rom[0x704]=0x83;rom[0x705]=0x30;rom[0x706]=0xdb;k16_rom_load(&mem,rom,sizeof(rom));
+    assert(k16_cpu_step(&cpu,&mem)==4);assert((cpu.a&0xff)==0x71);assert(k16_cpu_step(&cpu,&mem)==7);assert((cpu.a&0xff)==0x72);
+    assert(k16_cpu_step(&cpu,&mem)==4);assert(k16_read8(&mem,0x0530)==0x72);
     k16_memory_destroy(&mem);return 0;
 }
