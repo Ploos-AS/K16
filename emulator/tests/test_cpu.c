@@ -29,5 +29,13 @@ int main(void)
     assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.a==1);assert(k16_cpu_step(&cpu,&mem)==6);
     assert(cpu.pc==0xc20a);assert(k16_cpu_step(&cpu,&mem)==2);assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.a==3);
     assert(k16_cpu_step(&cpu,&mem)==6);assert(cpu.pc==0xc206);assert(cpu.sp==0x1ff0);
+    /* IRQ entry and RTI in emulation mode */
+    cpu.emulation=1;cpu.p|=K16_P_M|K16_P_X;cpu.p&=(uint8_t)~K16_P_I;cpu.sp=0x01ff;cpu.pc=0xc300;cpu.pbr=0;cpu.stopped=0;
+    rom[0x3ffe]=0x10;rom[0x3fff]=0xc3;rom[0x310]=0x40;k16_rom_load(&mem,rom,sizeof(rom));
+    k16_cpu_irq(&cpu,1);assert(k16_cpu_step(&cpu,&mem)==7);assert(cpu.pc==0xc310);k16_cpu_irq(&cpu,0);
+    assert(k16_cpu_step(&cpu,&mem)==6);assert(cpu.pc==0xc300);assert(cpu.sp==0x01ff);
+    /* NMI vector */
+    rom[0x3ffa]=0x20;rom[0x3ffb]=0xc3;rom[0x320]=0x40;k16_rom_load(&mem,rom,sizeof(rom));
+    k16_cpu_nmi(&cpu);assert(k16_cpu_step(&cpu,&mem)==7);assert(cpu.pc==0xc320);assert(k16_cpu_step(&cpu,&mem)==6);
     k16_memory_destroy(&mem);return 0;
 }
