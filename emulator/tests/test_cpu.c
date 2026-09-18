@@ -143,5 +143,14 @@ int main(void)
     assert(k16_cpu_step(&cpu,&mem)==3);assert((cpu.a&0xff)==0xf0);assert(k16_cpu_step(&cpu,&mem)==4);assert((cpu.a&0xff)==0xc0);
     assert(k16_cpu_step(&cpu,&mem)==4);assert((cpu.a&0xff)==0x80);assert(k16_cpu_step(&cpu,&mem)==5);assert((cpu.a&0xff)==0x00);assert(cpu.p&K16_P_Z);
     cpu.a=0xff;assert(k16_cpu_step(&cpu,&mem)==6);assert((cpu.a&0xff)==0x03);assert(k16_cpu_step(&cpu,&mem)==4);assert((cpu.a&0xff)==0x01);
+    /* ORA addressing-family coverage */
+    cpu.emulation=0;cpu.p=(uint8_t)(K16_P_M|K16_P_X);cpu.a=0;cpu.d=0x0200;cpu.dbr=0;cpu.x=2;cpu.y=3;cpu.sp=0x0a00;cpu.pc=0xc200;cpu.stopped=0;
+    k16_write8(&mem,0x0210,0x80);k16_write8(&mem,0x0212,0x40);k16_write8(&mem,0x0300,0x20);k16_write8(&mem,0x0303,0x10);
+    k16_write8(&mem,0x0220,0x00);k16_write8(&mem,0x0221,0x03);k16_write8(&mem,0x0222,0x10);k16_write8(&mem,0x0223,0x03);k16_write8(&mem,0x0310,0x08);k16_write8(&mem,0x0a10,0x04);
+    rom[0x200]=0x05;rom[0x201]=0x10;rom[0x202]=0x15;rom[0x203]=0x10;rom[0x204]=0x0d;rom[0x205]=0x00;rom[0x206]=0x03;rom[0x207]=0x11;rom[0x208]=0x20;rom[0x209]=0x01;rom[0x20a]=0x20;rom[0x20b]=0x03;rom[0x20c]=0x10;k16_rom_load(&mem,rom,sizeof(rom));
+    assert(k16_cpu_step(&cpu,&mem)==3);assert((cpu.a&0xff)==0x80);assert(cpu.p&K16_P_N);
+    assert(k16_cpu_step(&cpu,&mem)==4);assert((cpu.a&0xff)==0xc0);assert(k16_cpu_step(&cpu,&mem)==4);assert((cpu.a&0xff)==0xe0);
+    assert(k16_cpu_step(&cpu,&mem)==5);assert((cpu.a&0xff)==0xf0);assert(k16_cpu_step(&cpu,&mem)==6);assert((cpu.a&0xff)==0xf8);
+    assert(k16_cpu_step(&cpu,&mem)==4);assert((cpu.a&0xff)==0xfc);
     k16_memory_destroy(&mem);return 0;
 }
