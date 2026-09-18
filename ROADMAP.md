@@ -63,7 +63,9 @@
   - [x] IRQ/NMI/BRK/COP/RTI foundation
   - [x] absolute-long memory access foundation
 - [x] executable raster timing + raster IRQ foundation
-- [ ] executable DMA arbitration model
+- [x] executable deterministic DMA priority arbiter
+- [x] executable Copper WAIT/MOVE/JUMP foundation
+- [x] first Copper-driven multi-raster palette test
 - [x] first CPU-driven raster palette effect integration test
 - [ ] interactive frontend
 
