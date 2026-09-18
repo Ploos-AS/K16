@@ -75,7 +75,7 @@
 - [ ] host display frontend
 - [x] PS/2 keyboard controller model foundation
 - [x] dual DE-9 joystick + quadrature mouse model foundation
-- [ ] UART/RS-232 controller model
+- [x] UART/RS-232 controller model foundation
 - [ ] Ethernet controller model
 - [ ] I/O interrupts and DMA integration
 - [ ] debugger-visible I/O state
