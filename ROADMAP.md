@@ -60,6 +60,8 @@
 - [x] W65C816S execution-core foundation (reset + initial opcode subset)
 - [x] executable 24-bit RAM/ROM/MMIO bus foundation
 - [ ] complete W65C816S instruction set and interrupt semantics
+  - [x] IRQ/NMI/BRK/COP/RTI foundation
+  - [x] absolute-long memory access foundation
 - [ ] executable raster/DMA models
 - [ ] interactive frontend
 
