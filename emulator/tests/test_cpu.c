@@ -170,7 +170,7 @@ int main(void)
     assert(k16_cpu_step(&cpu,&mem)==2);assert((cpu.a&0xff)==0x02);assert(cpu.p&K16_P_C);
     assert(k16_cpu_step(&cpu,&mem)==2);assert((cpu.a&0xff)==0x01);assert(!(cpu.p&K16_P_C));assert(!(cpu.p&K16_P_N));
     assert(k16_cpu_step(&cpu,&mem)==5);assert(k16_read8(&mem,0x0210)==0x00);assert(cpu.p&K16_P_C);assert(cpu.p&K16_P_Z);
-    assert(k16_cpu_step(&cpu,&mem)==6);assert(k16_read8(&mem,0x0212)==0x80);assert(cpu.p&K16_P_C);
+    assert(k16_cpu_step(&cpu,&mem)==6);assert(k16_read8(&mem,0x0212)==0x00);assert(cpu.p&K16_P_C);assert(cpu.p&K16_P_Z);
     assert(k16_cpu_step(&cpu,&mem)==6);assert(k16_read8(&mem,0x0300)==0x07);
     assert(k16_cpu_step(&cpu,&mem)==7);assert(k16_read8(&mem,0x0302)==0x40);assert(!(cpu.p&K16_P_C));
     /* 16-bit accumulator rotate/shift width */
