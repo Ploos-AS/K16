@@ -79,6 +79,9 @@
   - [x] emulation-mode M/X enforcement foundation
   - [x] index high-byte clearing on 8-bit transition
   - [x] width-aware PHA/PLA foundation
+  - [x] CLV/CLD/SED status foundation
+  - [x] TCS/TSC/TCD/TDC/XBA transfer foundation
+  - [x] PHD/PLD/PHK stack foundation
 - [x] executable raster timing + raster IRQ foundation
 - [x] executable deterministic DMA priority arbiter
 - [x] executable Copper WAIT/MOVE/JUMP foundation
