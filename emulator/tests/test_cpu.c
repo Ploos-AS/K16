@@ -241,7 +241,19 @@ int main(void)
     assert(k16_cpu_step(&cpu,&mem)==3);assert(!(cpu.p&K16_P_C));
     assert(k16_cpu_step(&cpu,&mem)==3);assert(!(cpu.p&K16_P_C));
     assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.pc==0xc90d);
+    /* M5.32 MVN/MVP block move completion */
+    cpu.emulation=0;cpu.p=0;cpu.pbr=0;cpu.a=1;cpu.x=0x1000;cpu.y=0x2000;cpu.pc=0xca00;cpu.stopped=0;
+    k16_write8(&mem,0x011000,0xaa);k16_write8(&mem,0x011001,0xbb);
+    rom[0xa00]=0x54;rom[0xa01]=0x02;rom[0xa02]=0x01;k16_rom_load(&mem,rom,sizeof(rom));
+    assert(k16_cpu_step(&cpu,&mem)==7);assert(k16_read8(&mem,0x022000)==0xaa);assert(cpu.a==0);assert(cpu.x==0x1001);assert(cpu.y==0x2001);assert(cpu.pc==0xca00);assert(cpu.dbr==2);
+    assert(k16_cpu_step(&cpu,&mem)==7);assert(k16_read8(&mem,0x022001)==0xbb);assert(cpu.a==0xffff);assert(cpu.x==0x1002);assert(cpu.y==0x2002);assert(cpu.pc==0xca03);
+    cpu.a=1;cpu.x=0x1001;cpu.y=0x2101;cpu.pc=0xca10;cpu.stopped=0;
+    k16_write8(&mem,0x031001,0xcc);k16_write8(&mem,0x031000,0xdd);
+    rom[0xa10]=0x44;rom[0xa11]=0x04;rom[0xa12]=0x03;k16_rom_load(&mem,rom,sizeof(rom));
+    assert(k16_cpu_step(&cpu,&mem)==7);assert(k16_read8(&mem,0x042101)==0xcc);assert(cpu.x==0x1000);assert(cpu.y==0x2100);assert(cpu.pc==0xca10);assert(cpu.dbr==4);
+    assert(k16_cpu_step(&cpu,&mem)==7);assert(k16_read8(&mem,0x042100)==0xdd);assert(cpu.a==0xffff);assert(cpu.pc==0xca13);
     k16_memory_destroy(&mem);return 0;
+}
 }
 }
 }
