@@ -22,5 +22,7 @@ int k16_machine_uart_transmit(k16_machine_t *m,uint8_t *byte);
 int k16_machine_ethernet_receive(k16_machine_t *m,const uint8_t *data,uint16_t len);
 int k16_machine_ethernet_rx_dma(k16_machine_t *m,uint32_t address);
 int k16_machine_ethernet_tx_dma(k16_machine_t *m,uint32_t address,uint16_t len);
+int k16_machine_ethernet_start_rx_dma(k16_machine_t *m,uint32_t address);
+int k16_machine_ethernet_start_tx_dma(k16_machine_t *m,uint32_t address,uint16_t len);
 uint32_t k16_machine_step(k16_machine_t *m);
 #endif
