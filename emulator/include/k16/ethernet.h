@@ -18,10 +18,14 @@
 #define K16_ETH_STATUS_TX_READY 0x02u
 #define K16_ETH_STATUS_RX_OVERFLOW 0x04u
 #define K16_ETH_FRAME_MAX 1536u
-typedef struct {uint8_t rx[K16_ETH_FRAME_MAX],tx[K16_ETH_FRAME_MAX];uint16_t rx_len,tx_len;uint32_t rx_addr,tx_addr;uint8_t rx_ready;} k16_ethernet_t;
+typedef struct {uint8_t rx[K16_ETH_FRAME_MAX],tx[K16_ETH_FRAME_MAX];uint16_t rx_len,tx_len;uint32_t rx_addr,tx_addr;uint16_t dma_pos,dma_len;uint8_t rx_ready,dma_active,dma_tx;} k16_ethernet_t;
 void k16_ethernet_reset(k16_ethernet_t *e,k16_memory_t *m);
 int k16_ethernet_receive(k16_ethernet_t *e,k16_memory_t *m,const uint8_t *data,uint16_t len);
 int k16_ethernet_rx_dma(k16_ethernet_t *e,k16_memory_t *m,uint32_t address);
 int k16_ethernet_tx_dma(k16_ethernet_t *e,k16_memory_t *m,uint32_t address,uint16_t len);
+int k16_ethernet_start_rx_dma(k16_ethernet_t *e,uint32_t address);
+int k16_ethernet_start_tx_dma(k16_ethernet_t *e,uint32_t address,uint16_t len);
+uint8_t k16_ethernet_dma_wants_slot(const k16_ethernet_t *e);
+uint8_t k16_ethernet_dma_step(k16_ethernet_t *e,k16_memory_t *m);
 int k16_ethernet_take_tx(k16_ethernet_t *e,uint8_t *data,uint16_t *len);
 #endif
