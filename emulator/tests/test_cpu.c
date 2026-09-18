@@ -225,9 +225,9 @@ int main(void)
     assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.y==0x81);assert(cpu.p&K16_P_N);
     assert(k16_cpu_step(&cpu,&mem)==4);assert(cpu.y==0x42);
     assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.x==0x81);
-    assert(k16_cpu_step(&cpu,&mem)==4);assert(cpu.x==0x24);
+    assert(k16_cpu_step(&cpu,&mem)==4);assert(cpu.x==0x42);
     assert(k16_cpu_step(&cpu,&mem)==3);assert(k16_read8(&mem,0x0220)==0x42);
-    assert(k16_cpu_step(&cpu,&mem)==3);assert(k16_read8(&mem,0x0221)==0x24);
+    assert(k16_cpu_step(&cpu,&mem)==3);assert(k16_read8(&mem,0x0221)==0x42);
     assert(k16_cpu_step(&cpu,&mem)==3);assert(k16_read8(&mem,0x0220)==0);
     assert(k16_cpu_step(&cpu,&mem)==4);assert(k16_read8(&mem,0x0244)==0);
     /* M5.31 remaining memory/compare/control coverage */
