@@ -30,6 +30,12 @@ K16 should use FPGA logic for the custom hardware rather than requiring a large 
 
 The FPGA-based VPU is expected to contain video timing, palette logic, sprites, scrolling, Copper, Blitter, video DMA, audio, audio DMA, and interrupt sources.
 
+## Revision 1 baseline I/O
+
+K16 Rev.1 includes display output, native PS/2 keyboard, two DE-9 digital joystick ports, a real RS-232 serial port plus TTL debug UART, Ethernet, audio, and the expansion interface as baseline machine features.
+
+These interfaces are specified in [IO.md](IO.md). They must be represented by the emulator and remain directly accessible to demo and game software.
+
 ## Maker-first principle
 
 Component selection must prioritize:
