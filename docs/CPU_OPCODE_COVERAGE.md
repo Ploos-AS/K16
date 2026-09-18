@@ -7,12 +7,12 @@ This matrix tracks **emulator implementation coverage**, not final conformance.
 - Implemented does **not** imply cycle-exact or fully qualified behavior.
 - Addressing, emulation/native-mode edge cases, flags, decimal behavior, interrupts and timing still require conformance qualification.
 
-Current execution cases: **156/256 (60.9%)**.
+Current execution cases: **170/256 (66.4%)**.
 
 | | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | A | B | C | D | E | F |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 0x | I | — | I | — | — | — | — | — | I | I | — | I | — | — | — | — |
-| 1x | I | — | — | — | — | — | — | — | I | — | — | I | — | — | — | — |
+| 0x | I | I | I | I | — | I | — | I | I | I | — | I | — | I | — | I |
+| 1x | I | I | I | I | — | I | — | I | I | I | — | I | — | I | — | I |
 | 2x | I | I | I | I | — | I | — | I | I | I | — | I | — | I | — | I |
 | 3x | I | I | I | I | — | I | — | I | I | I | — | I | — | I | — | I |
 | 4x | I | — | — | — | — | — | — | — | I | I | — | I | I | — | — | — |
