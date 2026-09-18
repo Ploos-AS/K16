@@ -106,6 +106,8 @@
   - [x] refresh opcode coverage: 223/256 execution cases after M5.28
   - [x] complete PEA/PEI/PER + TXY/TYX foundation (M5.29)
   - [x] refresh opcode coverage: 228/256 execution cases after M5.29
+  - [x] complete remaining LDX/LDY/STX/STY + STZ foundation (M5.30)
+  - [x] refresh opcode coverage: 242/256 execution cases after M5.30
   - [ ] complete opcode implementation coverage
   - [ ] complete semantic/mode/addressing conformance
   - [ ] complete cycle/timing conformance
