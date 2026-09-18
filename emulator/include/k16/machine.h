@@ -8,7 +8,8 @@
 #include "k16/input.h"
 #include "k16/uart.h"
 #include "k16/ethernet.h"
-typedef struct {k16_memory_t memory;k16_cpu_t cpu;k16_vpu_t vpu;k16_copper_t copper;k16_dma_t dma;k16_input_t input;k16_uart_t uart;k16_ethernet_t ethernet;uint64_t ticks;} k16_machine_t;
+#include "k16/irq.h"
+typedef struct {k16_memory_t memory;k16_cpu_t cpu;k16_vpu_t vpu;k16_copper_t copper;k16_dma_t dma;k16_input_t input;k16_uart_t uart;k16_ethernet_t ethernet;k16_irq_t irq;uint64_t ticks;} k16_machine_t;
 int k16_machine_init(k16_machine_t *m,size_t ram_size);
 void k16_machine_destroy(k16_machine_t *m);
 void k16_machine_reset(k16_machine_t *m);
