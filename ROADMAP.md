@@ -73,8 +73,8 @@
 ## M5.8 — Baseline I/O emulation
 - [x] Freeze Rev.1 baseline I/O requirements
 - [ ] host display frontend
-- [ ] PS/2 keyboard controller model
-- [ ] dual DE-9 joystick + quadrature mouse model
+- [x] PS/2 keyboard controller model foundation
+- [x] dual DE-9 joystick + quadrature mouse model foundation
 - [ ] UART/RS-232 controller model
 - [ ] Ethernet controller model
 - [ ] I/O interrupts and DMA integration
