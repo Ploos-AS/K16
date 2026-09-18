@@ -79,7 +79,8 @@
 - [x] Ethernet controller model foundation
 - [x] shared I/O interrupt-controller foundation
 - [x] Ethernet RX/TX memory DMA foundation
-- [ ] peripheral event wiring + cycle-arbitrated I/O DMA
+- [x] peripheral event wiring into shared IRQ controller
+- [ ] cycle-arbitrated I/O DMA
 - [ ] debugger-visible I/O state
 
 ## M6 — Toolchain
