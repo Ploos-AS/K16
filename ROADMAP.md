@@ -94,6 +94,8 @@
   - [x] refresh opcode coverage: 142/256 execution cases after M5.22
   - [x] complete AND addressing-family foundation (M5.23)
   - [x] refresh opcode coverage: 156/256 execution cases after M5.23
+  - [x] complete ORA addressing-family foundation (M5.24)
+  - [x] refresh opcode coverage: 170/256 execution cases after M5.24
   - [ ] complete opcode implementation coverage
   - [ ] complete semantic/mode/addressing conformance
   - [ ] complete cycle/timing conformance
