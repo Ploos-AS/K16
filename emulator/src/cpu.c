@@ -39,7 +39,7 @@ uint32_t k16_cpu_step(k16_cpu_t *c,k16_memory_t *m)
     uint8_t op;
     if(c->nmi_pending){c->nmi_pending=0;c->stopped=0;return interrupt_enter(c,m,c->emulation?0xfffau:0xffeau,0);}
     if(c->irq_line && !(c->p&K16_P_I)){c->stopped=0;return interrupt_enter(c,m,c->emulation?0xfffeu:0xffeeu,0);}
-    if(c->stopped)return 0;op=fetch8(c,m);
+    if(c->stopped)return 0;\n    op=fetch8(c,m);
     switch(op){
     case 0xea:return 2;
     /* M5.26 shift/rotate foundation */
