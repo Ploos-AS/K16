@@ -6,7 +6,7 @@ CORE_SRC = src/core.c src/memory.c src/cpu.c
 
 .PHONY: all check clean
 
-all: build/test_core build/test_memory build/test_cpu build/test_raster_irq build/test_copper_dma build/test_machine_copper build/test_input build/test_uart build/test_ethernet build/test_irq build/test_machine_io build/test_io_dma
+all: build/test_core build/test_memory build/test_cpu build/test_raster_irq build/test_copper_dma build/test_machine_copper build/test_input build/test_uart build/test_ethernet build/test_irq build/test_machine_io build/test_io_dma build/test_debug_io
 
 build:
 	mkdir -p build
@@ -47,6 +47,9 @@ build/test_machine_io: src/cpu.c src/memory.c src/vpu.c src/copper.c src/dma.c s
 build/test_io_dma: src/cpu.c src/memory.c src/vpu.c src/copper.c src/dma.c src/input.c src/uart.c src/ethernet.c src/irq.c src/machine.c tests/test_io_dma.c include/k16/machine.h | build
 	$(CC) $(CPPFLAGS) $(CFLAGS) src/cpu.c src/memory.c src/vpu.c src/copper.c src/dma.c src/input.c src/uart.c src/ethernet.c src/irq.c src/machine.c tests/test_io_dma.c -o $@
 
+build/test_debug_io: src/cpu.c src/memory.c src/vpu.c src/copper.c src/dma.c src/input.c src/uart.c src/ethernet.c src/irq.c src/machine.c src/debug.c tests/test_debug_io.c include/k16/debug.h | build
+	$(CC) $(CPPFLAGS) $(CFLAGS) src/cpu.c src/memory.c src/vpu.c src/copper.c src/dma.c src/input.c src/uart.c src/ethernet.c src/irq.c src/machine.c src/debug.c tests/test_debug_io.c -o $@
+
 check: all
 	./build/test_core
 	./build/test_memory
@@ -60,6 +63,7 @@ check: all
 	./build/test_irq
 	./build/test_machine_io
 	./build/test_io_dma
+	./build/test_debug_io
 
 clean:
 	rm -rf build
