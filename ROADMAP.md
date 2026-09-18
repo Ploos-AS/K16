@@ -129,6 +129,18 @@
 - [ ] Copper demos
 - [ ] combined demos
 
+## M9.5 — Documentation and learning
+- [ ] complete hardware reference manual
+- [ ] complete programmer's reference
+- [ ] assembler and instruction reference
+- [ ] VPU/Copper/Blitter/audio programming guides
+- [ ] schematic walkthrough and maker bring-up guide
+- [ ] emulator/debugger manual
+- [ ] worked demo-programming examples
+- [ ] beginner K16 assembly course
+- [ ] advanced demo-coding course
+- [ ] generate versioned PDF manuals from repository documentation
+
 ## M10 — K16 revision 1
 - [ ] manufacture
 - [ ] assembly
