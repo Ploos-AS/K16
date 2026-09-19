@@ -121,6 +121,7 @@
   - [x] M5.37 add IRQ/NMI/BRK/COP/RTI stack-frame and vector conformance coverage
   - [x] M5.38 add interrupt masking, NMI priority and WAI interaction regression coverage
   - [x] M5.39 add emulation/native stack-wrap, width and PLP transition conformance coverage
+  - [x] M5.40 add JSR/JSL/RTS/RTL and JMP/JML bank/return conformance coverage
   - [ ] complete semantic/mode/addressing conformance
   - [ ] complete cycle/timing conformance
 - [x] executable raster timing + raster IRQ foundation
