@@ -116,6 +116,7 @@
   - [x] M5.33 distinguish WAI wait state from STP stopped state
   - [x] M5.33 add WAI wake / STP reset-only regression coverage
   - [x] M5.34 add REP/SEP/XCE mode-transition conformance regression coverage
+  - [x] M5.35 add direct-page/indexed/indirect/stack-relative address-wrap regression coverage
   - [ ] complete semantic/mode/addressing conformance
   - [ ] complete cycle/timing conformance
 - [x] executable raster timing + raster IRQ foundation
