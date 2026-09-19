@@ -113,6 +113,8 @@
   - [x] implement MVN/MVP block-move foundation (M5.32)
   - [x] reach 256/256 opcode execution-case coverage (M5.32)
   - [ ] complete opcode implementation coverage
+  - [x] M5.33 distinguish WAI wait state from STP stopped state
+  - [x] M5.33 add WAI wake / STP reset-only regression coverage
   - [ ] complete semantic/mode/addressing conformance
   - [ ] complete cycle/timing conformance
 - [x] executable raster timing + raster IRQ foundation
