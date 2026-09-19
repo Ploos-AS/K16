@@ -279,5 +279,24 @@ int main(void)
     assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.p&K16_P_C);cpu.sp=0xbeef;
     assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.emulation);assert(!(cpu.p&K16_P_C));assert(cpu.p&K16_P_M);assert(cpu.p&K16_P_X);assert(cpu.sp==0x01ef);
 
+    /* M5.35 addressing-boundary conformance: 16-bit address arithmetic wraps in bank 0/DBR. */
+    cpu.emulation=0;cpu.p=(uint8_t)(K16_P_M|K16_P_X);cpu.pbr=0;cpu.dbr=0x02;cpu.d=0xfff0;cpu.x=0x20;cpu.y=0x20;cpu.sp=0xfff0;cpu.pc=0xcb60;cpu.stopped=0;cpu.waiting=0;
+    k16_write8(&mem,0x0010,0x5a);                 /* D + $20 -> $0010 */
+    k16_write8(&mem,0x0020,0x34);k16_write8(&mem,0x0021,0x12); /* (D+$10+X) -> $0020 pointer */
+    k16_write8(&mem,0x021234,0xa5);
+    k16_write8(&mem,0x0010,0x78);k16_write8(&mem,0x0011,0x56); /* (D+$20) -> $0010 pointer */
+    k16_write8(&mem,0x025678,0x3c);
+    k16_write8(&mem,0x0010,0x7e); /* stack-relative SP+$20 -> $0010 */
+    rom[0xb60]=0xa5;rom[0xb61]=0x20; /* LDA dp */
+    rom[0xb62]=0xa1;rom[0xb63]=0x10; /* LDA (dp,X) */
+    rom[0xb64]=0xb2;rom[0xb65]=0x20; /* LDA (dp) */
+    rom[0xb66]=0xa3;rom[0xb67]=0x20; /* LDA sr,S */
+    k16_rom_load(&mem,rom,sizeof(rom));
+    /* Restore each operand target just before its instruction because the boundary cases share $0010. */
+    k16_write8(&mem,0x0010,0x5a);assert(k16_cpu_step(&cpu,&mem)==3);assert((cpu.a&0xff)==0x5a);
+    k16_write8(&mem,0x0020,0x34);k16_write8(&mem,0x0021,0x12);assert(k16_cpu_step(&cpu,&mem)==6);assert((cpu.a&0xff)==0xa5);
+    k16_write8(&mem,0x0010,0x78);k16_write8(&mem,0x0011,0x56);assert(k16_cpu_step(&cpu,&mem)==5);assert((cpu.a&0xff)==0x3c);
+    k16_write8(&mem,0x0010,0x7e);assert(k16_cpu_step(&cpu,&mem)==4);assert((cpu.a&0xff)==0x7e);
+
     k16_memory_destroy(&mem);return 0;
 }
