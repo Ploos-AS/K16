@@ -16,6 +16,7 @@ typedef struct {
     uint16_t d;
     uint8_t emulation;
     uint8_t stopped;
+    uint8_t waiting;
     uint8_t irq_line;
     uint8_t nmi_pending;
 } k16_cpu_t;
