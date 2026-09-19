@@ -252,5 +252,13 @@ int main(void)
     rom[0xa10]=0x44;rom[0xa11]=0x04;rom[0xa12]=0x03;k16_rom_load(&mem,rom,sizeof(rom));
     assert(k16_cpu_step(&cpu,&mem)==7);assert(k16_read8(&mem,0x042101)==0xcc);assert(cpu.x==0x1000);assert(cpu.y==0x2100);assert(cpu.pc==0xca10);assert(cpu.dbr==4);
     assert(k16_cpu_step(&cpu,&mem)==7);assert(k16_read8(&mem,0x042100)==0xdd);assert(cpu.a==0xffff);assert(cpu.pc==0xca13);
+    /* M5.33 WAI/STP conformance: WAI wakes on IRQ; STP only reset releases execution. */
+    cpu.emulation=1;cpu.p=0;cpu.pbr=0;cpu.pc=0xcb00;cpu.sp=0x01ff;cpu.stopped=0;cpu.waiting=0;cpu.irq_line=0;cpu.nmi_pending=0;
+    rom[0xb00]=0xcb;rom[0xb01]=0xea;rom[0xb10]=0x40;rom[0x3ffe]=0x10;rom[0x3fff]=0xcb;k16_rom_load(&mem,rom,sizeof(rom));
+    assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.waiting);assert(!cpu.stopped);
+    assert(k16_cpu_step(&cpu,&mem)==0);k16_cpu_irq(&cpu,1);assert(k16_cpu_step(&cpu,&mem)>0);assert(!cpu.waiting);k16_cpu_irq(&cpu,0);
+    cpu.pc=0xcb20;cpu.pbr=0;cpu.stopped=0;cpu.waiting=0;rom[0xb20]=0xdb;rom[0xb21]=0xea;k16_rom_load(&mem,rom,sizeof(rom));
+    assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.stopped);k16_cpu_irq(&cpu,1);k16_cpu_nmi(&cpu);assert(k16_cpu_step(&cpu,&mem)==0);assert(cpu.stopped);
+    k16_cpu_reset(&cpu,&mem);assert(!cpu.stopped);assert(!cpu.waiting);
     k16_memory_destroy(&mem);return 0;
 }
