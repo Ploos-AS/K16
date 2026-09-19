@@ -125,6 +125,9 @@
 - [x] M5.7 integrate CPU + VPU + Copper + DMA on shared machine clock
 - [x] first CPU-driven raster palette effect integration test
 - [ ] interactive frontend
+- [ ] package a user-facing K16 Emulator for software, OS, game and demo development
+- [ ] integrated emulator debugger UI (CPU/registers/memory/disassembly/breakpoints)
+- [ ] emulator distribution and reproducible release builds
 
 ## M5.8 — Baseline I/O emulation
 - [x] Freeze Rev.1 baseline I/O requirements
@@ -153,6 +156,24 @@
 - [ ] FPGA target
 - [ ] emulator/RTL conformance tests
 - [ ] development-board prototype
+
+## M7.5 — K16 hardware simulator
+- [ ] define simulator scope and conformance contract
+- [ ] cycle-aware CPU/bus model
+- [ ] cycle-aware memory and MMIO transactions
+- [ ] deterministic DMA arbitration simulation
+- [ ] VPU raster and video-DMA timing simulation
+- [ ] Copper timing and bus-interaction simulation
+- [ ] Blitter timing and bus-contention simulation
+- [ ] audio DMA and audiovisual synchronization simulation
+- [ ] interrupt latency and priority simulation
+- [ ] FPGA/RTL co-simulation and trace comparison
+- [ ] emulator/simulator differential conformance tests
+- [ ] hardware/simulator trace comparison once physical prototypes exist
+- [ ] interactive waveform, bus and device-state inspection
+- [ ] educational single-step view of CPU, bus, DMA and custom-chip activity
+- [ ] deterministic simulator scenarios suitable for documentation and courses
+- [ ] establish simulator as K16 hardware golden-reference model
 
 ## M8 — Maker PCB
 - [ ] schematic
@@ -192,9 +213,11 @@
 - [ ] VPU/Copper/Blitter/audio programming guides
 - [ ] schematic walkthrough and maker bring-up guide
 - [ ] emulator/debugger manual
+- [ ] simulator/conformance manual
 - [ ] worked demo-programming examples
 - [ ] beginner K16 assembly course
 - [ ] advanced demo-coding course
+- [ ] simulator-based hardware architecture exercises
 - [ ] generate versioned PDF manuals from repository documentation
 
 ## M10 — K16 revision 1
