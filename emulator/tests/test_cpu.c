@@ -390,5 +390,26 @@ int main(void)
     cpu.pc=0xcca0;rom[0xca0]=0xdc;rom[0xca1]=0x00;rom[0xca2]=0x20;k16_rom_load(&mem,rom,sizeof(rom));k16_write8(&mem,0x002000,0x34);k16_write8(&mem,0x002001,0x12);k16_write8(&mem,0x002002,0x56);
     assert(k16_cpu_step(&cpu,&mem)==6);assert(cpu.pc==0x1234);assert(cpu.pbr==0x56);
 
+    /* M5.41 branch-boundary conformance: signed offsets and 16-bit PC wrapping retain PBR. */
+    cpu.emulation=0;cpu.p=0;cpu.pbr=0x01;cpu.pc=0xfffc;cpu.stopped=0;cpu.waiting=0;
+    k16_write8(&mem,0x01fffc,0x80);k16_write8(&mem,0x01fffd,0x04); /* BRA +4: $FFFE -> $0002 */
+    assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.pc==0x0002);assert(cpu.pbr==0x01);
+    k16_write8(&mem,0x010002,0x80);k16_write8(&mem,0x010003,0xfa); /* BRA -6: $0004 -> $FFFE */
+    assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.pc==0xfffe);assert(cpu.pbr==0x01);
+    /* BRL uses signed 16-bit displacement and wraps PC without changing PBR. */
+    k16_write8(&mem,0x01fffe,0x82);k16_write8(&mem,0x01ffff,0x02);k16_write8(&mem,0x010000,0x00);
+    assert(k16_cpu_step(&cpu,&mem)==4);assert(cpu.pc==0x0003);assert(cpu.pbr==0x01);
+    k16_write8(&mem,0x010003,0x82);k16_write8(&mem,0x010004,0xf8);k16_write8(&mem,0x010005,0xff); /* -8 from $0006 -> $FFFE */
+    assert(k16_cpu_step(&cpu,&mem)==4);assert(cpu.pc==0xfffe);assert(cpu.pbr==0x01);
+    /* Conditional branches consume the displacement when not taken and apply signed offset when taken. */
+    cpu.p=K16_P_C;cpu.pc=0x0100;k16_write8(&mem,0x010100,0x90);k16_write8(&mem,0x010101,0x7f); /* BCC not taken */
+    assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.pc==0x0102);
+    cpu.p=0;cpu.pc=0xfffd;k16_write8(&mem,0x01fffd,0x90);k16_write8(&mem,0x01fffe,0x02); /* BCC taken across wrap */
+    assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.pc==0x0001);assert(cpu.pbr==0x01);
+    cpu.p=K16_P_Z;cpu.pc=0x0200;k16_write8(&mem,0x010200,0xd0);k16_write8(&mem,0x010201,0x80); /* BNE not taken */
+    assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.pc==0x0202);
+    cpu.p=0;cpu.pc=0x0202;k16_write8(&mem,0x010202,0xd0);k16_write8(&mem,0x010203,0x80); /* BNE -128 */
+    assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.pc==0x0184);
+
     k16_memory_destroy(&mem);return 0;
 }
