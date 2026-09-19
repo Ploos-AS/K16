@@ -117,6 +117,7 @@
   - [x] M5.33 add WAI wake / STP reset-only regression coverage
   - [x] M5.34 add REP/SEP/XCE mode-transition conformance regression coverage
   - [x] M5.35 add direct-page/indexed/indirect/stack-relative address-wrap regression coverage
+  - [x] M5.36 add long/long-indexed bank-crossing and 24-bit wrap conformance coverage
   - [ ] complete semantic/mode/addressing conformance
   - [ ] complete cycle/timing conformance
 - [x] executable raster timing + raster IRQ foundation
