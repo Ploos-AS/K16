@@ -39,9 +39,9 @@ K16 is a hardware and software computer project inspired by classic machines suc
 
 ## Status
 
-**M4 — Audio architecture (logical model)**
+**M5.34 — Emulator CPU conformance**
 
-The video and audio coprocessor architecture is now defined at the logical level. Audio adds an 8-voice baseline with tracker-friendly PCM, wavetable/synth capability, ADSR, stereo mixing, modulation, deterministic DMA, and hardware audiovisual synchronization. Exact sample rates, DAC and physical bandwidth limits remain subject to RTL/prototype qualification.
+The emulator now has execution cases for all 256 W65C816S opcodes. Current qualification work is moving beyond opcode presence into semantic, native/emulation-mode, width, addressing, interrupt, and timing conformance. M5.34 adds explicit REP/SEP/XCE mode-transition regression coverage; full CPU conformance and cycle-accurate timing remain in progress.
 
 ## Non-goals
 
