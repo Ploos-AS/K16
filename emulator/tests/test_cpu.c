@@ -260,5 +260,24 @@ int main(void)
     cpu.pc=0xcb20;cpu.pbr=0;cpu.stopped=0;cpu.waiting=0;rom[0xb20]=0xdb;rom[0xb21]=0xea;k16_rom_load(&mem,rom,sizeof(rom));
     assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.stopped);k16_cpu_irq(&cpu,1);k16_cpu_nmi(&cpu);assert(k16_cpu_step(&cpu,&mem)==0);assert(cpu.stopped);
     k16_cpu_reset(&cpu,&mem);assert(!cpu.stopped);assert(!cpu.waiting);
+    /* M5.34 mode-transition conformance: REP/SEP/XCE invariants. */
+    cpu.emulation=1;cpu.p=(uint8_t)(K16_P_M|K16_P_X|K16_P_C);cpu.x=0xabcd;cpu.y=0x9876;cpu.sp=0x01ef;cpu.pbr=0;cpu.pc=0xcb40;cpu.stopped=0;cpu.waiting=0;
+    rom[0xb40]=0xc2;rom[0xb41]=(uint8_t)(K16_P_M|K16_P_X); /* REP cannot clear M/X in emulation mode */
+    rom[0xb42]=0xfb; /* XCE: C=1 -> native, C receives old E=1 */
+    rom[0xb43]=0xc2;rom[0xb44]=(uint8_t)(K16_P_M|K16_P_X); /* native 16-bit widths */
+    rom[0xb45]=0xe2;rom[0xb46]=K16_P_X; /* SEP X truncates X/Y high bytes */
+    rom[0xb47]=0x18; /* CLC */
+    rom[0xb48]=0x38; /* SEC */
+    rom[0xb49]=0xfb; /* XCE: C=1 -> emulation; stack forced to page 1 */
+    k16_rom_load(&mem,rom,sizeof(rom));
+    assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.p&K16_P_M);assert(cpu.p&K16_P_X);
+    assert(k16_cpu_step(&cpu,&mem)==2);assert(!cpu.emulation);assert(cpu.p&K16_P_C);
+    assert(k16_cpu_step(&cpu,&mem)==3);assert(!(cpu.p&K16_P_M));assert(!(cpu.p&K16_P_X));
+    cpu.x=0xabcd;cpu.y=0x9876;
+    assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.p&K16_P_X);assert(cpu.x==0x00cd);assert(cpu.y==0x0076);
+    assert(k16_cpu_step(&cpu,&mem)==2);assert(!(cpu.p&K16_P_C));
+    assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.p&K16_P_C);cpu.sp=0xbeef;
+    assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.emulation);assert(!(cpu.p&K16_P_C));assert(cpu.p&K16_P_M);assert(cpu.p&K16_P_X);assert(cpu.sp==0x01ef);
+
     k16_memory_destroy(&mem);return 0;
 }
