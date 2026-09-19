@@ -149,6 +149,11 @@
 - [ ] MIDI OUT transmit path + IRQ integration
 - [ ] MIDI THRU behavior model
 - [ ] host MIDI backend for emulator
+- [ ] USB host-controller model for 2x USB-A host ports
+- [ ] USB-C device/service-controller model
+- [ ] SD-card controller model and boot/storage path
+- [ ] eMMC controller model and persistent system-storage path
+- [ ] USB mass-storage model and block-device abstraction
 - [ ] debugger-visible MIDI state
 
 ## M6 — Toolchain
@@ -178,6 +183,10 @@
 - [ ] audio DMA and audiovisual synchronization simulation
 - [ ] interrupt latency and priority simulation
 - [ ] MIDI serial timing, IRQ and IN/OUT/THRU simulation
+- [ ] USB host/device transaction and interrupt simulation
+- [ ] SD-card command/data timing simulation
+- [ ] eMMC persistent-storage and error-path simulation
+- [ ] storage-controller differential tests against emulator and RTL
 - [ ] FPGA/RTL co-simulation and trace comparison
 - [ ] emulator/simulator differential conformance tests
 - [ ] hardware/simulator trace comparison once physical prototypes exist
@@ -200,9 +209,17 @@
 - [ ] 2x DE-9 multifunction joystick/mouse ports
 - [ ] RS-232 DE-9 + TTL debug UART
 - [ ] Ethernet PHY/controller + connector
+- [ ] USB host power, protection and ESD design
+- [ ] USB-C power/data protection and service/debug circuitry
+- [ ] SD-card power switching and ESD protection
+- [ ] eMMC power, boot and signal-integrity design
 - [ ] 5-pin DIN MIDI IN with standards-compliant isolated input
 - [ ] 5-pin DIN MIDI OUT with standards-compliant output driver
 - [ ] 5-pin DIN MIDI THRU derived from MIDI IN
+- [ ] 2x USB-A host ports
+- [ ] USB-C device/service port
+- [ ] full-size SD-card slot
+- [ ] eMMC interface and onboard persistent storage
 
 ## M9 — Demo platform
 - [ ] demo framework
@@ -211,6 +228,9 @@
 - [ ] blitter demos
 - [ ] audio demos
 - [ ] MIDI IN/OUT/THRU and synth-control demo
+- [ ] USB keyboard/gamepad and storage demo
+- [ ] SD boot and filesystem demo
+- [ ] eMMC system-storage and recovery demo
 - [ ] Copper demos
 - [ ] combined demos
 - [x] define showcase demo suite
@@ -227,6 +247,8 @@
 - [ ] assembler and instruction reference
 - [ ] VPU/Copper/Blitter/audio programming guides
 - [ ] MIDI programming and electrical-interface guide
+- [ ] USB host/device programming guide
+- [ ] SD/eMMC storage programming and filesystem guide
 - [ ] schematic walkthrough and maker bring-up guide
 - [ ] emulator/debugger manual
 - [ ] simulator/conformance manual
