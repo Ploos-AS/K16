@@ -332,5 +332,21 @@ int main(void)
     assert(k16_cpu_step(&cpu,&mem)==7);assert(cpu.pc==0xcc20);assert(k16_read8(&mem,0x01fd)&0x10);assert(k16_cpu_step(&cpu,&mem)==6);assert(cpu.pc==0xcbc2);
     assert(k16_cpu_step(&cpu,&mem)==7);assert(cpu.pc==0xcc30);assert(k16_cpu_step(&cpu,&mem)==6);assert(cpu.pc==0xcbc4);
 
+    /* M5.38 interrupt edge conformance: masking, NMI priority and WAI interactions. */
+    cpu.emulation=1;cpu.p=(uint8_t)(K16_P_M|K16_P_X|K16_P_I);cpu.pbr=0;cpu.pc=0xcbd0;cpu.sp=0x01ff;cpu.stopped=0;cpu.waiting=0;cpu.irq_line=0;cpu.nmi_pending=0;
+    rom[0xbd0]=0xea;rom[0xbd1]=0xcb;rom[0xbd2]=0xea;rom[0xc40]=0x40;rom[0xc50]=0x40;
+    k16_write8(&mem,0xfffe,0x40);k16_write8(&mem,0xffff,0xcc);k16_write8(&mem,0xfffa,0x50);k16_write8(&mem,0xfffb,0xcc);k16_rom_load(&mem,rom,sizeof(rom));
+    /* Masked IRQ does not preempt ordinary execution. */
+    k16_cpu_irq(&cpu,1);assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.pc==0xcbd1);
+    /* WAI entered with I set remains waiting on a masked IRQ in this instruction-boundary model. */
+    assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.waiting);assert(k16_cpu_step(&cpu,&mem)==0);assert(cpu.waiting);
+    /* NMI has priority, wakes WAI even with I set, and RTI returns to the post-WAI PC. */
+    k16_cpu_nmi(&cpu);assert(k16_cpu_step(&cpu,&mem)==7);assert(!cpu.waiting);assert(cpu.pc==0xcc50);assert(k16_cpu_step(&cpu,&mem)==6);assert(cpu.pc==0xcbd2);
+    /* With I cleared and IRQ still asserted, IRQ is taken before the next opcode. */
+    cpu.p&=(uint8_t)~K16_P_I;assert(k16_cpu_step(&cpu,&mem)==7);assert(cpu.pc==0xcc40);k16_cpu_irq(&cpu,0);assert(k16_cpu_step(&cpu,&mem)==6);assert(cpu.pc==0xcbd2);
+    /* Simultaneous unmasked IRQ + NMI: NMI wins the first boundary. */
+    cpu.p&=(uint8_t)~K16_P_I;cpu.pc=0xcbd2;cpu.sp=0x01ff;k16_cpu_irq(&cpu,1);k16_cpu_nmi(&cpu);
+    assert(k16_cpu_step(&cpu,&mem)==7);assert(cpu.pc==0xcc50);assert(!cpu.nmi_pending);k16_cpu_irq(&cpu,0);assert(k16_cpu_step(&cpu,&mem)==6);assert(cpu.pc==0xcbd2);
+
     k16_memory_destroy(&mem);return 0;
 }
