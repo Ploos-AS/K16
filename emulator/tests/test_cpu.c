@@ -452,5 +452,24 @@ int main(void)
     rom[0xd50]=0x8e;rom[0xd51]=0x00;rom[0xd52]=0x12;rom[0xd53]=0x8c;rom[0xd54]=0x02;rom[0xd55]=0x12;k16_rom_load(&mem,rom,sizeof(rom));
     assert(k16_cpu_step(&cpu,&mem)==4);assert(k16_read8(&mem,0x031200)==0xcd);assert(k16_read8(&mem,0x031201)==0xee);assert(k16_cpu_step(&cpu,&mem)==4);assert(k16_read8(&mem,0x031202)==0x76);assert(k16_read8(&mem,0x031203)==0xee);
 
+    /* M5.44 bit/shift/rotate edges: carry/N/Z plus BIT/TRB/TSB 8/16-bit semantics. */
+    cpu.emulation=0;cpu.p=K16_P_M;cpu.pbr=0;cpu.dbr=0;cpu.pc=0xcd70;cpu.a=0x0080;cpu.stopped=0;cpu.waiting=0;
+    rom[0xd70]=0x0a; /* ASL A: $80 -> $00, C+Z */ rom[0xd71]=0x6a; /* ROR A: C -> bit7 */
+    rom[0xd72]=0x4a; /* LSR A */ rom[0xd73]=0x2a; /* ROL A */ k16_rom_load(&mem,rom,sizeof(rom));
+    assert(k16_cpu_step(&cpu,&mem)==2);assert((cpu.a&0xff)==0);assert(cpu.p&K16_P_C);assert(cpu.p&K16_P_Z);
+    assert(k16_cpu_step(&cpu,&mem)==2);assert((cpu.a&0xff)==0x80);assert(!(cpu.p&K16_P_C));assert(cpu.p&K16_P_N);
+    assert(k16_cpu_step(&cpu,&mem)==2);assert((cpu.a&0xff)==0x40);assert(!(cpu.p&K16_P_C));assert(!(cpu.p&K16_P_N));
+    cpu.p|=K16_P_C;assert(k16_cpu_step(&cpu,&mem)==2);assert((cpu.a&0xff)==0x81);assert(!(cpu.p&K16_P_C));assert(cpu.p&K16_P_N);
+    /* 16-bit shifts use bit 15 for carry/sign and preserve full width. */
+    cpu.p=0;cpu.a=0x8000;cpu.pc=0xcd80;rom[0xd80]=0x0a;rom[0xd81]=0x6a;k16_rom_load(&mem,rom,sizeof(rom));
+    assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.a==0);assert(cpu.p&K16_P_C);assert(cpu.p&K16_P_Z);assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.a==0x8000);assert(cpu.p&K16_P_N);
+    /* BIT immediate affects Z only; memory BIT also sources N/V from operand. */
+    cpu.p=(uint8_t)(K16_P_M|K16_P_N|K16_P_V);cpu.a=0x000f;cpu.pc=0xcd90;rom[0xd90]=0x89;rom[0xd91]=0xf0;rom[0xd92]=0x2c;rom[0xd93]=0x00;rom[0xd94]=0x20;k16_write8(&mem,0x002000,0xc0);k16_rom_load(&mem,rom,sizeof(rom));
+    assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.p&K16_P_Z);assert(cpu.p&K16_P_N);assert(cpu.p&K16_P_V);
+    assert(k16_cpu_step(&cpu,&mem)==4);assert(cpu.p&K16_P_Z);assert(cpu.p&K16_P_N);assert(cpu.p&K16_P_V);
+    /* TRB clears A-selected bits; TSB sets them, while Z reflects pre-modification A&M. */
+    cpu.a=0x000f;cpu.pc=0xcda0;k16_write8(&mem,0x002010,0x3c);k16_write8(&mem,0x002011,0x30);rom[0xda0]=0x1c;rom[0xda1]=0x10;rom[0xda2]=0x20;rom[0xda3]=0x0c;rom[0xda4]=0x11;rom[0xda5]=0x20;k16_rom_load(&mem,rom,sizeof(rom));
+    assert(k16_cpu_step(&cpu,&mem)==6);assert(k16_read8(&mem,0x002010)==0x30);assert(!(cpu.p&K16_P_Z));assert(k16_cpu_step(&cpu,&mem)==6);assert(k16_read8(&mem,0x002011)==0x3f);assert(cpu.p&K16_P_Z);
+
     k16_memory_destroy(&mem);return 0;
 }
