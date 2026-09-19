@@ -125,6 +125,7 @@
   - [x] M5.41 add relative-branch/BRL signed-offset and PC-wrap conformance coverage
   - [x] M5.42 add ADC/SBC binary/decimal carry, borrow, overflow and width-boundary conformance coverage
   - [x] M5.43 add load/store M/X width, high-byte preservation/truncation and boundary conformance coverage
+  - [x] M5.44 add BIT/TRB/TSB and shift/rotate carry/N/Z width-edge conformance coverage
   - [ ] complete semantic/mode/addressing conformance
   - [ ] complete cycle/timing conformance
 - [x] executable raster timing + raster IRQ foundation
