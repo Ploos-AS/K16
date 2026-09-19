@@ -348,5 +348,27 @@ int main(void)
     cpu.p&=(uint8_t)~K16_P_I;cpu.pc=0xcbd2;cpu.sp=0x01ff;k16_cpu_irq(&cpu,1);k16_cpu_nmi(&cpu);
     assert(k16_cpu_step(&cpu,&mem)==7);assert(cpu.pc==0xcc50);assert(!cpu.nmi_pending);k16_cpu_irq(&cpu,0);assert(k16_cpu_step(&cpu,&mem)==6);assert(cpu.pc==0xcbd2);
 
+    /* M5.39 stack conformance: emulation page-1 wrap and native 8/16-bit stack widths. */
+    cpu.emulation=1;cpu.p=(uint8_t)(K16_P_M|K16_P_X);cpu.pbr=0;cpu.pc=0xcbe0;cpu.sp=0x0100;cpu.a=0x125a;cpu.x=0x34cd;cpu.y=0x567e;cpu.stopped=0;cpu.waiting=0;
+    rom[0xbe0]=0x48;rom[0xbe1]=0x68;rom[0xbe2]=0xda;rom[0xbe3]=0xfa;rom[0xbe4]=0x5a;rom[0xbe5]=0x7a;k16_rom_load(&mem,rom,sizeof(rom));
+    assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.sp==0x01ff);assert(k16_read8(&mem,0x0100)==0x5a);cpu.a=0x1200;
+    assert(k16_cpu_step(&cpu,&mem)==4);assert(cpu.sp==0x0100);assert(cpu.a==0x125a);
+    assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.sp==0x01ff);assert(k16_read8(&mem,0x0100)==0xcd);cpu.x=0;
+    assert(k16_cpu_step(&cpu,&mem)==4);assert(cpu.x==0x00cd);assert(cpu.sp==0x0100);
+    assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.sp==0x01ff);assert(k16_read8(&mem,0x0100)==0x7e);cpu.y=0;
+    assert(k16_cpu_step(&cpu,&mem)==4);assert(cpu.y==0x007e);assert(cpu.sp==0x0100);
+    /* Native 16-bit PHA/PHX/PHY use two bytes and wrap the full 16-bit stack pointer. */
+    cpu.emulation=0;cpu.p=0;cpu.pc=0xcbf0;cpu.sp=0x0000;cpu.a=0x1234;cpu.x=0x5678;cpu.y=0x9abc;
+    rom[0xbf0]=0x48;rom[0xbf1]=0x68;rom[0xbf2]=0xda;rom[0xbf3]=0xfa;rom[0xbf4]=0x5a;rom[0xbf5]=0x7a;k16_rom_load(&mem,rom,sizeof(rom));
+    assert(k16_cpu_step(&cpu,&mem)==4);assert(cpu.sp==0xfffe);assert(k16_read8(&mem,0x0000)==0x12);assert(k16_read8(&mem,0xffff)==0x34);cpu.a=0;
+    assert(k16_cpu_step(&cpu,&mem)==5);assert(cpu.a==0x1234);assert(cpu.sp==0x0000);
+    assert(k16_cpu_step(&cpu,&mem)==4);cpu.x=0;assert(k16_cpu_step(&cpu,&mem)==5);assert(cpu.x==0x5678);
+    assert(k16_cpu_step(&cpu,&mem)==4);cpu.y=0;assert(k16_cpu_step(&cpu,&mem)==5);assert(cpu.y==0x9abc);
+    /* PLP entering 8-bit index width truncates X/Y; emulation mode forces M/X set. */
+    cpu.emulation=0;cpu.p=0;cpu.x=0xabcd;cpu.y=0x9876;cpu.sp=0x0200;cpu.pc=0xcc00;k16_write8(&mem,0x0201,K16_P_X);rom[0xc00]=0x28;k16_rom_load(&mem,rom,sizeof(rom));
+    assert(k16_cpu_step(&cpu,&mem)==4);assert(cpu.p&K16_P_X);assert(cpu.x==0x00cd);assert(cpu.y==0x0076);
+    cpu.emulation=1;cpu.p=0;cpu.sp=0x01fe;cpu.pc=0xcc01;k16_write8(&mem,0x01ff,0);rom[0xc01]=0x28;k16_rom_load(&mem,rom,sizeof(rom));
+    assert(k16_cpu_step(&cpu,&mem)==4);assert(cpu.p&K16_P_M);assert(cpu.p&K16_P_X);assert(cpu.sp==0x01ff);
+
     k16_memory_destroy(&mem);return 0;
 }
