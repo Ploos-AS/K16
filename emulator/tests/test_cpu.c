@@ -370,5 +370,25 @@ int main(void)
     cpu.emulation=1;cpu.p=0;cpu.sp=0x01fe;cpu.pc=0xcc01;k16_write8(&mem,0x01ff,0);rom[0xc01]=0x28;k16_rom_load(&mem,rom,sizeof(rom));
     assert(k16_cpu_step(&cpu,&mem)==4);assert(cpu.p&K16_P_M);assert(cpu.p&K16_P_X);assert(cpu.sp==0x01ff);
 
+    /* M5.40 control-flow conformance: subroutine return frames and jump bank semantics. */
+    cpu.emulation=0;cpu.p=0;cpu.pbr=0;cpu.pc=0xcc20;cpu.sp=0x0300;cpu.stopped=0;cpu.waiting=0;
+    rom[0xc20]=0x20;rom[0xc21]=0x30;rom[0xc22]=0xcc;rom[0xc30]=0x60;k16_rom_load(&mem,rom,sizeof(rom));
+    assert(k16_cpu_step(&cpu,&mem)==6);assert(cpu.pc==0xcc30);assert(cpu.sp==0x02fe);assert(k16_read8(&mem,0x0300)==0xcc);assert(k16_read8(&mem,0x02ff)==0x22);
+    assert(k16_cpu_step(&cpu,&mem)==6);assert(cpu.pc==0xcc23);assert(cpu.sp==0x0300);
+    /* JSL/RTL preserve/restore PBR and push the address of the final operand byte. */
+    cpu.pbr=0;cpu.pc=0xcc40;cpu.sp=0x0310;rom[0xc40]=0x22;rom[0xc41]=0x50;rom[0xc42]=0x00;rom[0xc43]=0x01;k16_rom_load(&mem,rom,sizeof(rom));k16_write8(&mem,0x010050,0x6b);
+    assert(k16_cpu_step(&cpu,&mem)==8);assert(cpu.pbr==1);assert(cpu.pc==0x0050);assert(cpu.sp==0x030d);assert(k16_read8(&mem,0x0310)==0x00);assert(k16_read8(&mem,0x030f)==0xcc);assert(k16_read8(&mem,0x030e)==0x43);
+    assert(k16_cpu_step(&cpu,&mem)==6);assert(cpu.pbr==0);assert(cpu.pc==0xcc44);assert(cpu.sp==0x0310);
+    /* Absolute JMP retains PBR; JML replaces it. */
+    cpu.pbr=0;cpu.pc=0xcc60;rom[0xc60]=0x4c;rom[0xc61]=0x70;rom[0xc62]=0xcc;rom[0xc70]=0x5c;rom[0xc71]=0x80;rom[0xc72]=0x00;rom[0xc73]=0x02;k16_rom_load(&mem,rom,sizeof(rom));
+    assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.pbr==0);assert(cpu.pc==0xcc70);assert(k16_cpu_step(&cpu,&mem)==4);assert(cpu.pbr==2);assert(cpu.pc==0x0080);
+    /* Indirect JMP pointer and indexed pointer arithmetic wrap within the current program bank. */
+    cpu.pbr=0;cpu.pc=0xcc80;cpu.x=2;rom[0xc80]=0x6c;rom[0xc81]=0xff;rom[0xc82]=0xff;rom[0xc90]=0x7c;rom[0xc91]=0xfd;rom[0xc92]=0xff;k16_rom_load(&mem,rom,sizeof(rom));
+    k16_write8(&mem,0x00ffff,0x90);k16_write8(&mem,0x000000,0xcc);assert(k16_cpu_step(&cpu,&mem)==5);assert(cpu.pc==0xcc90);assert(cpu.pbr==0);
+    assert(k16_cpu_step(&cpu,&mem)==6);assert(cpu.pc==0xcc90);assert(cpu.pbr==0);
+    /* JML [abs] reads a 24-bit destination and updates both PC and PBR. */
+    cpu.pc=0xcca0;rom[0xca0]=0xdc;rom[0xca1]=0x00;rom[0xca2]=0x20;k16_rom_load(&mem,rom,sizeof(rom));k16_write8(&mem,0x002000,0x34);k16_write8(&mem,0x002001,0x12);k16_write8(&mem,0x002002,0x56);
+    assert(k16_cpu_step(&cpu,&mem)==6);assert(cpu.pc==0x1234);assert(cpu.pbr==0x56);
+
     k16_memory_destroy(&mem);return 0;
 }
