@@ -24,7 +24,7 @@ static void cmp8(k16_cpu_t*c,uint8_t a,uint8_t v){uint8_t r=(uint8_t)(a-v);c->p=
 static void cmp16(k16_cpu_t*c,uint16_t a,uint16_t v){uint16_t r=(uint16_t)(a-v);c->p=(uint8_t)((c->p&~K16_P_C)|((a>=v)?K16_P_C:0));nz16(c,r);}
 void k16_cpu_reset(k16_cpu_t *c,k16_memory_t *m)
 {
-    c->a=c->x=c->y=c->d=0;c->sp=0x01ff;c->p=0x34;c->dbr=c->pbr=0;c->emulation=1;c->stopped=0;c->irq_line=0;c->nmi_pending=0;c->pc=read16(m,0x00fffcu);
+    c->a=c->x=c->y=c->d=0;c->sp=0x01ff;c->p=0x34;c->dbr=c->pbr=0;c->emulation=1;c->stopped=0;c->waiting=0;c->irq_line=0;c->nmi_pending=0;c->pc=read16(m,0x00fffcu);
 }
 void k16_cpu_irq(k16_cpu_t *c,uint8_t level){c->irq_line=level?1u:0u;}
 void k16_cpu_nmi(k16_cpu_t *c){c->nmi_pending=1;}
@@ -39,9 +39,9 @@ static uint32_t interrupt_enter(k16_cpu_t *c,k16_memory_t *m,uint16_t vec,uint8_
 uint32_t k16_cpu_step(k16_cpu_t *c,k16_memory_t *m)
 {
     uint8_t op;
-    if(c->nmi_pending){c->nmi_pending=0;c->stopped=0;return interrupt_enter(c,m,c->emulation?0xfffau:0xffeau,0);}
-    if(c->irq_line && !(c->p&K16_P_I)){c->stopped=0;return interrupt_enter(c,m,c->emulation?0xfffeu:0xffeeu,0);}
-    if(c->stopped)return 0;
+    if(c->nmi_pending){c->nmi_pending=0;c->waiting=0;return interrupt_enter(c,m,c->emulation?0xfffau:0xffeau,0);}
+    if(c->irq_line && !(c->p&K16_P_I)){c->waiting=0;return interrupt_enter(c,m,c->emulation?0xfffeu:0xffeeu,0);}
+    if(c->waiting)return 0;
     op=fetch8(c,m);
     switch(op){
     case 0xea:return 2;
@@ -312,7 +312,7 @@ uint32_t k16_cpu_step(k16_cpu_t *c,k16_memory_t *m)
     case 0x54:{uint8_t dst=fetch8(c,m),src=fetch8(c,m);uint32_t s=((uint32_t)src<<16)|c->x,d=((uint32_t)dst<<16)|c->y;k16_write8(m,d,k16_read8(m,s));c->dbr=dst;c->x++;c->y++;c->a--;if(c->a!=0xffffu)c->pc=(uint16_t)(c->pc-3u);return 7;} /* MVN */
     case 0x44:{uint8_t dst=fetch8(c,m),src=fetch8(c,m);uint32_t s=((uint32_t)src<<16)|c->x,d=((uint32_t)dst<<16)|c->y;k16_write8(m,d,k16_read8(m,s));c->dbr=dst;c->x--;c->y--;c->a--;if(c->a!=0xffffu)c->pc=(uint16_t)(c->pc-3u);return 7;} /* MVP */
     case 0x42:fetch8(c,m);return 2; /* WDM reserved */
-    case 0xcb:c->stopped=1;return 3; /* WAI foundation: resume on interrupt */
+    case 0xcb:c->waiting=1;return 3; /* WAI: wait until interrupt */
     case 0xad:{uint16_t a=fetch16(c,m);uint32_t d=((uint32_t)c->dbr<<16)|a;if(c->p&K16_P_M){uint8_t v=k16_read8(m,d);c->a=(uint16_t)((c->a&0xff00u)|v);nz8(c,v);return 4;}else{c->a=read16(m,d);nz16(c,c->a);return 5;}} /* LDA abs */
     case 0x8f:{uint16_t a=fetch16(c,m);uint8_t b=fetch8(c,m);uint32_t d=((uint32_t)b<<16)|a;k16_write8(m,d,(uint8_t)c->a);if(!(c->p&K16_P_M))k16_write8(m,d+1u,(uint8_t)(c->a>>8));return (c->p&K16_P_M)?5:6;} /* STA long */
     case 0xaf:{uint16_t a=fetch16(c,m);uint8_t b=fetch8(c,m);uint32_t d=((uint32_t)b<<16)|a;if(c->p&K16_P_M){uint8_t v=k16_read8(m,d);c->a=(uint16_t)((c->a&0xff00u)|v);nz8(c,v);return 5;}else{c->a=read16(m,d);nz16(c,c->a);return 6;}} /* LDA long */
