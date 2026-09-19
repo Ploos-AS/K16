@@ -119,6 +119,7 @@
   - [x] M5.35 add direct-page/indexed/indirect/stack-relative address-wrap regression coverage
   - [x] M5.36 add long/long-indexed bank-crossing and 24-bit wrap conformance coverage
   - [x] M5.37 add IRQ/NMI/BRK/COP/RTI stack-frame and vector conformance coverage
+  - [x] M5.38 add interrupt masking, NMI priority and WAI interaction regression coverage
   - [ ] complete semantic/mode/addressing conformance
   - [ ] complete cycle/timing conformance
 - [x] executable raster timing + raster IRQ foundation
