@@ -411,5 +411,26 @@ int main(void)
     cpu.p=0;cpu.pc=0x0202;k16_write8(&mem,0x010202,0xd0);k16_write8(&mem,0x010203,0x80); /* BNE -128 */
     assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.pc==0x0184);
 
+    /* M5.42 arithmetic/status edges: binary/decimal carry, borrow, overflow and width boundaries. */
+    cpu.emulation=0;cpu.p=K16_P_M;cpu.pbr=0;cpu.pc=0xccd0;cpu.a=0x007f;cpu.stopped=0;cpu.waiting=0;
+    rom[0xcd0]=0x69;rom[0xcd1]=0x01; /* ADC #$01: +127 + 1 => signed overflow */
+    rom[0xcd2]=0x69;rom[0xcd3]=0xff; /* ADC #$ff: $80 + $ff => carry */
+    rom[0xcd4]=0xe9;rom[0xcd5]=0x01; /* SBC #$01 with carry set */
+    k16_rom_load(&mem,rom,sizeof(rom));
+    assert(k16_cpu_step(&cpu,&mem)==2);assert((cpu.a&0xff)==0x80);assert(cpu.p&K16_P_V);assert(!(cpu.p&K16_P_C));assert(cpu.p&K16_P_N);
+    assert(k16_cpu_step(&cpu,&mem)==2);assert((cpu.a&0xff)==0x7f);assert(cpu.p&K16_P_C);assert(cpu.p&K16_P_V);assert(!(cpu.p&K16_P_N));
+    assert(k16_cpu_step(&cpu,&mem)==2);assert((cpu.a&0xff)==0x7e);assert(cpu.p&K16_P_C);
+    /* 16-bit binary boundaries. */
+    cpu.p=0;cpu.a=0x7fff;cpu.pc=0xcce0;rom[0xce0]=0x69;rom[0xce1]=0x01;rom[0xce2]=0x00;rom[0xce3]=0xe9;rom[0xce4]=0x01;rom[0xce5]=0x00;k16_rom_load(&mem,rom,sizeof(rom));
+    assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.a==0x8000);assert(cpu.p&K16_P_V);assert(cpu.p&K16_P_N);assert(!(cpu.p&K16_P_C));
+    cpu.p|=K16_P_C;assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.a==0x7fff);assert(cpu.p&K16_P_V);assert(cpu.p&K16_P_C);
+    /* Decimal 8-bit carry and borrow edges. */
+    cpu.p=(uint8_t)(K16_P_M|K16_P_D);cpu.a=0x0099;cpu.pc=0xccf0;rom[0xcf0]=0x69;rom[0xcf1]=0x01;rom[0xcf2]=0xe9;rom[0xcf3]=0x01;k16_rom_load(&mem,rom,sizeof(rom));
+    assert(k16_cpu_step(&cpu,&mem)==2);assert((cpu.a&0xff)==0x00);assert(cpu.p&K16_P_C);assert(cpu.p&K16_P_Z);
+    assert(k16_cpu_step(&cpu,&mem)==2);assert((cpu.a&0xff)==0x99);assert(!(cpu.p&K16_P_C));assert(cpu.p&K16_P_N);
+    /* Decimal 16-bit carry across packed-BCD bytes. */
+    cpu.p=K16_P_D;cpu.a=0x9999;cpu.pc=0xcd00;rom[0xd00]=0x69;rom[0xd01]=0x01;rom[0xd02]=0x00;k16_rom_load(&mem,rom,sizeof(rom));
+    assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.a==0x0000);assert(cpu.p&K16_P_C);assert(cpu.p&K16_P_Z);
+
     k16_memory_destroy(&mem);return 0;
 }
