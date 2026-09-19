@@ -432,5 +432,25 @@ int main(void)
     cpu.p=K16_P_D;cpu.a=0x9999;cpu.pc=0xcd00;rom[0xd00]=0x69;rom[0xd01]=0x01;rom[0xd02]=0x00;k16_rom_load(&mem,rom,sizeof(rom));
     assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.a==0x0000);assert(cpu.p&K16_P_C);assert(cpu.p&K16_P_Z);
 
+    /* M5.43 load/store width edges: accumulator high-byte preservation and index truncation. */
+    cpu.emulation=0;cpu.p=(uint8_t)(K16_P_M|K16_P_X);cpu.pbr=0;cpu.dbr=0x03;cpu.pc=0xcd20;cpu.a=0xab00;cpu.x=0x00ff;cpu.y=0x00fe;cpu.stopped=0;cpu.waiting=0;
+    k16_write8(&mem,0x031000,0x5a);rom[0xd20]=0xad;rom[0xd21]=0x00;rom[0xd22]=0x10; /* LDA abs 8-bit */
+    rom[0xd23]=0x8d;rom[0xd24]=0x01;rom[0xd25]=0x10; /* STA abs 8-bit */
+    k16_rom_load(&mem,rom,sizeof(rom));
+    assert(k16_cpu_step(&cpu,&mem)==4);assert(cpu.a==0xab5a);assert(k16_cpu_step(&cpu,&mem)==4);assert(k16_read8(&mem,0x031001)==0x5a);
+    /* 16-bit accumulator load/store transfers both bytes, including across bank offset $FFFF -> $0000 within DBR semantics used by core. */
+    cpu.p=K16_P_X;cpu.pc=0xcd30;k16_write8(&mem,0x03ffff,0x34);k16_write8(&mem,0x040000,0x12);
+    rom[0xd30]=0xaf;rom[0xd31]=0xff;rom[0xd32]=0xff;rom[0xd33]=0x03; /* LDA long */
+    rom[0xd34]=0x8f;rom[0xd35]=0xff;rom[0xd36]=0xff;rom[0xd37]=0x04; /* STA long */
+    k16_rom_load(&mem,rom,sizeof(rom));assert(k16_cpu_step(&cpu,&mem)==5);assert(cpu.a==0x1234);assert(k16_cpu_step(&cpu,&mem)==6);assert(k16_read8(&mem,0x04ffff)==0x34);assert(k16_read8(&mem,0x050000)==0x12);
+    /* 16-bit index loads retain full width; SEP X truncates both X and Y immediately. */
+    cpu.p=K16_P_M;cpu.pc=0xcd40;k16_write8(&mem,0x031100,0xcd);k16_write8(&mem,0x031101,0xab);k16_write8(&mem,0x031102,0x76);k16_write8(&mem,0x031103,0x98);
+    rom[0xd40]=0xae;rom[0xd41]=0x00;rom[0xd42]=0x11;rom[0xd43]=0xac;rom[0xd44]=0x02;rom[0xd45]=0x11;rom[0xd46]=0xe2;rom[0xd47]=K16_P_X;k16_rom_load(&mem,rom,sizeof(rom));
+    assert(k16_cpu_step(&cpu,&mem)==5);assert(cpu.x==0xabcd);assert(k16_cpu_step(&cpu,&mem)==5);assert(cpu.y==0x9876);assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.x==0x00cd);assert(cpu.y==0x0076);
+    /* 8-bit index stores write one byte only. */
+    cpu.pc=0xcd50;k16_write8(&mem,0x031200,0xee);k16_write8(&mem,0x031201,0xee);k16_write8(&mem,0x031202,0xee);k16_write8(&mem,0x031203,0xee);
+    rom[0xd50]=0x8e;rom[0xd51]=0x00;rom[0xd52]=0x12;rom[0xd53]=0x8c;rom[0xd54]=0x02;rom[0xd55]=0x12;k16_rom_load(&mem,rom,sizeof(rom));
+    assert(k16_cpu_step(&cpu,&mem)==4);assert(k16_read8(&mem,0x031200)==0xcd);assert(k16_read8(&mem,0x031201)==0xee);assert(k16_cpu_step(&cpu,&mem)==4);assert(k16_read8(&mem,0x031202)==0x76);assert(k16_read8(&mem,0x031203)==0xee);
+
     k16_memory_destroy(&mem);return 0;
 }
