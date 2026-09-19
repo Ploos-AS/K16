@@ -144,6 +144,12 @@
 - [x] peripheral event wiring into shared IRQ controller
 - [x] cycle-arbitrated Ethernet I/O DMA foundation
 - [x] debugger-visible I/O state foundation
+- [ ] MIDI controller model with deterministic 31.25 kbit/s timing
+- [ ] MIDI IN receive path + IRQ integration
+- [ ] MIDI OUT transmit path + IRQ integration
+- [ ] MIDI THRU behavior model
+- [ ] host MIDI backend for emulator
+- [ ] debugger-visible MIDI state
 
 ## M6 — Toolchain
 - [ ] assembler
@@ -159,6 +165,7 @@
 - [ ] FPGA target
 - [ ] emulator/RTL conformance tests
 - [ ] development-board prototype
+- [ ] MIDI UART/timing RTL and emulator/RTL conformance
 
 ## M7.5 — K16 hardware simulator
 - [ ] define simulator scope and conformance contract
@@ -170,6 +177,7 @@
 - [ ] Blitter timing and bus-contention simulation
 - [ ] audio DMA and audiovisual synchronization simulation
 - [ ] interrupt latency and priority simulation
+- [ ] MIDI serial timing, IRQ and IN/OUT/THRU simulation
 - [ ] FPGA/RTL co-simulation and trace comparison
 - [ ] emulator/simulator differential conformance tests
 - [ ] hardware/simulator trace comparison once physical prototypes exist
@@ -192,6 +200,9 @@
 - [ ] 2x DE-9 multifunction joystick/mouse ports
 - [ ] RS-232 DE-9 + TTL debug UART
 - [ ] Ethernet PHY/controller + connector
+- [ ] 5-pin DIN MIDI IN with standards-compliant isolated input
+- [ ] 5-pin DIN MIDI OUT with standards-compliant output driver
+- [ ] 5-pin DIN MIDI THRU derived from MIDI IN
 
 ## M9 — Demo platform
 - [ ] demo framework
@@ -199,6 +210,7 @@
 - [ ] sprite demos
 - [ ] blitter demos
 - [ ] audio demos
+- [ ] MIDI IN/OUT/THRU and synth-control demo
 - [ ] Copper demos
 - [ ] combined demos
 - [x] define showcase demo suite
@@ -214,6 +226,7 @@
 - [ ] complete programmer's reference
 - [ ] assembler and instruction reference
 - [ ] VPU/Copper/Blitter/audio programming guides
+- [ ] MIDI programming and electrical-interface guide
 - [ ] schematic walkthrough and maker bring-up guide
 - [ ] emulator/debugger manual
 - [ ] simulator/conformance manual
