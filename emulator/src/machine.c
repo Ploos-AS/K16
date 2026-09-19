@@ -20,7 +20,7 @@ static void custom_tick(k16_machine_t *m){
  k16_dma_owner_t owner=k16_dma_grant(&m->dma,display,0,copper,0,0,general);
  if(owner==K16_DMA_COPPER)k16_copper_step(&m->copper,&m->memory,m->vpu.x,m->vpu.y);
  if(owner==K16_DMA_GENERAL&&k16_ethernet_dma_step(&m->ethernet,&m->memory))k16_irq_raise(&m->irq,m->ethernet.dma_tx?K16_IRQ_ETH_TX:K16_IRQ_ETH_RX);
- k16_vpu_step(&m->vpu,&m->memory,&m->cpu,1);k16_irq_step(&m->irq,&m->memory,&m->cpu);
+ k16_vpu_step(&m->vpu,&m->memory,&m->cpu,1);k16_irq_step(&m->irq,&m->memory,&m->cpu);if(m->vpu.irq_asserted)k16_cpu_irq(&m->cpu,1);
 }
 uint32_t k16_machine_step(k16_machine_t *m){
  uint32_t n,t=k16_cpu_step(&m->cpu,&m->memory);if(!t)return 0;
