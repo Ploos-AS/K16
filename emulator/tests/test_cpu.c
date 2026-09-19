@@ -298,5 +298,21 @@ int main(void)
     k16_write8(&mem,0x0010,0x78);k16_write8(&mem,0x0011,0x56);assert(k16_cpu_step(&cpu,&mem)==5);assert((cpu.a&0xff)==0x3c);
     k16_write8(&mem,0x0010,0x7e);assert(k16_cpu_step(&cpu,&mem)==4);assert((cpu.a&0xff)==0x7e);
 
+    /* M5.36 24-bit bank/address-space boundary conformance. */
+    cpu.emulation=0;cpu.p=(uint8_t)(K16_P_M|K16_P_X);cpu.pbr=0;cpu.x=2;cpu.pc=0xcb80;cpu.stopped=0;cpu.waiting=0;
+    k16_write8(&mem,0x130001,0x66); /* long,X crosses $12FFFF into bank $13 */
+    k16_write8(&mem,0x000001,0x77); /* long,X wraps $FFFFFF -> $000001 */
+    rom[0xb80]=0xbf;rom[0xb81]=0xff;rom[0xb82]=0xff;rom[0xb83]=0x12;
+    rom[0xb84]=0xbf;rom[0xb85]=0xff;rom[0xb86]=0xff;rom[0xb87]=0xff;
+    k16_rom_load(&mem,rom,sizeof(rom));
+    assert(k16_cpu_step(&cpu,&mem)==5);assert((cpu.a&0xff)==0x66);
+    assert(k16_cpu_step(&cpu,&mem)==5);assert((cpu.a&0xff)==0x77);
+    cpu.p=(uint8_t)(K16_P_X);cpu.a=0xbeef;cpu.x=0;cpu.pc=0xcb90;cpu.stopped=0;
+    rom[0xb90]=0x8f;rom[0xb91]=0xff;rom[0xb92]=0xff;rom[0xb93]=0xff; /* 16-bit STA long at top of 24-bit space */
+    rom[0xb94]=0x9f;rom[0xb95]=0xff;rom[0xb96]=0xff;rom[0xb97]=0xff; /* 16-bit STA long,X same boundary */
+    k16_rom_load(&mem,rom,sizeof(rom));
+    assert(k16_cpu_step(&cpu,&mem)==6);assert(k16_read8(&mem,0xffffff)==0xef);assert(k16_read8(&mem,0x000000)==0xbe);
+    cpu.a=0x1234;assert(k16_cpu_step(&cpu,&mem)==6);assert(k16_read8(&mem,0xffffff)==0x34);assert(k16_read8(&mem,0x000000)==0x12);
+
     k16_memory_destroy(&mem);return 0;
 }
