@@ -584,5 +584,12 @@ int main(void)
     cpu.d=0x2101;cpu.pc=0xcff0;k16_write8(&mem,0x002112,0x55);k16_write8(&mem,0x002122,0x00);k16_write8(&mem,0x002123,0x30);
     assert(k16_cpu_step(&cpu,&mem)==5);assert(k16_cpu_step(&cpu,&mem)==7);
 
+    /* M5.54 dynamic timing: indexed read page crossing and emulation-mode branch page crossing. */
+    cpu.emulation=0;cpu.p=K16_P_M|K16_P_X;cpu.pbr=0;cpu.dbr=0;cpu.x=1;cpu.y=1;cpu.pc=0xce00;rom[0xe00]=0xbd;rom[0xe01]=0xfe;rom[0xe02]=0x20;rom[0xe03]=0xbd;rom[0xe04]=0xff;rom[0xe05]=0x20;rom[0xe06]=0xb9;rom[0xe07]=0xff;rom[0xe08]=0x20;k16_rom_load(&mem,rom,sizeof(rom));k16_write8(&mem,0x0020ff,1);k16_write8(&mem,0x002100,2);
+    assert(k16_cpu_step(&cpu,&mem)==4);assert(k16_cpu_step(&cpu,&mem)==5);assert(k16_cpu_step(&cpu,&mem)==5);
+    cpu.emulation=1;cpu.p=(uint8_t)(K16_P_M|K16_P_X);cpu.pc=0xcefc;rom[0xefc]=0xd0;rom[0xefd]=0x02;k16_rom_load(&mem,rom,sizeof(rom));assert(k16_cpu_step(&cpu,&mem)==4);assert(cpu.pc==0xcf00);
+    cpu.emulation=0;cpu.pc=0xcefc;assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.pc==0xcf00);
+    cpu.emulation=1;cpu.pc=0xcef0;rom[0xef0]=0xd0;rom[0xef1]=0x02;k16_rom_load(&mem,rom,sizeof(rom));assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.pc==0xcef4);
+
     k16_memory_destroy(&mem);return 0;
 }
