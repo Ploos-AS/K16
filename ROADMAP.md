@@ -144,7 +144,7 @@
     - [x] connect JSON feeder to runner CPU-state transport
     - [x] add sparse RAM initial/final transport and comparison
     - [x] wire end-to-end execution of real ProcessorTests vectors
-    - [ ] record first pinned corpus run result and resolve initial mismatches
+    - [x] record first pinned corpus smoke result and resolve initial adapter mismatch (NOP emulation/native, 10 vectors each; Actions run #9)
     - [ ] run pinned emulation/native semantic corpus and resolve mismatches
   - [ ] complete semantic/mode/addressing conformance
   - [ ] complete cycle/timing conformance
