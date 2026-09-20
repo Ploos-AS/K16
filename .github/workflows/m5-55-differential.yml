@@ -1,0 +1,29 @@
+name: M5.55 Differential Smoke
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'emulator/**'
+      - 'tools/processor_tests_feed.py'
+      - 'tools/fetch-processor-tests.sh'
+      - '.github/workflows/m5-55-differential.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  processor-tests-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build differential runner
+        working-directory: emulator
+        run: make build/test_differential
+      - name: Fetch pinned ProcessorTests oracle
+        run: ./tools/fetch-processor-tests.sh .cache/ProcessorTests
+      - name: Run pinned NOP semantic smoke
+        run: |
+          python3 tools/processor_tests_feed.py .cache/ProcessorTests/65816/v1/ea.e.json --limit 10 --runner emulator/build/test_differential --run
+          python3 tools/processor_tests_feed.py .cache/ProcessorTests/65816/v1/ea.n.json --limit 10 --runner emulator/build/test_differential --run
