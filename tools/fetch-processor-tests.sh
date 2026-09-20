@@ -4,7 +4,7 @@ set -eu
 # Tom Harte ProcessorTests provides independent, language-agnostic single-step
 # JSON vectors. Keep the large corpus outside git; pin the revision in CI/local use.
 DEST="${1:-.cache/ProcessorTests}"
-REV="${PROCESSOR_TESTS_REV:-main}"
+REV="${PROCESSOR_TESTS_REV:-bb11756436da8fd16cce86aef63dc6725f48836f}"
 if [ ! -d "$DEST/.git" ]; then
   git clone --filter=blob:none --no-checkout https://github.com/SingleStepTests/ProcessorTests.git "$DEST"
 fi
