@@ -291,7 +291,7 @@ uint32_t k16_cpu_step(k16_cpu_t *c,k16_memory_t *m)
     case 0x68:if(c->p&K16_P_M){uint8_t v=pull8(c,m);c->a=(uint16_t)((c->a&0xff00u)|v);nz8(c,v);return 4;}else{c->a=pull16(c,m);nz16(c,c->a);return 5;} /* PLA */
     case 0x00:fetch8(c,m);return interrupt_enter(c,m,c->emulation?0xfffeu:0xffe6u,1); /* BRK */
     case 0x02:fetch8(c,m);return interrupt_enter(c,m,c->emulation?0xfff4u:0xffe4u,1); /* COP */
-    case 0x40:{c->p=pull8(c,m);c->pc=pull16(c,m);if(!c->emulation)c->pbr=pull8(c,m);return c->emulation?6:7;} /* RTI */
+    case 0x40:{c->p=pull8(c,m);if(c->emulation)c->p|=K16_P_M|K16_P_X;c->pc=pull16(c,m);if(!c->emulation)c->pbr=pull8(c,m);return c->emulation?6:7;} /* RTI */
     /* M5.30 remaining load/store family foundation */
     case 0xa4:{uint32_t e=(uint16_t)(c->d+fetch8(c,m));if(c->p&K16_P_X){c->y=k16_read8(m,e);nz8(c,(uint8_t)c->y);return 3+dp_penalty(c);}c->y=read16(m,e);nz16(c,c->y);return 4+dp_penalty(c);} /* LDY dp */
     case 0xb4:{uint32_t e=(uint16_t)(c->d+fetch8(c,m)+c->x);if(c->p&K16_P_X){c->y=k16_read8(m,e);nz8(c,(uint8_t)c->y);return 4+dp_penalty(c);}c->y=read16(m,e);nz16(c,c->y);return 5+dp_penalty(c);} /* LDY dp,X */
