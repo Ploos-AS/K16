@@ -42,6 +42,7 @@ static uint32_t interrupt_enter(k16_cpu_t *c,k16_memory_t *m,uint16_t vec,uint8_
 uint32_t k16_cpu_step(k16_cpu_t *c,k16_memory_t *m)
 {
     uint8_t op;
+    if(c->stopped)return 0;
     if(c->nmi_pending){c->nmi_pending=0;c->waiting=0;return interrupt_enter(c,m,c->emulation?0xfffau:0xffeau,0);}
     if(c->irq_line){
         if(c->waiting)c->waiting=0;
