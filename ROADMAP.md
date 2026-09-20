@@ -142,7 +142,7 @@
     - [x] add deterministic K16 CPU/memory state bridge and runner self-test
     - [x] add ProcessorTests JSON schema/selection feeder
     - [x] connect JSON feeder to runner CPU-state transport
-    - [ ] add sparse RAM initial/final transport and comparison
+    - [x] add sparse RAM initial/final transport and comparison
     - [ ] execute first real ProcessorTests vectors end-to-end
     - [ ] run pinned emulation/native semantic corpus and resolve mismatches
   - [ ] complete semantic/mode/addressing conformance
