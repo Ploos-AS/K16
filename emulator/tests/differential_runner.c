@@ -17,8 +17,8 @@ static int same_cpu(const k16_cpu_t *a,const k16_cpu_t *b){
 static int run_vector(void){
  k16_memory_t m; k16_cpu_t c={0}, expected={0}; uint8_t rom[0x10000]={0};
  if(k16_memory_init(&m,0x1000000u)!=0)return 2;
- c.pc=0x8000;c.sp=0x01ff;c.p=K16_P_M|K16_P_X;c.emulation=1;expected=c;expected.pc=0x8001;
- rom[0x8000]=0xea;k16_rom_load(&m,rom,sizeof rom);
+ c.pc=0xc000;c.sp=0x01ff;c.p=K16_P_M|K16_P_X;c.emulation=1;expected=c;expected.pc=0xc001;
+ rom[0]=0xea;k16_rom_load(&m,rom,sizeof rom);
  (void)k16_cpu_step(&c,&m);
  if(!same_cpu(&c,&expected)){fprintf(stderr,"M5.55 adapter self-test mismatch\n");k16_memory_destroy(&m);return 1;}
  k16_memory_destroy(&m);return 0;
