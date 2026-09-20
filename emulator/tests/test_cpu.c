@@ -522,5 +522,22 @@ int main(void)
     /* Emulation TXS forces page one while taking the low X byte. */
     cpu.emulation=1;cpu.p|=K16_P_M|K16_P_X;cpu.x=0x00aa;cpu.sp=0x01ff;cpu.pc=0xceb0;rom[0xeb0]=0x9a;k16_rom_load(&mem,rom,sizeof(rom));assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.sp==0x01aa);
 
+    /* M5.48 special stack/address conformance: PEA/PEI/PER and bank/direct-page pushes. */
+    cpu.emulation=0;cpu.p=0;cpu.pbr=0x01;cpu.dbr=0x7e;cpu.d=0x2000;cpu.sp=0x0400;cpu.pc=0xcf00;cpu.stopped=0;cpu.waiting=0;
+    k16_write8(&mem,0x01cf00,0xf4);k16_write8(&mem,0x01cf01,0x34);k16_write8(&mem,0x01cf02,0x12); /* PEA $1234 */
+    assert(k16_cpu_step(&cpu,&mem)==5);assert(cpu.sp==0x03fe);assert(k16_read8(&mem,0x0400)==0x12);assert(k16_read8(&mem,0x03ff)==0x34);
+    /* PEI dereferences a direct-page pointer and pushes its 16-bit value. */
+    k16_write8(&mem,0x01cf03,0xd4);k16_write8(&mem,0x01cf04,0xff);k16_write8(&mem,0x0020ff,0xcd);k16_write8(&mem,0x002100,0xab);
+    assert(k16_cpu_step(&cpu,&mem)==6);assert(cpu.sp==0x03fc);assert(k16_read8(&mem,0x03fe)==0xab);assert(k16_read8(&mem,0x03fd)==0xcd);
+    /* PER pushes PC-after-operand plus signed 16-bit displacement, including wrap. */
+    cpu.pc=0xfffd;k16_write8(&mem,0x01fffd,0x62);k16_write8(&mem,0x01fffe,0xfe);k16_write8(&mem,0x01ffff,0xff); /* -2 from $0000 => $fffe */
+    assert(k16_cpu_step(&cpu,&mem)==6);assert(cpu.sp==0x03fa);assert(k16_read8(&mem,0x03fc)==0xff);assert(k16_read8(&mem,0x03fb)==0xfe);
+    /* PHB/PLB and PHD/PLD round-trip and pulls update N/Z. PHK pushes current PBR. */
+    cpu.pc=0xcf20;k16_write8(&mem,0x01cf20,0x8b);k16_write8(&mem,0x01cf21,0xab);k16_write8(&mem,0x01cf22,0x0b);k16_write8(&mem,0x01cf23,0x2b);k16_write8(&mem,0x01cf24,0x4b);
+    cpu.dbr=0x80;cpu.d=0x8001;
+    assert(k16_cpu_step(&cpu,&mem)==3);cpu.dbr=0;assert(k16_cpu_step(&cpu,&mem)==4);assert(cpu.dbr==0x80);assert(cpu.p&K16_P_N);
+    assert(k16_cpu_step(&cpu,&mem)==4);cpu.d=0;assert(k16_cpu_step(&cpu,&mem)==5);assert(cpu.d==0x8001);assert(cpu.p&K16_P_N);
+    assert(k16_cpu_step(&cpu,&mem)==3);assert(k16_read8(&mem,0x03fa)==0x01);assert(cpu.sp==0x03f9);
+
     k16_memory_destroy(&mem);return 0;
 }
