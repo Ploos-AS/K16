@@ -506,5 +506,21 @@ int main(void)
     cpu.pc=0xce50;rom[0xe50]=0x4f;rom[0xe51]=0xff;rom[0xe52]=0xff;rom[0xe53]=0x03;k16_rom_load(&mem,rom,sizeof(rom));
     assert(k16_cpu_step(&cpu,&mem)==6);assert(cpu.a==0x0000);assert(cpu.p&K16_P_Z);
 
+    /* M5.47 transfer/stack-special conformance across M/X and emulation/native modes. */
+    cpu.emulation=0;cpu.p=(uint8_t)(K16_P_M|K16_P_X);cpu.pbr=0;cpu.pc=0xce70;cpu.a=0xab80;cpu.x=0x1234;cpu.y=0x5678;cpu.sp=0x9abc;cpu.stopped=0;cpu.waiting=0;
+    rom[0xe70]=0xaa; /* TAX */ rom[0xe71]=0xa8; /* TAY */ rom[0xe72]=0xba; /* TSX */ rom[0xe73]=0x8a; /* TXA */ rom[0xe74]=0x98; /* TYA */ k16_rom_load(&mem,rom,sizeof(rom));
+    assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.x==0x0080);assert(cpu.p&K16_P_N);assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.y==0x0080);assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.x==0x00bc);assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.a==0xabbc);assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.a==0xab80);
+    /* 16-bit transfers retain full values and TXS does not alter flags. */
+    cpu.p=0;cpu.a=0x8001;cpu.x=0x1234;cpu.y=0x5678;cpu.pc=0xce80;rom[0xe80]=0xaa;rom[0xe81]=0x9a;rom[0xe82]=0x9b;rom[0xe83]=0xbb;k16_rom_load(&mem,rom,sizeof(rom));
+    assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.x==0x8001);assert(cpu.p&K16_P_N);uint8_t pf=cpu.p;assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.sp==0x8001);assert(cpu.p==pf);assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.y==0x8001);assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.x==0x8001);
+    /* TCD/TDC and TCS/TSC always transfer 16 bits; TCD/TDC set N/Z, TCS/TSC follow core flag semantics. */
+    cpu.a=0x0000;cpu.d=0x8123;cpu.sp=0x4567;cpu.pc=0xce90;rom[0xe90]=0x5b; /* TCD */ rom[0xe91]=0x7b; /* TDC */ rom[0xe92]=0x1b; /* TCS */ rom[0xe93]=0x3b; /* TSC */ k16_rom_load(&mem,rom,sizeof(rom));
+    assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.d==0);assert(cpu.p&K16_P_Z);cpu.d=0x8123;assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.a==0x8123);assert(cpu.p&K16_P_N);assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.sp==0x8123);cpu.sp=0x4567;assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.a==0x4567);
+    /* XBA swaps accumulator bytes and sets N/Z from the new low byte. */
+    cpu.a=0x8000;cpu.pc=0xcea0;rom[0xea0]=0xeb;rom[0xea1]=0xeb;k16_rom_load(&mem,rom,sizeof(rom));
+    assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.a==0x0080);assert(cpu.p&K16_P_N);assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.a==0x8000);assert(cpu.p&K16_P_Z);
+    /* Emulation TXS forces page one while taking the low X byte. */
+    cpu.emulation=1;cpu.p|=K16_P_M|K16_P_X;cpu.x=0x00aa;cpu.sp=0x01ff;cpu.pc=0xceb0;rom[0xeb0]=0x9a;k16_rom_load(&mem,rom,sizeof(rom));assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.sp==0x01aa);
+
     k16_memory_destroy(&mem);return 0;
 }
