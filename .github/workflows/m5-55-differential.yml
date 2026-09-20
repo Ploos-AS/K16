@@ -22,7 +22,7 @@ jobs:
         working-directory: emulator
         run: make build/test_differential
       - name: Fetch pinned ProcessorTests oracle
-        run: ./tools/fetch-processor-tests.sh .cache/ProcessorTests
+        run: sh tools/fetch-processor-tests.sh .cache/ProcessorTests
       - name: Run pinned NOP semantic smoke
         run: |
           python3 tools/processor_tests_feed.py .cache/ProcessorTests/65816/v1/ea.e.json --limit 10 --runner emulator/build/test_differential --run
