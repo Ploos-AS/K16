@@ -539,5 +539,19 @@ int main(void)
     assert(k16_cpu_step(&cpu,&mem)==4);cpu.d=0;assert(k16_cpu_step(&cpu,&mem)==5);assert(cpu.d==0x8001);assert(cpu.p&K16_P_N);
     assert(k16_cpu_step(&cpu,&mem)==3);assert(k16_read8(&mem,0x03fa)==0x01);assert(cpu.sp==0x03f9);
 
+    /* M5.49 block-move conformance: MVN/MVP banks, counters, direction and 16-bit wrap. */
+    cpu.emulation=0;cpu.p=0;cpu.pbr=0;cpu.pc=0xcf50;cpu.a=0x0001;cpu.x=0xffff;cpu.y=0xffff;cpu.dbr=0;cpu.stopped=0;cpu.waiting=0;
+    rom[0xf50]=0x54;rom[0xf51]=0x03;rom[0xf52]=0x02; /* MVN dst=$03, src=$02; two bytes */ k16_rom_load(&mem,rom,sizeof(rom));
+    k16_write8(&mem,0x02ffff,0xaa);k16_write8(&mem,0x020000,0xbb);
+    assert(k16_cpu_step(&cpu,&mem)==7);assert(k16_read8(&mem,0x03ffff)==0xaa);assert(cpu.dbr==0x03);assert(cpu.x==0x0000);assert(cpu.y==0x0000);assert(cpu.a==0x0000);assert(cpu.pc==0xcf50);
+    assert(k16_cpu_step(&cpu,&mem)==7);assert(k16_read8(&mem,0x030000)==0xbb);assert(cpu.x==0x0001);assert(cpu.y==0x0001);assert(cpu.a==0xffff);assert(cpu.pc==0xcf53);
+    /* MVP decrements X/Y, wraps at zero and repeats until A underflows to $ffff. */
+    cpu.pc=0xcf60;cpu.a=0x0001;cpu.x=0x0000;cpu.y=0x0000;rom[0xf60]=0x44;rom[0xf61]=0x05;rom[0xf62]=0x04;k16_rom_load(&mem,rom,sizeof(rom));k16_write8(&mem,0x040000,0x11);k16_write8(&mem,0x04ffff,0x22);
+    assert(k16_cpu_step(&cpu,&mem)==7);assert(k16_read8(&mem,0x050000)==0x11);assert(cpu.dbr==0x05);assert(cpu.x==0xffff);assert(cpu.y==0xffff);assert(cpu.a==0x0000);assert(cpu.pc==0xcf60);
+    assert(k16_cpu_step(&cpu,&mem)==7);assert(k16_read8(&mem,0x05ffff)==0x22);assert(cpu.x==0xfffe);assert(cpu.y==0xfffe);assert(cpu.a==0xffff);assert(cpu.pc==0xcf63);
+    /* A=$0000 means exactly one byte is moved before termination. */
+    cpu.pc=0xcf70;cpu.a=0;cpu.x=0x1234;cpu.y=0x5678;rom[0xf70]=0x54;rom[0xf71]=0x07;rom[0xf72]=0x06;k16_rom_load(&mem,rom,sizeof(rom));k16_write8(&mem,0x061234,0x5a);
+    assert(k16_cpu_step(&cpu,&mem)==7);assert(k16_read8(&mem,0x075678)==0x5a);assert(cpu.a==0xffff);assert(cpu.x==0x1235);assert(cpu.y==0x5679);assert(cpu.pc==0xcf73);assert(cpu.dbr==0x07);
+
     k16_memory_destroy(&mem);return 0;
 }
