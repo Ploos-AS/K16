@@ -572,5 +572,17 @@ int main(void)
     cpu.pc=0xcfc0;cpu.p=0xa5;cpu.a=0x1234;rom[0xfc0]=0xea;rom[0xfc1]=0x42;rom[0xfc2]=0x99;k16_rom_load(&mem,rom,sizeof(rom));uint8_t p0=cpu.p;uint16_t a0=cpu.a;
     assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.pc==0xcfc1);assert(cpu.p==p0);assert(cpu.a==a0);assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.pc==0xcfc3);assert(cpu.p==p0);assert(cpu.a==a0);
 
+    /* M5.53 direct-page timing: D low byte != 0 adds one cycle across representative DP families. */
+    cpu.emulation=0;cpu.p=K16_P_M|K16_P_X;cpu.pbr=0;cpu.dbr=0;cpu.d=0x2000;cpu.pc=0xcfe0;cpu.a=0;cpu.x=0;cpu.stopped=0;cpu.waiting=0;
+    rom[0xfe0]=0xa5;rom[0xfe1]=0x10;rom[0xfe2]=0x85;rom[0xfe3]=0x11;rom[0xfe4]=0x06;rom[0xfe5]=0x12;k16_rom_load(&mem,rom,sizeof(rom));k16_write8(&mem,0x002010,0x42);k16_write8(&mem,0x002012,0x01);
+    assert(k16_cpu_step(&cpu,&mem)==3);assert(k16_cpu_step(&cpu,&mem)==3);assert(k16_cpu_step(&cpu,&mem)==5);
+    cpu.d=0x2001;cpu.pc=0xcfe0;k16_write8(&mem,0x002011,0x42);k16_write8(&mem,0x002013,0x01);
+    assert(k16_cpu_step(&cpu,&mem)==4);assert(k16_cpu_step(&cpu,&mem)==4);assert(k16_cpu_step(&cpu,&mem)==6);
+    /* Indexed and indirect direct-page modes carry the same one-cycle D-low penalty. */
+    cpu.d=0x2100;cpu.x=1;cpu.pc=0xcff0;rom[0xff0]=0xb5;rom[0xff1]=0x10;rom[0xff2]=0xa1;rom[0xff3]=0x20;k16_rom_load(&mem,rom,sizeof(rom));k16_write8(&mem,0x002111,0x55);k16_write8(&mem,0x002121,0x00);k16_write8(&mem,0x002122,0x30);k16_write8(&mem,0x003000,0x66);
+    assert(k16_cpu_step(&cpu,&mem)==4);assert(k16_cpu_step(&cpu,&mem)==6);
+    cpu.d=0x2101;cpu.pc=0xcff0;k16_write8(&mem,0x002112,0x55);k16_write8(&mem,0x002122,0x00);k16_write8(&mem,0x002123,0x30);
+    assert(k16_cpu_step(&cpu,&mem)==5);assert(k16_cpu_step(&cpu,&mem)==7);
+
     k16_memory_destroy(&mem);return 0;
 }
