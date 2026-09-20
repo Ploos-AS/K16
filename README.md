@@ -39,9 +39,9 @@ K16 is a hardware and software computer project inspired by classic machines suc
 
 ## Status
 
-**M5.34 — Emulator CPU conformance**
+**M5.51 — Emulator CPU conformance audit**
 
-The emulator now has execution cases for all 256 W65C816S opcodes. Current qualification work is moving beyond opcode presence into semantic, native/emulation-mode, width, addressing, interrupt, and timing conformance. M5.34 adds explicit REP/SEP/XCE mode-transition regression coverage; full CPU conformance and cycle-accurate timing remain in progress.
+The emulator now has execution cases for all 256 W65C816S opcodes. Current qualification work is moving beyond opcode presence into semantic, native/emulation-mode, width, addressing, interrupt, and timing conformance. M5.33–M5.50 add focused regression coverage across execution modes, addressing boundaries, interrupts, arithmetic, stack/control flow, block moves, and status semantics. M5.51 confirms all 256 opcode switch cases are present and separates remaining semantic and timing qualification into explicit audit gates; full CPU conformance and cycle-accurate timing remain in progress.
 
 ## Non-goals
 
