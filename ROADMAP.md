@@ -143,7 +143,8 @@
     - [x] add ProcessorTests JSON schema/selection feeder
     - [x] connect JSON feeder to runner CPU-state transport
     - [x] add sparse RAM initial/final transport and comparison
-    - [ ] execute first real ProcessorTests vectors end-to-end
+    - [x] wire end-to-end execution of real ProcessorTests vectors
+    - [ ] record first pinned corpus run result and resolve initial mismatches
     - [ ] run pinned emulation/native semantic corpus and resolve mismatches
   - [ ] complete semantic/mode/addressing conformance
   - [ ] complete cycle/timing conformance
