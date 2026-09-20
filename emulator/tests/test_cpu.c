@@ -471,5 +471,22 @@ int main(void)
     cpu.a=0x000f;cpu.pc=0xcda0;k16_write8(&mem,0x002010,0x3c);k16_write8(&mem,0x002011,0x30);rom[0xda0]=0x1c;rom[0xda1]=0x10;rom[0xda2]=0x20;rom[0xda3]=0x0c;rom[0xda4]=0x11;rom[0xda5]=0x20;k16_rom_load(&mem,rom,sizeof(rom));
     assert(k16_cpu_step(&cpu,&mem)==6);assert(k16_read8(&mem,0x002010)==0x30);assert(!(cpu.p&K16_P_Z));assert(k16_cpu_step(&cpu,&mem)==6);assert(k16_read8(&mem,0x002011)==0x3f);assert(cpu.p&K16_P_Z);
 
+    /* M5.45 increment/decrement and compare edge conformance. */
+    cpu.emulation=0;cpu.p=K16_P_M|K16_P_X;cpu.pbr=0;cpu.dbr=0;cpu.pc=0xcdc0;cpu.a=0x00ff;cpu.x=0x00ff;cpu.y=0x0000;cpu.stopped=0;cpu.waiting=0;
+    rom[0xdc0]=0x1a; /* INC A: ff -> 00 */ rom[0xdc1]=0x3a; /* DEC A: 00 -> ff */
+    rom[0xdc2]=0xe8; /* INX */ rom[0xdc3]=0xca; /* DEX */ rom[0xdc4]=0x88; /* DEY */ rom[0xdc5]=0xc8; /* INY */ k16_rom_load(&mem,rom,sizeof(rom));
+    assert(k16_cpu_step(&cpu,&mem)==2);assert((cpu.a&0xff)==0);assert(cpu.p&K16_P_Z);assert(k16_cpu_step(&cpu,&mem)==2);assert((cpu.a&0xff)==0xff);assert(cpu.p&K16_P_N);
+    assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.x==0);assert(cpu.p&K16_P_Z);assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.x==0xff);assert(cpu.p&K16_P_N);
+    assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.y==0xff);assert(cpu.p&K16_P_N);assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.y==0);assert(cpu.p&K16_P_Z);
+    /* Memory INC/DEC wrap at selected width. */
+    cpu.pc=0xcdd0;k16_write8(&mem,0x002100,0xff);rom[0xdd0]=0xee;rom[0xdd1]=0x00;rom[0xdd2]=0x21;rom[0xdd3]=0xce;rom[0xdd4]=0x00;rom[0xdd5]=0x21;k16_rom_load(&mem,rom,sizeof(rom));
+    assert(k16_cpu_step(&cpu,&mem)==6);assert(k16_read8(&mem,0x002100)==0);assert(cpu.p&K16_P_Z);assert(k16_cpu_step(&cpu,&mem)==6);assert(k16_read8(&mem,0x002100)==0xff);assert(cpu.p&K16_P_N);
+    /* CMP/CPX/CPY: C means unsigned >=, Z equality, N follows width-limited subtraction. */
+    cpu.a=0x0080;cpu.x=0x007f;cpu.y=0x0080;cpu.pc=0xcde0;rom[0xde0]=0xc9;rom[0xde1]=0x80;rom[0xde2]=0xe0;rom[0xde3]=0x80;rom[0xde4]=0xc0;rom[0xde5]=0x7f;k16_rom_load(&mem,rom,sizeof(rom));
+    assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.p&K16_P_C);assert(cpu.p&K16_P_Z);assert(k16_cpu_step(&cpu,&mem)==2);assert(!(cpu.p&K16_P_C));assert(cpu.p&K16_P_N);assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.p&K16_P_C);assert(!(cpu.p&K16_P_Z));
+    /* 16-bit register boundaries. */
+    cpu.p=0;cpu.a=0xffff;cpu.x=0xffff;cpu.y=0x0000;cpu.pc=0xcdf0;rom[0xdf0]=0x1a;rom[0xdf1]=0xe8;rom[0xdf2]=0x88;rom[0xdf3]=0xc9;rom[0xdf4]=0x00;rom[0xdf5]=0x00;k16_rom_load(&mem,rom,sizeof(rom));
+    assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.a==0);assert(cpu.p&K16_P_Z);assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.x==0);assert(cpu.p&K16_P_Z);assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.y==0xffff);assert(cpu.p&K16_P_N);assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.p&K16_P_C);assert(cpu.p&K16_P_Z);
+
     k16_memory_destroy(&mem);return 0;
 }
