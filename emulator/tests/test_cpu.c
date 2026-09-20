@@ -443,7 +443,7 @@ int main(void)
     cpu.p=K16_P_X;cpu.pc=0xcd30;k16_write8(&mem,0x03ffff,0x34);k16_write8(&mem,0x040000,0x12);
     rom[0xd30]=0xaf;rom[0xd31]=0xff;rom[0xd32]=0xff;rom[0xd33]=0x03; /* LDA long */
     rom[0xd34]=0x8f;rom[0xd35]=0xff;rom[0xd36]=0xff;rom[0xd37]=0x04; /* STA long */
-    k16_rom_load(&mem,rom,sizeof(rom));assert(k16_cpu_step(&cpu,&mem)==5);assert(cpu.a==0x1234);assert(k16_cpu_step(&cpu,&mem)==6);assert(k16_read8(&mem,0x04ffff)==0x34);assert(k16_read8(&mem,0x050000)==0x12);
+    k16_rom_load(&mem,rom,sizeof(rom));assert(k16_cpu_step(&cpu,&mem)==6);assert(cpu.a==0x1234);assert(k16_cpu_step(&cpu,&mem)==6);assert(k16_read8(&mem,0x04ffff)==0x34);assert(k16_read8(&mem,0x050000)==0x12);
     /* 16-bit index loads retain full width; SEP X truncates both X and Y immediately. */
     cpu.p=K16_P_M;cpu.pc=0xcd40;k16_write8(&mem,0x031100,0xcd);k16_write8(&mem,0x031101,0xab);k16_write8(&mem,0x031102,0x76);k16_write8(&mem,0x031103,0x98);
     rom[0xd40]=0xae;rom[0xd41]=0x00;rom[0xd42]=0x11;rom[0xd43]=0xac;rom[0xd44]=0x02;rom[0xd45]=0x11;rom[0xd46]=0xe2;rom[0xd47]=K16_P_X;k16_rom_load(&mem,rom,sizeof(rom));
