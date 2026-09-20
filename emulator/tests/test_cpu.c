@@ -385,7 +385,7 @@ int main(void)
     assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.pbr==0);assert(cpu.pc==0xcc70);assert(k16_cpu_step(&cpu,&mem)==4);assert(cpu.pbr==2);assert(cpu.pc==0x0080);
     /* Indirect JMP pointer and indexed pointer arithmetic wrap within the current program bank. */
     cpu.pbr=0;cpu.pc=0xcc80;cpu.x=2;rom[0xc80]=0x6c;rom[0xc81]=0xff;rom[0xc82]=0xff;rom[0xc90]=0x7c;rom[0xc91]=0xfd;rom[0xc92]=0xff;k16_rom_load(&mem,rom,sizeof(rom));
-    k16_write8(&mem,0x00ffff,0x90);k16_write8(&mem,0x000000,0xcc);assert(k16_cpu_step(&cpu,&mem)==5);assert(cpu.pc==0xcc90);assert(cpu.pbr==0);
+    rom[0x3fff]=0x90;k16_write8(&mem,0x000000,0xcc);k16_rom_load(&mem,rom,sizeof(rom));assert(k16_cpu_step(&cpu,&mem)==5);assert(cpu.pc==0xcc90);assert(cpu.pbr==0);
     assert(k16_cpu_step(&cpu,&mem)==6);assert(cpu.pc==0xcc90);assert(cpu.pbr==0);
     /* JML [abs] reads a 24-bit destination and updates both PC and PBR. */
     cpu.pc=0xcca0;rom[0xca0]=0xdc;rom[0xca1]=0x00;rom[0xca2]=0x20;k16_rom_load(&mem,rom,sizeof(rom));k16_write8(&mem,0x002000,0x34);k16_write8(&mem,0x002001,0x12);k16_write8(&mem,0x002002,0x56);
