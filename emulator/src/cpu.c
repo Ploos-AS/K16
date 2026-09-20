@@ -3,6 +3,11 @@ static uint16_t read16(k16_memory_t *m, uint32_t a)
 {
     return (uint16_t)(k16_read8(m,a) | ((uint16_t)k16_read8(m,a+1u)<<8));
 }
+static uint16_t read16_bank_wrap(k16_memory_t *m,uint8_t bank,uint16_t a)
+{
+    uint32_t base=(uint32_t)bank<<16;
+    return (uint16_t)(k16_read8(m,base|a) | ((uint16_t)k16_read8(m,base|(uint16_t)(a+1u))<<8));
+}
 static uint32_t dp_penalty(const k16_cpu_t *c){return (c->d&0x00ffu)?1u:0u;}
 static uint32_t page_cross_penalty(uint16_t base,uint16_t index){return ((base&0xff00u)!=((uint16_t)(base+index)&0xff00u))?1u:0u;}
 static uint32_t branch_page_penalty(const k16_cpu_t *c,uint16_t from,uint16_t to){return (c->emulation&&((from&0xff00u)!=(to&0xff00u)))?1u:0u;}
@@ -146,8 +151,8 @@ uint32_t k16_cpu_step(k16_cpu_t *c,k16_memory_t *m)
     case 0x93:{uint16_t p=(uint16_t)(c->sp+fetch8(c,m));uint16_t a=(uint16_t)(read16(m,p)+c->y);uint32_t d=((uint32_t)c->dbr<<16)|a;k16_write8(m,d,(uint8_t)c->a);if(!(c->p&K16_P_M))k16_write8(m,d+1u,(uint8_t)(c->a>>8));return (c->p&K16_P_M)?7:8;} /* STA (sr,S),Y */
     case 0x4c:c->pc=fetch16(c,m);return 3; /* JMP abs */
     case 0x5c:{uint16_t target=fetch16(c,m);c->pbr=fetch8(c,m);c->pc=target;return 4;} /* JML long */
-    case 0x6c:{uint16_t p=fetch16(c,m);c->pc=read16(m,((uint32_t)c->pbr<<16)|p);return 5;} /* JMP (abs) */
-    case 0x7c:{uint16_t p=(uint16_t)(fetch16(c,m)+c->x);c->pc=read16(m,((uint32_t)c->pbr<<16)|p);return 6;} /* JMP (abs,X) */
+    case 0x6c:{uint16_t p=fetch16(c,m);c->pc=read16_bank_wrap(m,c->pbr,p);return 5;} /* JMP (abs) */
+    case 0x7c:{uint16_t p=(uint16_t)(fetch16(c,m)+c->x);c->pc=read16_bank_wrap(m,c->pbr,p);return 6;} /* JMP (abs,X) */
     case 0xdc:{uint16_t p=fetch16(c,m);uint32_t base=((uint32_t)c->pbr<<16)|p;c->pc=read16(m,base);c->pbr=k16_read8(m,base+2u);return 6;} /* JML [abs] */
     case 0x20:{uint16_t target=fetch16(c,m);push16(c,m,(uint16_t)(c->pc-1u));c->pc=target;return 6;} /* JSR */
     case 0x60:c->pc=(uint16_t)(pull16(c,m)+1u);return 6; /* RTS */
