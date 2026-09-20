@@ -14,5 +14,5 @@ for i,v in enumerate(data[:a.limit]):
  for side in ("initial","final"):
   missing=required-set(v[side])
   if missing: raise SystemExit(f"{v['name']} {side}: missing {sorted(missing)}")
- if a.emit:\n  keys=("pc","s","p","a","x","y","dbr","d","pbr","e")\n  vals=[str(v["initial"][k]) for k in keys]+[str(v["final"][k]) for k in keys]\n  print("\\t".join([a.runner,v["name"],*vals]))\n else: print(v["name"])
+ if a.emit:\n  keys=("pc","s","p","a","x","y","dbr","d","pbr","e")\n  vals=[str(v["initial"][k]) for k in keys]+[str(v["final"][k]) for k in keys]\n  ram=lambda side: ",".join(f"{addr}={val}" for addr,val in v[side]["ram"]) or "-"\n  print("\\t".join([a.runner,v["name"],*vals,ram("initial"),ram("final")]))\n else: print(v["name"])
 print(f"validated {min(a.limit,len(data))} vectors",file=sys.stderr)
