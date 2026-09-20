@@ -10,10 +10,12 @@
 typedef struct {
     uint8_t *ram;
     size_t ram_size;
+    uint8_t flat;
     uint8_t rom[0x4000];
     uint8_t mmio[0x4000];
 } k16_memory_t;
 int k16_memory_init(k16_memory_t *mem, size_t ram_size);
+int k16_memory_init_flat(k16_memory_t *mem, size_t ram_size);
 void k16_memory_destroy(k16_memory_t *mem);
 uint8_t k16_read8(k16_memory_t *mem, uint32_t address);
 void k16_write8(k16_memory_t *mem, uint32_t address, uint8_t value);
