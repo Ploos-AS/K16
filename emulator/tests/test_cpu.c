@@ -316,14 +316,14 @@ int main(void)
 
     /* M5.37 interrupt/stack conformance: native IRQ frame/vector and RTI restoration. */
     cpu.emulation=0;cpu.p=(uint8_t)(K16_P_M|K16_P_X|K16_P_D);cpu.pbr=0x12;cpu.pc=0x3456;cpu.sp=0x0200;cpu.stopped=0;cpu.waiting=0;cpu.irq_line=0;cpu.nmi_pending=0;
-    k16_write8(&mem,0xffee,0x00);k16_write8(&mem,0xffef,0xcc);rom[0xc00]=0x40;k16_rom_load(&mem,rom,sizeof(rom));
+    rom[0x3fee]=0x00;rom[0x3fef]=0xcc;rom[0xc00]=0x40;k16_rom_load(&mem,rom,sizeof(rom));
     k16_cpu_irq(&cpu,1);assert(k16_cpu_step(&cpu,&mem)==8);k16_cpu_irq(&cpu,0);
     assert(cpu.pbr==0);assert(cpu.pc==0xcc00);assert(cpu.sp==0x01fc);assert(cpu.p&K16_P_I);assert(!(cpu.p&K16_P_D));
     assert(k16_read8(&mem,0x0200)==0x12);assert(k16_read8(&mem,0x01ff)==0x34);assert(k16_read8(&mem,0x01fe)==0x56);assert(k16_read8(&mem,0x01fd)&K16_P_D);
     assert(k16_cpu_step(&cpu,&mem)==7);assert(cpu.pbr==0x12);assert(cpu.pc==0x3456);assert(cpu.sp==0x0200);assert(cpu.p&K16_P_D);
     /* Native NMI uses $FFEA and is accepted even with I set. */
     cpu.p=(uint8_t)(K16_P_M|K16_P_X|K16_P_I);cpu.pbr=0x23;cpu.pc=0x4567;cpu.sp=0x0300;cpu.nmi_pending=0;
-    k16_write8(&mem,0xffea,0x10);k16_write8(&mem,0xffeb,0xcc);rom[0xc10]=0x40;k16_rom_load(&mem,rom,sizeof(rom));
+    rom[0x3fea]=0x10;rom[0x3feb]=0xcc;rom[0xc10]=0x40;k16_rom_load(&mem,rom,sizeof(rom));
     k16_cpu_nmi(&cpu);assert(k16_cpu_step(&cpu,&mem)==8);assert(cpu.pc==0xcc10);assert(cpu.pbr==0);assert(k16_cpu_step(&cpu,&mem)==7);assert(cpu.pc==0x4567);assert(cpu.pbr==0x23);
     /* Emulation BRK sets B in stacked P and RTI restores PC; COP uses its distinct vector. */
     cpu.emulation=1;cpu.p=(uint8_t)(K16_P_M|K16_P_X);cpu.pbr=0;cpu.pc=0xcbc0;cpu.sp=0x01ff;cpu.stopped=0;cpu.waiting=0;
