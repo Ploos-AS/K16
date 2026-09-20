@@ -40,7 +40,10 @@ uint32_t k16_cpu_step(k16_cpu_t *c,k16_memory_t *m)
 {
     uint8_t op;
     if(c->nmi_pending){c->nmi_pending=0;c->waiting=0;return interrupt_enter(c,m,c->emulation?0xfffau:0xffeau,0);}
-    if(c->irq_line && !(c->p&K16_P_I)){c->waiting=0;return interrupt_enter(c,m,c->emulation?0xfffeu:0xffeeu,0);}
+    if(c->irq_line){
+        if(c->waiting)c->waiting=0;
+        if(!(c->p&K16_P_I))return interrupt_enter(c,m,c->emulation?0xfffeu:0xffeeu,0);
+    }
     if(c->waiting)return 0;
     op=fetch8(c,m);
     switch(op){
