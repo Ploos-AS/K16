@@ -141,7 +141,9 @@
     - [x] add external-corpus bootstrap and reproducibility policy
     - [x] add deterministic K16 CPU/memory state bridge and runner self-test
     - [x] add ProcessorTests JSON schema/selection feeder
-    - [ ] connect JSON feeder to runner for full initial/final state comparison
+    - [x] connect JSON feeder to runner CPU-state transport
+    - [ ] add sparse RAM initial/final transport and comparison
+    - [ ] execute first real ProcessorTests vectors end-to-end
     - [ ] run pinned emulation/native semantic corpus and resolve mismatches
   - [ ] complete semantic/mode/addressing conformance
   - [ ] complete cycle/timing conformance
