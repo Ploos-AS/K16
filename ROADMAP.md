@@ -112,7 +112,7 @@
   - [x] refresh opcode coverage: 254/256 execution cases after M5.31
   - [x] implement MVN/MVP block-move foundation (M5.32)
   - [x] reach 256/256 opcode execution-case coverage (M5.32)
-  - [ ] complete opcode implementation coverage
+  - [x] complete opcode implementation coverage (256/256 execution cases; semantic qualification continues)
   - [x] M5.33 distinguish WAI wait state from STP stopped state
   - [x] M5.33 add WAI wake / STP reset-only regression coverage
   - [x] M5.34 add REP/SEP/XCE mode-transition conformance regression coverage
@@ -132,6 +132,11 @@
   - [x] M5.48 add PEA/PEI/PER and PHB/PLB/PHD/PLD/PHK stack/address conformance coverage
   - [x] M5.49 add MVN/MVP bank, counter, direction and 16-bit wrap conformance coverage
   - [x] M5.50 add system/status flag isolation, REP/SEP/XCE and NOP/WDM conformance coverage
+  - [x] M5.51 audit opcode implementation coverage: 256/256 switch cases present
+  - [ ] M5.52 verify WAI masked-IRQ wake semantics against W65C816S specification and correct model/tests if required
+  - [ ] M5.53 audit direct-page low-byte penalty and addressing-mode cycle adjustments
+  - [ ] M5.54 audit page/bank crossing timing adjustments and branch timing
+  - [ ] M5.55 differential semantic qualification against an independent W65C816 reference corpus/core
   - [ ] complete semantic/mode/addressing conformance
   - [ ] complete cycle/timing conformance
 - [x] executable raster timing + raster IRQ foundation
