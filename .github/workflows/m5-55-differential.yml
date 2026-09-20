@@ -21,8 +21,12 @@ jobs:
       - name: Build differential runner
         working-directory: emulator
         run: make build/test_differential
-      - name: Fetch pinned ProcessorTests oracle
-        run: sh tools/fetch-processor-tests.sh .cache/ProcessorTests
+      - name: Fetch pinned NOP ProcessorTests vectors
+        run: |
+          mkdir -p .cache/ProcessorTests/65816/v1
+          base=https://raw.githubusercontent.com/SingleStepTests/ProcessorTests/bb11756436da8fd16cce86aef63dc6725f48836f/65816/v1
+          curl --fail --silent --show-error --location "$base/ea.e.json" -o .cache/ProcessorTests/65816/v1/ea.e.json
+          curl --fail --silent --show-error --location "$base/ea.n.json" -o .cache/ProcessorTests/65816/v1/ea.n.json
       - name: Run pinned NOP semantic smoke
         run: |
           python3 tools/processor_tests_feed.py .cache/ProcessorTests/65816/v1/ea.e.json --limit 10 --runner emulator/build/test_differential --run
