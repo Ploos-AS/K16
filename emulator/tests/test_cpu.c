@@ -553,5 +553,24 @@ int main(void)
     cpu.pc=0xcf70;cpu.a=0;cpu.x=0x1234;cpu.y=0x5678;rom[0xf70]=0x54;rom[0xf71]=0x07;rom[0xf72]=0x06;k16_rom_load(&mem,rom,sizeof(rom));k16_write8(&mem,0x061234,0x5a);
     assert(k16_cpu_step(&cpu,&mem)==7);assert(k16_read8(&mem,0x075678)==0x5a);assert(cpu.a==0xffff);assert(cpu.x==0x1235);assert(cpu.y==0x5679);assert(cpu.pc==0xcf73);assert(cpu.dbr==0x07);
 
+    /* M5.50 system/status conformance: flag isolation, REP/SEP/XCE invariants and NOP/WDM PC behavior. */
+    cpu.emulation=0;cpu.p=(uint8_t)(K16_P_N|K16_P_V|K16_P_M|K16_P_X|K16_P_Z);cpu.pbr=0;cpu.pc=0xcf90;cpu.stopped=0;cpu.waiting=0;
+    rom[0xf90]=0x38; /* SEC */ rom[0xf91]=0x18; /* CLC */ rom[0xf92]=0x78; /* SEI */ rom[0xf93]=0x58; /* CLI */ rom[0xf94]=0xf8; /* SED */ rom[0xf95]=0xd8; /* CLD */ rom[0xf96]=0xb8; /* CLV */ k16_rom_load(&mem,rom,sizeof(rom));
+    uint8_t base=cpu.p;assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.p==(uint8_t)(base|K16_P_C));assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.p==base);
+    assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.p==(uint8_t)(base|K16_P_I));assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.p==base);
+    assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.p==(uint8_t)(base|K16_P_D));assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.p==base);assert(k16_cpu_step(&cpu,&mem)==2);assert(!(cpu.p&K16_P_V));assert((cpu.p&(K16_P_N|K16_P_M|K16_P_X|K16_P_Z))==(base&(K16_P_N|K16_P_M|K16_P_X|K16_P_Z)));
+    /* REP/SEP modify only selected bits; entering X=1 truncates X/Y. */
+    cpu.pc=0xcfa0;cpu.p=0;cpu.x=0xabcd;cpu.y=0x9876;rom[0xfa0]=0xe2;rom[0xfa1]=(uint8_t)(K16_P_C|K16_P_D|K16_P_X);rom[0xfa2]=0xc2;rom[0xfa3]=(uint8_t)(K16_P_C|K16_P_D);k16_rom_load(&mem,rom,sizeof(rom));
+    assert(k16_cpu_step(&cpu,&mem)==3);assert((cpu.p&(K16_P_C|K16_P_D|K16_P_X))==(K16_P_C|K16_P_D|K16_P_X));assert(cpu.x==0x00cd);assert(cpu.y==0x0076);
+    assert(k16_cpu_step(&cpu,&mem)==3);assert(!(cpu.p&K16_P_C));assert(!(cpu.p&K16_P_D));assert(cpu.p&K16_P_X);
+    /* XCE exchanges C/E; entering emulation forces M/X and page-one stack, leaving emulation preserves them until REP. */
+    cpu.emulation=0;cpu.p=K16_P_C;cpu.sp=0xabcd;cpu.pc=0xcfb0;rom[0xfb0]=0xfb;rom[0xfb1]=0xfb;k16_rom_load(&mem,rom,sizeof(rom));
+    assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.emulation==1);assert(!(cpu.p&K16_P_C));assert((cpu.p&(K16_P_M|K16_P_X))==(K16_P_M|K16_P_X));assert(cpu.sp==0x01cd);
+    cpu.p|=K16_P_C;assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.emulation==1);assert(cpu.p&K16_P_C); /* C=E=1 is a no-op exchange */
+    cpu.p&=(uint8_t)~K16_P_C;cpu.pc=0xcfb1;assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.emulation==0);assert(cpu.p&K16_P_C);assert((cpu.p&(K16_P_M|K16_P_X))==(K16_P_M|K16_P_X));
+    /* NOP consumes one byte; WDM consumes its signature byte and otherwise preserves state. */
+    cpu.pc=0xcfc0;cpu.p=0xa5;cpu.a=0x1234;rom[0xfc0]=0xea;rom[0xfc1]=0x42;rom[0xfc2]=0x99;k16_rom_load(&mem,rom,sizeof(rom));uint8_t p0=cpu.p;uint16_t a0=cpu.a;
+    assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.pc==0xcfc1);assert(cpu.p==p0);assert(cpu.a==a0);assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.pc==0xcfc3);assert(cpu.p==p0);assert(cpu.a==a0);
+
     k16_memory_destroy(&mem);return 0;
 }
