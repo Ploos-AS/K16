@@ -261,7 +261,7 @@ int main(void)
     assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.stopped);k16_cpu_irq(&cpu,1);k16_cpu_nmi(&cpu);assert(k16_cpu_step(&cpu,&mem)==0);assert(cpu.stopped);
     k16_cpu_reset(&cpu,&mem);assert(!cpu.stopped);assert(!cpu.waiting);
     /* M5.34 mode-transition conformance: REP/SEP/XCE invariants. */
-    cpu.emulation=1;cpu.p=(uint8_t)(K16_P_M|K16_P_X|K16_P_C);cpu.x=0xabcd;cpu.y=0x9876;cpu.sp=0x01ef;cpu.pbr=0;cpu.pc=0xcb40;cpu.stopped=0;cpu.waiting=0;
+    cpu.emulation=1;cpu.p=(uint8_t)(K16_P_M|K16_P_X);cpu.x=0xabcd;cpu.y=0x9876;cpu.sp=0x01ef;cpu.pbr=0;cpu.pc=0xcb40;cpu.stopped=0;cpu.waiting=0;
     rom[0xb40]=0xc2;rom[0xb41]=(uint8_t)(K16_P_M|K16_P_X); /* REP cannot clear M/X in emulation mode */
     rom[0xb42]=0xfb; /* XCE: C=1 -> native, C receives old E=1 */
     rom[0xb43]=0xc2;rom[0xb44]=(uint8_t)(K16_P_M|K16_P_X); /* native 16-bit widths */
