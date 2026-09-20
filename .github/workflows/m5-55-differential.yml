@@ -27,7 +27,7 @@ jobs:
         run: |
           mkdir -p .cache/ProcessorTests/65816/v1
           base=https://raw.githubusercontent.com/SingleStepTests/ProcessorTests/bb11756436da8fd16cce86aef63dc6725f48836f/65816/v1
-          for op in ea a9 85 69 d0 6c 22 60 6b 00 40 c2 e2 a2 a0 8d 9d 99 e9 c9 e0 c0 29 09 49 a5 b5 ad bd b9 af bf 81 91 92 87 97 8f b1 b2 a1 b7 95 9f 93 83 a3 b3 89 8e 8c 9e 9b 8b ab a9 6d 7d 4c 5c dc 65 75 6f 61 71 72 67 77 63 73 e5 f5 ed fd f9 ef e1 f1 f2 e7 f7 e3 f3 25 35 2d 3d 39 2f 3f 21 31 32 27 37 23 33 05 15 0d 1d 19 0f 1f 01 11 12 07 17 03 13 45 55 4d 5d 59 4f 5f 41 51 52 47 57 43 53 c5 d5 cd dd d9 cf df c1 d1 d2 c7 d7 c3 d3 e4 ec c4 cc 24 2c 34 3c 04 0c 14 1c; do
+          for op in ea a9 85 69 d0 6c 22 60 6b 00 40 c2 e2 a2 a0 8d 9d 99 e9 c9 e0 c0 29 09 49 a5 b5 ad bd b9 af bf 81 91 92 87 97 8f b1 b2 a1 b7 95 9f 93 83 a3 b3 89 8e 8c 9e 9b 8b ab a9 6d 7d 4c 5c dc 65 75 6f 61 71 72 67 77 63 73 e5 f5 ed fd f9 ef e1 f1 f2 e7 f7 e3 f3 25 35 2d 3d 39 2f 3f 21 31 32 27 37 23 33 05 15 0d 1d 19 0f 1f 01 11 12 07 17 03 13 45 55 4d 5d 59 4f 5f 41 51 52 47 57 43 53 c5 d5 cd dd d9 cf df c1 d1 d2 c7 d7 c3 d3 e4 ec c4 cc 24 2c 34 3c 04 0c 14 1c 06 16 0e 1e 46 56 4e 5e 26 36 2e 3e 66 76 6e 7e e6 f6 ee fe c6 d6 ce de 0a 4a 2a 6a 1a 3a ca 88 e8 c8; do
             curl --fail --silent --show-error --location "$base/$op.e.json" -o ".cache/ProcessorTests/65816/v1/$op.e.json"
             curl --fail --silent --show-error --location "$base/$op.n.json" -o ".cache/ProcessorTests/65816/v1/$op.n.json"
           done
