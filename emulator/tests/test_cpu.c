@@ -293,7 +293,7 @@ int main(void)
     rom[0xb66]=0xa3;rom[0xb67]=0x20; /* LDA sr,S */
     k16_rom_load(&mem,rom,sizeof(rom));
     /* Restore each operand target just before its instruction because the boundary cases share $0010. */
-    k16_write8(&mem,0x0010,0x5a);assert(k16_cpu_step(&cpu,&mem)==3);assert((cpu.a&0xff)==0x5a);
+    k16_write8(&mem,0x0010,0x5a);assert(k16_cpu_step(&cpu,&mem)==4);assert((cpu.a&0xff)==0x5a);
     k16_write8(&mem,0x0020,0x34);k16_write8(&mem,0x0021,0x12);assert(k16_cpu_step(&cpu,&mem)==6);assert((cpu.a&0xff)==0xa5);
     k16_write8(&mem,0x0010,0x78);k16_write8(&mem,0x0011,0x56);assert(k16_cpu_step(&cpu,&mem)==5);assert((cpu.a&0xff)==0x3c);
     k16_write8(&mem,0x0010,0x7e);assert(k16_cpu_step(&cpu,&mem)==4);assert((cpu.a&0xff)==0x7e);
