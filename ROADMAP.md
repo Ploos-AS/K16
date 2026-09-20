@@ -130,6 +130,7 @@
   - [x] M5.46 add AND/ORA/EOR width, N/Z and addressing-boundary conformance coverage
   - [x] M5.47 add transfer/stack-special M/X, emulation/native and XBA conformance coverage
   - [x] M5.48 add PEA/PEI/PER and PHB/PLB/PHD/PLD/PHK stack/address conformance coverage
+  - [x] M5.49 add MVN/MVP bank, counter, direction and 16-bit wrap conformance coverage
   - [ ] complete semantic/mode/addressing conformance
   - [ ] complete cycle/timing conformance
 - [x] executable raster timing + raster IRQ foundation
