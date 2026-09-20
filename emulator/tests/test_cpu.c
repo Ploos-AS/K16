@@ -488,5 +488,23 @@ int main(void)
     cpu.p=0;cpu.a=0xffff;cpu.x=0xffff;cpu.y=0x0000;cpu.pc=0xcdf0;rom[0xdf0]=0x1a;rom[0xdf1]=0xe8;rom[0xdf2]=0x88;rom[0xdf3]=0xc9;rom[0xdf4]=0x00;rom[0xdf5]=0x00;k16_rom_load(&mem,rom,sizeof(rom));
     assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.a==0);assert(cpu.p&K16_P_Z);assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.x==0);assert(cpu.p&K16_P_Z);assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.y==0xffff);assert(cpu.p&K16_P_N);assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.p&K16_P_C);assert(cpu.p&K16_P_Z);
 
+    /* M5.46 logical-operation conformance: AND/ORA/EOR width, N/Z and addressing boundaries. */
+    cpu.emulation=0;cpu.p=K16_P_M;cpu.pbr=0;cpu.dbr=0x02;cpu.d=0x1000;cpu.pc=0xce10;cpu.a=0xaa55;cpu.stopped=0;cpu.waiting=0;
+    rom[0xe10]=0x29;rom[0xe11]=0x0f; /* AND #$0f: preserve A high byte */
+    rom[0xe12]=0x09;rom[0xe13]=0x80; /* ORA #$80 -> N */
+    rom[0xe14]=0x49;rom[0xe15]=0x85; /* EOR -> zero */ k16_rom_load(&mem,rom,sizeof(rom));
+    assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.a==0xaa05);assert(!(cpu.p&K16_P_Z));assert(!(cpu.p&K16_P_N));
+    assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.a==0xaa85);assert(cpu.p&K16_P_N);assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.a==0xaa00);assert(cpu.p&K16_P_Z);
+    /* 16-bit immediate logical operations use both operand bytes. */
+    cpu.p=0;cpu.a=0xf0f0;cpu.pc=0xce20;rom[0xe20]=0x29;rom[0xe21]=0x0f;rom[0xe22]=0xff;rom[0xe23]=0x09;rom[0xe24]=0x00;rom[0xe25]=0x80;rom[0xe26]=0x49;rom[0xe27]=0xf0;rom[0xe28]=0x80;k16_rom_load(&mem,rom,sizeof(rom));
+    assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.a==0xf000);assert(cpu.p&K16_P_N);assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.a==0xf000);assert(cpu.p&K16_P_N);assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.a==0x70f0);assert(!(cpu.p&K16_P_N));
+    /* Absolute logical access uses DBR; long addressing can cross a 24-bit bank boundary for 16-bit operands. */
+    cpu.p=0;cpu.a=0xffff;cpu.pc=0xce30;k16_write8(&mem,0x022200,0x0f);k16_write8(&mem,0x022201,0xf0);rom[0xe30]=0x2d;rom[0xe31]=0x00;rom[0xe32]=0x22;k16_rom_load(&mem,rom,sizeof(rom));
+    assert(k16_cpu_step(&cpu,&mem)==5);assert(cpu.a==0xf00f);
+    cpu.a=0x0000;cpu.pc=0xce40;k16_write8(&mem,0x03ffff,0x34);k16_write8(&mem,0x040000,0x12);rom[0xe40]=0x0f;rom[0xe41]=0xff;rom[0xe42]=0xff;rom[0xe43]=0x03;k16_rom_load(&mem,rom,sizeof(rom));
+    assert(k16_cpu_step(&cpu,&mem)==6);assert(cpu.a==0x1234);
+    cpu.pc=0xce50;rom[0xe50]=0x4f;rom[0xe51]=0xff;rom[0xe52]=0xff;rom[0xe53]=0x03;k16_rom_load(&mem,rom,sizeof(rom));
+    assert(k16_cpu_step(&cpu,&mem)==6);assert(cpu.a==0x0000);assert(cpu.p&K16_P_Z);
+
     k16_memory_destroy(&mem);return 0;
 }
