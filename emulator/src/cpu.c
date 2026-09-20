@@ -131,7 +131,7 @@ uint32_t k16_cpu_step(k16_cpu_t *c,k16_memory_t *m)
     case 0x8c:{uint16_t a=fetch16(c,m);uint32_t d=((uint32_t)c->dbr<<16)|a;k16_write8(m,d,(uint8_t)c->y);if(!(c->p&K16_P_X))k16_write8(m,d+1u,(uint8_t)(c->y>>8));return (c->p&K16_P_X)?4:5;} /* STY abs */
     case 0xae:{uint16_t a=fetch16(c,m);uint32_t d=((uint32_t)c->dbr<<16)|a;if(c->p&K16_P_X){uint8_t v=k16_read8(m,d);c->x=v;nz8(c,v);return 4;}else{c->x=read16(m,d);nz16(c,c->x);return 5;}} /* LDX abs */
     case 0xac:{uint16_t a=fetch16(c,m);uint32_t d=((uint32_t)c->dbr<<16)|a;if(c->p&K16_P_X){uint8_t v=k16_read8(m,d);c->y=v;nz8(c,v);return 4;}else{c->y=read16(m,d);nz16(c,c->y);return 5;}} /* LDY abs */
-    case 0x9d:{uint16_t a=(uint16_t)(fetch16(c,m)+c->x);uint32_t d=((uint32_t)c->dbr<<16)|a;k16_write8(m,d,(uint8_t)c->a);if(!(c->p&K16_P_M))k16_write8(m,d+1u,(uint8_t)(c->a>>8));return (c->p&K16_P_M)?5:6;} /* STA abs,X */
+    case 0x9d:{uint32_t d=((((uint32_t)c->dbr<<16)|fetch16(c,m))+c->x)&K16_ADDRESS_MASK;k16_write8(m,d,(uint8_t)c->a);if(!(c->p&K16_P_M))k16_write8(m,d+1u,(uint8_t)(c->a>>8));return (c->p&K16_P_M)?5:6;} /* STA abs,X */
     case 0xbd:{uint16_t base=fetch16(c,m),a=(uint16_t)(base+c->x);uint32_t d=((uint32_t)c->dbr<<16)|a;if(c->p&K16_P_M){uint8_t v=k16_read8(m,d);c->a=(uint16_t)((c->a&0xff00u)|v);nz8(c,v);return 4+page_cross_penalty(base,c->x);}else{c->a=read16(m,d);nz16(c,c->a);return 5+page_cross_penalty(base,c->x);}} /* LDA abs,X */
     case 0xb9:{uint16_t base=fetch16(c,m),a=(uint16_t)(base+c->y);uint32_t d=((uint32_t)c->dbr<<16)|a;if(c->p&K16_P_M){uint8_t v=k16_read8(m,d);c->a=(uint16_t)((c->a&0xff00u)|v);nz8(c,v);return 4+page_cross_penalty(base,c->y);}else{c->a=read16(m,d);nz16(c,c->a);return 5+page_cross_penalty(base,c->y);}} /* LDA abs,Y */
 
@@ -309,7 +309,7 @@ uint32_t k16_cpu_step(k16_cpu_t *c,k16_memory_t *m)
     case 0x9e:{uint16_t a=(uint16_t)(fetch16(c,m)+c->x);uint32_t e=((uint32_t)c->dbr<<16)|a;k16_write8(m,e,0);if(!(c->p&K16_P_M))k16_write8(m,e+1u,0);return (c->p&K16_P_M)?5:6;} /* STZ abs,X */
     /* M5.31 remaining memory/compare/control foundation */
     case 0x95:{uint32_t e=(uint16_t)(c->d+fetch8(c,m)+c->x);k16_write8(m,e,(uint8_t)c->a);if(!(c->p&K16_P_M))k16_write8(m,e+1u,(uint8_t)(c->a>>8));return (c->p&K16_P_M)?4:5;} /* STA dp,X */
-    case 0x99:{uint16_t a=(uint16_t)(fetch16(c,m)+c->y);uint32_t e=((uint32_t)c->dbr<<16)|a;k16_write8(m,e,(uint8_t)c->a);if(!(c->p&K16_P_M))k16_write8(m,e+1u,(uint8_t)(c->a>>8));return (c->p&K16_P_M)?5:6;} /* STA abs,Y */
+    case 0x99:{uint32_t e=((((uint32_t)c->dbr<<16)|fetch16(c,m))+c->y)&K16_ADDRESS_MASK;k16_write8(m,e,(uint8_t)c->a);if(!(c->p&K16_P_M))k16_write8(m,e+1u,(uint8_t)(c->a>>8));return (c->p&K16_P_M)?5:6;} /* STA abs,Y */
     case 0x9f:{uint16_t a=fetch16(c,m);uint32_t e=((((uint32_t)fetch8(c,m)<<16)|a)+c->x)&K16_ADDRESS_MASK;k16_write8(m,e,(uint8_t)c->a);if(!(c->p&K16_P_M))k16_write8(m,(e+1u)&K16_ADDRESS_MASK,(uint8_t)(c->a>>8));return (c->p&K16_P_M)?5:6;} /* STA long,X */
     case 0xb5:{uint32_t e=(uint16_t)(c->d+fetch8(c,m)+c->x);if(c->p&K16_P_M){uint8_t v=k16_read8(m,e);c->a=(uint16_t)((c->a&0xff00u)|v);nz8(c,v);return 4+dp_penalty(c);}c->a=read16(m,e);nz16(c,c->a);return 5+dp_penalty(c);} /* LDA dp,X */
     case 0xbf:{uint16_t a=fetch16(c,m);uint32_t e=((((uint32_t)fetch8(c,m)<<16)|a)+c->x)&K16_ADDRESS_MASK;if(c->p&K16_P_M){uint8_t v=k16_read8(m,e);c->a=(uint16_t)((c->a&0xff00u)|v);nz8(c,v);return 5;}c->a=read16(m,e);nz16(c,c->a);return 6;} /* LDA long,X */
