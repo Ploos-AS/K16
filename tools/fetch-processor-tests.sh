@@ -6,7 +6,8 @@ set -eu
 DEST="${1:-.cache/ProcessorTests}"
 REV="${PROCESSOR_TESTS_REV:-bb11756436da8fd16cce86aef63dc6725f48836f}"
 if [ ! -d "$DEST/.git" ]; then
-  git init "$DEST"\ngit -C "$DEST" remote add origin https://github.com/SingleStepTests/ProcessorTests.git
+  git init "$DEST"
+git -C "$DEST" remote add origin https://github.com/SingleStepTests/ProcessorTests.git
 fi
 git -C "$DEST" sparse-checkout init --cone
 git -C "$DEST" sparse-checkout set 65816
