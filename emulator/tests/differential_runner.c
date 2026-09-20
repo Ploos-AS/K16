@@ -27,7 +27,7 @@ static int run_vector(void){
 int main(int argc,char **argv){
  if(argc==1){int r=run_vector();if(!r)puts("M5.55 adapter state bridge: PASS");return r;}
  if(argc!=24){fprintf(stderr,"usage: %s name <10 initial CPU> <10 final CPU> initial_ram final_ram\n",argv[0]);return 2;}
- k16_memory_t m;k16_cpu_t c={0},e={0};if(k16_memory_init(&m,0x1000000u)!=0)return 2;
+ k16_memory_t m;k16_cpu_t c={0},e={0};if(k16_memory_init_flat(&m,0x1000000u)!=0)return 2;
  unsigned long v[20];for(int i=0;i<20;i++)v[i]=strtoul(argv[i+2],0,0);
  c.pc=v[0];c.sp=v[1];c.p=v[2];c.a=v[3];c.x=v[4];c.y=v[5];c.dbr=v[6];c.d=v[7];c.pbr=v[8];c.emulation=v[9];
  e.pc=v[10];e.sp=v[11];e.p=v[12];e.a=v[13];e.x=v[14];e.y=v[15];e.dbr=v[16];e.d=v[17];e.pbr=v[18];e.emulation=v[19];
