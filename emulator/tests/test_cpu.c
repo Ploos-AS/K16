@@ -4,7 +4,7 @@
 int main(void)
 {
     k16_memory_t mem;k16_cpu_t cpu;uint8_t rom[0x4000]={0};
-    assert(k16_memory_init(&mem,2u*1024u*1024u)==0);
+    assert(k16_memory_init(&mem,0x1000000u)==0);
     /* reset-mode smoke: LDA #$42; STA $8000; PHA; LDA #0; PLA; BNE +1; STP; NOP; STP */
     {uint8_t p[]={0xa9,0x42,0x8d,0x00,0x80,0x48,0xa9,0x00,0x68,0xd0,0x01,0xdb,0xea,0xdb};
      unsigned i;for(i=0;i<sizeof(p);i++)rom[i]=p[i];}
