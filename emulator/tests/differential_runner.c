@@ -29,7 +29,7 @@ int main(int argc,char **argv){
  if(argc!=24){fprintf(stderr,"usage: %s name <10 initial CPU> <10 final CPU> initial_ram final_ram\n",argv[0]);return 2;}
  k16_memory_t m;k16_cpu_t c={0},e={0};if(k16_memory_init_flat(&m,0x1000000u)!=0)return 2;
  unsigned long v[20];for(int i=0;i<20;i++)v[i]=strtoul(argv[i+2],0,0);
- c.pc=v[0];c.sp=v[1];c.p=v[2];c.a=v[3];c.x=v[4];c.y=v[5];c.dbr=v[6];c.d=v[7];c.pbr=v[8];c.emulation=v[9];
+ c.pc=v[0];c.sp=v[1];c.p=v[2];c.a=v[3];c.x=v[4];c.y=v[5];c.dbr=v[6];c.d=v[7];c.pbr=v[8];c.emulation=v[9];if(c.emulation)c.sp=(uint16_t)(0x0100u|(c.sp&0x00ffu));
  e.pc=v[10];e.sp=v[11];e.p=v[12];e.a=v[13];e.x=v[14];e.y=v[15];e.dbr=v[16];e.d=v[17];e.pbr=v[18];e.emulation=v[19];
  char *p,*tok; if(strcmp(argv[22],"-")!=0)for(p=argv[22],tok=strtok(p,",");tok;tok=strtok(NULL,",")){char *eq=strchr(tok,'=');if(!eq){k16_memory_destroy(&m);return 2;}*eq=0;k16_write8(&m,(uint32_t)strtoul(tok,0,0),(uint8_t)strtoul(eq+1,0,0));}
  (void)k16_cpu_step(&c,&m);
