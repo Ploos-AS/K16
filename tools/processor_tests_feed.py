@@ -37,6 +37,17 @@ for i, vector in enumerate(data[:a.limit]):
     cmd = [a.runner, vector["name"], *values,
            ram_arg(vector["initial"]), ram_arg(vector["final"])]
 
+    if a.run and vector["name"].startswith("6d"):
+        pc = vector["initial"]["pc"]
+        pbr = vector["initial"]["pbr"]
+        dbr = vector["initial"]["dbr"]
+        ram = dict(vector["initial"].get("ram", []))
+        lo = ram.get((pbr << 16) | ((pc + 1) & 0xffff))
+        hi = ram.get((pbr << 16) | ((pc + 2) & 0xffff))
+        if lo is not None and hi is not None:
+            ea = (dbr << 16) | lo | (hi << 8)
+            print(f"{vector['name']}: ADC abs operand_addr={ea:06x} operand={ram.get(ea, -1):02x}", file=sys.stderr)
+
     if a.emit:
         print("\t".join(cmd))
     else:
