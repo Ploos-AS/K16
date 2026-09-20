@@ -135,7 +135,7 @@
   - [x] M5.51 audit opcode implementation coverage: 256/256 switch cases present
   - [x] M5.52 verify WAI masked-IRQ wake semantics against W65C816S specification and correct model/tests
   - [x] M5.53 audit direct-page low-byte penalty and addressing-mode cycle adjustments
-  - [ ] M5.54 audit page/bank crossing timing adjustments and branch timing
+  - [x] M5.54 audit page/bank crossing timing adjustments and branch timing
   - [ ] M5.55 differential semantic qualification against an independent W65C816 reference corpus/core
   - [ ] complete semantic/mode/addressing conformance
   - [ ] complete cycle/timing conformance
