@@ -137,6 +137,10 @@
   - [x] M5.53 audit direct-page low-byte penalty and addressing-mode cycle adjustments
   - [x] M5.54 audit page/bank crossing timing adjustments and branch timing
   - [ ] M5.55 differential semantic qualification against an independent W65C816 reference corpus/core
+    - [x] select independent SingleStepTests/ProcessorTests 65816 JSON oracle
+    - [x] add external-corpus bootstrap and reproducibility policy
+    - [ ] implement K16 ProcessorTests adapter/runner
+    - [ ] run pinned emulation/native semantic corpus and resolve mismatches
   - [ ] complete semantic/mode/addressing conformance
   - [ ] complete cycle/timing conformance
 - [x] executable raster timing + raster IRQ foundation
