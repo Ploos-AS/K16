@@ -328,14 +328,14 @@ int main(void)
     /* Emulation BRK sets B in stacked P and RTI restores PC; COP uses its distinct vector. */
     cpu.emulation=1;cpu.p=(uint8_t)(K16_P_M|K16_P_X);cpu.pbr=0;cpu.pc=0xcbc0;cpu.sp=0x01ff;cpu.stopped=0;cpu.waiting=0;
     rom[0xbc0]=0x00;rom[0xbc1]=0x99;rom[0xc20]=0x40;rom[0xbc2]=0x02;rom[0xbc3]=0x88;rom[0xc30]=0x40;
-    k16_write8(&mem,0xfffe,0x20);k16_write8(&mem,0xffff,0xcc);k16_write8(&mem,0xfff4,0x30);k16_write8(&mem,0xfff5,0xcc);k16_rom_load(&mem,rom,sizeof(rom));
+    rom[0x3ffe]=0x20;rom[0x3fff]=0xcc;rom[0x3ff4]=0x30;rom[0x3ff5]=0xcc;k16_rom_load(&mem,rom,sizeof(rom));
     assert(k16_cpu_step(&cpu,&mem)==7);assert(cpu.pc==0xcc20);assert(k16_read8(&mem,0x01fd)&0x10);assert(k16_cpu_step(&cpu,&mem)==6);assert(cpu.pc==0xcbc2);
     assert(k16_cpu_step(&cpu,&mem)==7);assert(cpu.pc==0xcc30);assert(k16_cpu_step(&cpu,&mem)==6);assert(cpu.pc==0xcbc4);
 
     /* M5.38 interrupt edge conformance: masking, NMI priority and WAI interactions. */
     cpu.emulation=1;cpu.p=(uint8_t)(K16_P_M|K16_P_X|K16_P_I);cpu.pbr=0;cpu.pc=0xcbd0;cpu.sp=0x01ff;cpu.stopped=0;cpu.waiting=0;cpu.irq_line=0;cpu.nmi_pending=0;
     rom[0xbd0]=0xea;rom[0xbd1]=0xcb;rom[0xbd2]=0xea;rom[0xc40]=0x40;rom[0xc50]=0x40;
-    k16_write8(&mem,0xfffe,0x40);k16_write8(&mem,0xffff,0xcc);k16_write8(&mem,0xfffa,0x50);k16_write8(&mem,0xfffb,0xcc);k16_rom_load(&mem,rom,sizeof(rom));
+    rom[0x3ffe]=0x40;rom[0x3fff]=0xcc;rom[0x3ffa]=0x50;rom[0x3ffb]=0xcc;k16_rom_load(&mem,rom,sizeof(rom));
     /* Masked IRQ does not preempt ordinary execution. */
     k16_cpu_irq(&cpu,1);assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.pc==0xcbd1);
     /* WAI entered with I set remains waiting on a masked IRQ in this instruction-boundary model. */
