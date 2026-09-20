@@ -4,12 +4,15 @@ CPPFLAGS ?= -Iinclude
 
 CORE_SRC = src/core.c src/memory.c src/cpu.c
 
-.PHONY: all check clean
+.PHONY: all check differential-selftest clean
 
-all: build/test_core build/test_memory build/test_cpu build/test_raster_irq build/test_copper_dma build/test_machine_copper build/test_input build/test_uart build/test_ethernet build/test_irq build/test_machine_io build/test_io_dma build/test_debug_io build/test_frontend
+all: build/test_differential build/test_core build/test_memory build/test_cpu build/test_raster_irq build/test_copper_dma build/test_machine_copper build/test_input build/test_uart build/test_ethernet build/test_irq build/test_machine_io build/test_io_dma build/test_debug_io build/test_frontend
 
 build:
 	mkdir -p build
+
+build/test_differential: src/cpu.c src/memory.c tests/differential_runner.c include/k16/cpu.h include/k16/memory.h | build
+	$(CC) $(CPPFLAGS) $(CFLAGS) src/cpu.c src/memory.c tests/differential_runner.c -o $@
 
 build/test_core: src/core.c tests/test_core.c include/k16/core.h | build
 	$(CC) $(CPPFLAGS) $(CFLAGS) src/core.c tests/test_core.c -o $@
@@ -53,7 +56,11 @@ build/test_debug_io: src/cpu.c src/memory.c src/vpu.c src/copper.c src/dma.c src
 build/test_frontend: src/cpu.c src/memory.c src/vpu.c src/copper.c src/dma.c src/input.c src/uart.c src/ethernet.c src/irq.c src/machine.c src/frontend.c tests/test_frontend.c include/k16/frontend.h | build
 	$(CC) $(CPPFLAGS) $(CFLAGS) src/cpu.c src/memory.c src/vpu.c src/copper.c src/dma.c src/input.c src/uart.c src/ethernet.c src/irq.c src/machine.c src/frontend.c tests/test_frontend.c -o $@
 
+differential-selftest: build/test_differential
+	./build/test_differential
+
 check: all
+	./build/test_differential
 	./build/test_core
 	./build/test_memory
 	./build/test_cpu
