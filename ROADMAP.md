@@ -139,7 +139,9 @@
   - [ ] M5.55 differential semantic qualification against an independent W65C816 reference corpus/core
     - [x] select independent SingleStepTests/ProcessorTests 65816 JSON oracle
     - [x] add external-corpus bootstrap and reproducibility policy
-    - [ ] implement K16 ProcessorTests adapter/runner
+    - [x] add deterministic K16 CPU/memory state bridge and runner self-test
+    - [x] add ProcessorTests JSON schema/selection feeder
+    - [ ] connect JSON feeder to runner for full initial/final state comparison
     - [ ] run pinned emulation/native semantic corpus and resolve mismatches
   - [ ] complete semantic/mode/addressing conformance
   - [ ] complete cycle/timing conformance
