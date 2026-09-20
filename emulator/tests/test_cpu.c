@@ -359,10 +359,10 @@ int main(void)
     assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.sp==0x01ff);assert(k16_read8(&mem,0x0100)==0x7e);cpu.y=0;
     assert(k16_cpu_step(&cpu,&mem)==4);assert(cpu.y==0x007e);assert(cpu.sp==0x0100);
     /* Native 16-bit PHA/PHX/PHY use two bytes and wrap the full 16-bit stack pointer. */
-    cpu.emulation=0;cpu.p=0;cpu.pc=0xcbf0;cpu.sp=0x0000;cpu.a=0x1234;cpu.x=0x5678;cpu.y=0x9abc;
+    cpu.emulation=0;cpu.p=0;cpu.pc=0xcbf0;cpu.sp=0x8000;cpu.a=0x1234;cpu.x=0x5678;cpu.y=0x9abc;
     rom[0xbf0]=0x48;rom[0xbf1]=0x68;rom[0xbf2]=0xda;rom[0xbf3]=0xfa;rom[0xbf4]=0x5a;rom[0xbf5]=0x7a;k16_rom_load(&mem,rom,sizeof(rom));
-    assert(k16_cpu_step(&cpu,&mem)==4);assert(cpu.sp==0xfffe);assert(k16_read8(&mem,0x0000)==0x12);assert(k16_read8(&mem,0xffff)==0x34);cpu.a=0;
-    assert(k16_cpu_step(&cpu,&mem)==5);assert(cpu.a==0x1234);assert(cpu.sp==0x0000);
+    assert(k16_cpu_step(&cpu,&mem)==4);assert(cpu.sp==0x7ffe);assert(k16_read8(&mem,0x8000)==0x12);assert(k16_read8(&mem,0x7fff)==0x34);cpu.a=0;
+    assert(k16_cpu_step(&cpu,&mem)==5);assert(cpu.a==0x1234);assert(cpu.sp==0x8000);
     assert(k16_cpu_step(&cpu,&mem)==4);cpu.x=0;assert(k16_cpu_step(&cpu,&mem)==5);assert(cpu.x==0x5678);
     assert(k16_cpu_step(&cpu,&mem)==4);cpu.y=0;assert(k16_cpu_step(&cpu,&mem)==5);assert(cpu.y==0x9abc);
     /* PLP entering 8-bit index width truncates X/Y; emulation mode forces M/X set. */
