@@ -256,7 +256,7 @@ int main(void)
     cpu.emulation=1;cpu.p=0;cpu.pbr=0;cpu.pc=0xcb00;cpu.sp=0x01ff;cpu.stopped=0;cpu.waiting=0;cpu.irq_line=0;cpu.nmi_pending=0;
     rom[0xb00]=0xcb;rom[0xb01]=0xea;rom[0xb10]=0x40;rom[0x3ffe]=0x10;rom[0x3fff]=0xcb;k16_rom_load(&mem,rom,sizeof(rom));
     assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.waiting);assert(!cpu.stopped);
-    assert(k16_cpu_step(&cpu,&mem)==0);k16_cpu_irq(&cpu,1);assert(k16_cpu_step(&cpu,&mem)==2);assert(!cpu.waiting);k16_cpu_irq(&cpu,0);
+    assert(k16_cpu_step(&cpu,&mem)==0);cpu.p|=K16_P_I;k16_cpu_irq(&cpu,1);assert(k16_cpu_step(&cpu,&mem)==2);assert(!cpu.waiting);k16_cpu_irq(&cpu,0);cpu.p&=(uint8_t)~K16_P_I;
     cpu.pc=0xcb20;cpu.pbr=0;cpu.stopped=0;cpu.waiting=0;rom[0xb20]=0xdb;rom[0xb21]=0xea;k16_rom_load(&mem,rom,sizeof(rom));
     assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.stopped);k16_cpu_irq(&cpu,1);k16_cpu_nmi(&cpu);assert(k16_cpu_step(&cpu,&mem)==0);assert(cpu.stopped);
     k16_cpu_reset(&cpu,&mem);assert(!cpu.stopped);assert(!cpu.waiting);
