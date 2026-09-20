@@ -21,13 +21,17 @@ jobs:
       - name: Build differential runner
         working-directory: emulator
         run: make build/test_differential
-      - name: Fetch pinned NOP ProcessorTests vectors
+      - name: Fetch pinned representative ProcessorTests vectors
         run: |
           mkdir -p .cache/ProcessorTests/65816/v1
           base=https://raw.githubusercontent.com/SingleStepTests/ProcessorTests/bb11756436da8fd16cce86aef63dc6725f48836f/65816/v1
-          curl --fail --silent --show-error --location "$base/ea.e.json" -o .cache/ProcessorTests/65816/v1/ea.e.json
-          curl --fail --silent --show-error --location "$base/ea.n.json" -o .cache/ProcessorTests/65816/v1/ea.n.json
-      - name: Run pinned NOP semantic smoke
+          for op in ea a9 85 69 d0 6c; do
+            curl --fail --silent --show-error --location "$base/$op.e.json" -o ".cache/ProcessorTests/65816/v1/$op.e.json"
+            curl --fail --silent --show-error --location "$base/$op.n.json" -o ".cache/ProcessorTests/65816/v1/$op.n.json"
+          done
+      - name: Run pinned representative semantic smoke
         run: |
-          python3 tools/processor_tests_feed.py .cache/ProcessorTests/65816/v1/ea.e.json --limit 10 --runner emulator/build/test_differential --run
-          python3 tools/processor_tests_feed.py .cache/ProcessorTests/65816/v1/ea.n.json --limit 10 --runner emulator/build/test_differential --run
+          for op in ea a9 85 69 d0 6c; do
+            python3 tools/processor_tests_feed.py ".cache/ProcessorTests/65816/v1/$op.e.json" --limit 10 --runner emulator/build/test_differential --run
+            python3 tools/processor_tests_feed.py ".cache/ProcessorTests/65816/v1/$op.n.json" --limit 10 --runner emulator/build/test_differential --run
+          done
