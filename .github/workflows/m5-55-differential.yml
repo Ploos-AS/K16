@@ -8,6 +8,8 @@ on:
       - 'tools/processor_tests_feed.py'
       - 'tools/fetch-processor-tests.sh'
       - '.github/workflows/m5-55-differential.yml'
+      - 'ROADMAP.md'
+      - 'docs/M5_55_DIFFERENTIAL_QUALIFICATION.md'
   workflow_dispatch:
 
 permissions:
