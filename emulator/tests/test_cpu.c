@@ -338,9 +338,10 @@ int main(void)
     rom[0x3ffe]=0x40;rom[0x3fff]=0xcc;rom[0x3ffa]=0x50;rom[0x3ffb]=0xcc;k16_rom_load(&mem,rom,sizeof(rom));
     /* Masked IRQ does not preempt ordinary execution. */
     k16_cpu_irq(&cpu,1);assert(k16_cpu_step(&cpu,&mem)==2);assert(cpu.pc==0xcbd1);
-    /* WAI entered with I set remains waiting on a masked IRQ in this instruction-boundary model. */
-    assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.waiting);assert(k16_cpu_step(&cpu,&mem)==0);assert(cpu.waiting);
-    /* NMI has priority, wakes WAI even with I set, and RTI returns to the post-WAI PC. */
+    /* WAI entered with I set wakes on asserted IRQB without vectoring (M5.52). */
+    assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.waiting);assert(k16_cpu_step(&cpu,&mem)==2);assert(!cpu.waiting);assert(cpu.pc==0xcbd3);
+    /* Re-enter WAI, then NMI has priority, wakes WAI even with I set, and RTI returns to the post-WAI PC. */
+    cpu.pc=0xcbd1;assert(k16_cpu_step(&cpu,&mem)==3);assert(cpu.waiting);
     k16_cpu_nmi(&cpu);assert(k16_cpu_step(&cpu,&mem)==7);assert(!cpu.waiting);assert(cpu.pc==0xcc50);assert(k16_cpu_step(&cpu,&mem)==6);assert(cpu.pc==0xcbd2);
     /* With I cleared and IRQ still asserted, IRQ is taken before the next opcode. */
     cpu.p&=(uint8_t)~K16_P_I;assert(k16_cpu_step(&cpu,&mem)==7);assert(cpu.pc==0xcc40);k16_cpu_irq(&cpu,0);assert(k16_cpu_step(&cpu,&mem)==6);assert(cpu.pc==0xcbd2);
