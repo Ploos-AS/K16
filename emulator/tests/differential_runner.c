@@ -14,13 +14,24 @@
 static int same_cpu(const k16_cpu_t *a,const k16_cpu_t *b){
  return a->pc==b->pc&&a->sp==b->sp&&a->p==b->p&&a->a==b->a&&a->x==b->x&&a->y==b->y&&a->dbr==b->dbr&&a->d==b->d&&a->pbr==b->pbr&&a->emulation==b->emulation;
 }
-int main(void){
+static int run_vector(void){
  k16_memory_t m; k16_cpu_t c={0}, expected={0}; uint8_t rom[0x10000]={0};
  if(k16_memory_init(&m)!=0)return 2;
  c.pc=0x8000;c.sp=0x01ff;c.p=K16_P_M|K16_P_X;c.emulation=1;expected=c;expected.pc=0x8001;
  rom[0x8000]=0xea;k16_rom_load(&m,rom,sizeof rom);
  (void)k16_cpu_step(&c,&m);
  if(!same_cpu(&c,&expected)){fprintf(stderr,"M5.55 adapter self-test mismatch\n");k16_memory_destroy(&m);return 1;}
- puts("M5.55 adapter state bridge: PASS");
  k16_memory_destroy(&m);return 0;
 }
+
+int main(int argc,char **argv){
+ if(argc==1){int r=run_vector();if(!r)puts("M5.55 adapter state bridge: PASS");return r;}
+ if(argc!=22){fprintf(stderr,"usage: %s name pc s p a x y dbr d pbr e exp_pc exp_s exp_p exp_a exp_x exp_y exp_dbr exp_d exp_pbr exp_e\\n",argv[0]);return 2;}
+ k16_memory_t m;k16_cpu_t c={0},e={0};if(k16_memory_init(&m)!=0)return 2;
+ unsigned long v[20];for(int i=0;i<20;i++)v[i]=strtoul(argv[i+2],0,0);
+ c.pc=v[0];c.sp=v[1];c.p=v[2];c.a=v[3];c.x=v[4];c.y=v[5];c.dbr=v[6];c.d=v[7];c.pbr=v[8];c.emulation=v[9];
+ e.pc=v[10];e.sp=v[11];e.p=v[12];e.a=v[13];e.x=v[14];e.y=v[15];e.dbr=v[16];e.d=v[17];e.pbr=v[18];e.emulation=v[19];
+ /* RAM transport is the next sub-gate; refuse corpus execution without it. */
+ fprintf(stderr,"%s: CPU state parsed; RAM transport not supplied\\n",argv[1]);k16_memory_destroy(&m);return 3;
+}
+
