@@ -1,0 +1,43 @@
+name: M5.55 Full Semantic Qualification
+
+on:
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: "Vectors per opcode/mode (20000 = full corpus file)"
+        required: false
+        default: "20000"
+
+jobs:
+  semantic:
+    name: opcodes ${{ matrix.chunk }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        chunk: ["00-1f","20-3f","40-5f","60-7f","80-9f","a0-bf","c0-df","e0-ff"]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build differential runner
+        run: make -C emulator build/test_differential
+      - name: Run pinned ProcessorTests chunk
+        shell: bash
+        env:
+          CORPUS_SHA: bb11756436da8fd16cce86aef63dc6725f48836f
+          LIMIT: ${{ inputs.limit }}
+          CHUNK: ${{ matrix.chunk }}
+        run: |
+          set -euo pipefail
+          mkdir -p processor-tests/65816/v1
+          lo=${CHUNK%-*}; hi=${CHUNK#*-}
+          for n in $(seq $((16#$lo)) $((16#$hi))); do
+            op=$(printf '%02x' "$n")
+            for mode in e n; do
+              file="${op}.${mode}.json"
+              curl --fail --silent --show-error --location \
+                "https://raw.githubusercontent.com/SingleStepTests/ProcessorTests/${CORPUS_SHA}/65816/v1/${file}" \
+                -o "processor-tests/65816/v1/${file}"
+              python3 tools/processor_tests_feed.py "processor-tests/65816/v1/${file}" \
+                --limit "$LIMIT" --runner emulator/build/test_differential --run
+            done
+          done
