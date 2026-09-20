@@ -154,7 +154,7 @@ uint32_t k16_cpu_step(k16_cpu_t *c,k16_memory_t *m)
     case 0x5c:{uint16_t target=fetch16(c,m);c->pbr=fetch8(c,m);c->pc=target;return 4;} /* JML long */
     case 0x6c:{uint16_t p=fetch16(c,m);c->pc=read16_bank_wrap(m,0,p);return 5;} /* JMP (abs): vector pointer is always in bank 0 */
     case 0x7c:{uint16_t p=(uint16_t)(fetch16(c,m)+c->x);c->pc=read16_bank_wrap(m,c->pbr,p);return 6;} /* JMP (abs,X) */
-    case 0xdc:{uint16_t p=fetch16(c,m);uint32_t base=((uint32_t)c->pbr<<16)|p;c->pc=read16(m,base);c->pbr=k16_read8(m,base+2u);return 6;} /* JML [abs] */
+    case 0xdc:{uint16_t p=fetch16(c,m);uint32_t base=p;c->pc=read16(m,base);c->pbr=k16_read8(m,base+2u);return 6;} /* JML [abs] */
     case 0x20:{uint16_t target=fetch16(c,m);push16(c,m,(uint16_t)(c->pc-1u));c->pc=target;return 6;} /* JSR */
     case 0x60:c->pc=(uint16_t)(pull16(c,m)+1u);return 6; /* RTS */
     case 0x22:{uint16_t target=fetch16(c,m);uint8_t bank=fetch8(c,m);push8(c,m,c->pbr);push16(c,m,(uint16_t)(c->pc-1u));c->pbr=bank;c->pc=target;return 8;} /* JSL */
