@@ -27,7 +27,7 @@ jobs:
         shell: bash
         env:
           CORPUS_SHA: bb11756436da8fd16cce86aef63dc6725f48836f
-          LIMIT: ${{ inputs.limit }}
+          LIMIT: ${{ inputs.limit || '20000' }}
           CHUNK: ${{ matrix.chunk }}
         run: |
           set -euo pipefail
