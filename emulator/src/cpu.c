@@ -18,7 +18,8 @@ static void nz8(k16_cpu_t *c,uint8_t v){c->p=(uint8_t)((c->p&~(K16_P_N|K16_P_Z))
 static void nz16(k16_cpu_t *c,uint16_t v){c->p=(uint8_t)((c->p&~(K16_P_N|K16_P_Z))|(v?0:K16_P_Z)|((v&0x8000u)?K16_P_N:0));}
 static void z8(k16_cpu_t *c,uint8_t v){c->p=(uint8_t)((c->p&~K16_P_Z)|(v?0:K16_P_Z));}
 static void z16(k16_cpu_t *c,uint16_t v){c->p=(uint8_t)((c->p&~K16_P_Z)|(v?0:K16_P_Z));}
-static uint32_t stack_addr(const k16_cpu_t *c){return c->emulation?(uint32_t)(0x0100u|(c->sp&0x00ffu)):(uint32_t)c->sp;}\nstatic void push8(k16_cpu_t *c,k16_memory_t *m,uint8_t v){k16_write8(m,stack_addr(c),v);c->sp=c->emulation?(uint16_t)(0x0100u|((c->sp-1u)&0xffu)):(uint16_t)(c->sp-1u);}
+static uint32_t stack_addr(const k16_cpu_t *c){return c->emulation?(uint32_t)(0x0100u|(c->sp&0x00ffu)):(uint32_t)c->sp;}
+static void push8(k16_cpu_t *c,k16_memory_t *m,uint8_t v){k16_write8(m,stack_addr(c),v);c->sp=c->emulation?(uint16_t)(0x0100u|((c->sp-1u)&0xffu)):(uint16_t)(c->sp-1u);}
 static uint8_t pull8(k16_cpu_t *c,k16_memory_t *m){c->sp=c->emulation?(uint16_t)(0x0100u|((c->sp+1u)&0xffu)):(uint16_t)(c->sp+1u);return k16_read8(m,stack_addr(c));}
 static void push16(k16_cpu_t *c,k16_memory_t *m,uint16_t v){if(c->emulation){uint16_t a=(uint16_t)(0x0100u|(c->sp&0x00ffu));k16_write8(m,a,(uint8_t)(v>>8));k16_write8(m,(uint16_t)(a-1u),(uint8_t)v);c->sp=(uint16_t)(0x0100u|((c->sp-2u)&0xffu));}else{push8(c,m,(uint8_t)(v>>8));push8(c,m,(uint8_t)v);}}
 static uint16_t pull16(k16_cpu_t *c,k16_memory_t *m){uint16_t lo=pull8(c,m);return (uint16_t)(lo|((uint16_t)pull8(c,m)<<8));}
