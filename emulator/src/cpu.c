@@ -285,7 +285,7 @@ uint32_t k16_cpu_step(k16_cpu_t *c,k16_memory_t *m)
     case 0x9b:if(c->p&K16_P_X){c->y=(uint8_t)c->x;nz8(c,(uint8_t)c->y);}else{c->y=c->x;nz16(c,c->y);}return 2; /* TXY */
     case 0xbb:if(c->p&K16_P_X){c->x=(uint8_t)c->y;nz8(c,(uint8_t)c->x);}else{c->x=c->y;nz16(c,c->x);}return 2; /* TYX */
     case 0x0b:push16(c,m,c->d);return 4; /* PHD */
-    case 0x2b:c->d=pull16(c,m);nz16(c,c->d);return 5; /* PLD */
+    case 0x2b:if(c->emulation){/* PLD performs sequential 16-bit stack bus reads across the page boundary before E-mode restores S to page 1. */uint16_t s=stack_addr(c);s--;uint8_t lo=k16_read8(m,s);s--;uint8_t hi=k16_read8(m,s);c->d=(uint16_t)(lo|((uint16_t)hi<<8));c->sp=(uint16_t)(0x0100u|(s&0x00ffu));}else c->d=pull16(c,m);nz16(c,c->d);return 5; /* PLD */
     case 0x4b:push8(c,m,c->pbr);return 3; /* PHK */
     case 0x8b:push8(c,m,c->dbr);return 3; /* PHB */
     case 0xab:c->dbr=pull8(c,m);nz8(c,c->dbr);return 4; /* PLB */
