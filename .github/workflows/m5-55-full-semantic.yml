@@ -1,6 +1,9 @@
 name: M5.55 Full Semantic Qualification
 
 on:
+  push:
+    paths:
+      - ".github/workflows/m5-55-full-semantic.yml"
   workflow_dispatch:
     inputs:
       limit:
