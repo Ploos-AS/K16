@@ -35,17 +35,33 @@ jobs:
           LIMIT: ${{ inputs.limit || '20000' }}
           CHUNK: ${{ matrix.chunk }}
         run: |
-          set -euo pipefail
-          mkdir -p processor-tests/65816/v1
+          set -uo pipefail
+          mkdir -p processor-tests/65816/v1 m5-55-results
           lo=${CHUNK%-*}; hi=${CHUNK#*-}
+          rc=0
           for n in $(seq $((16#$lo)) $((16#$hi))); do
             op=$(printf '%02x' "$n")
             for mode in e n; do
               file="${op}.${mode}.json"
-              curl --fail --silent --show-error --location \
-                "https://raw.githubusercontent.com/SingleStepTests/ProcessorTests/${CORPUS_SHA}/65816/v1/${file}" \
-                -o "processor-tests/65816/v1/${file}"
-              python3 tools/processor_tests_feed.py "processor-tests/65816/v1/${file}" \
-                --limit "$LIMIT" --runner emulator/build/test_differential --run
+              log="m5-55-results/${op}.${mode}.log"
+              curl --fail --silent --show-error --location                 "https://raw.githubusercontent.com/SingleStepTests/ProcessorTests/${CORPUS_SHA}/65816/v1/${file}"                 -o "processor-tests/65816/v1/${file}" || { rc=1; continue; }
+              if ! python3 tools/processor_tests_feed.py "processor-tests/65816/v1/${file}"                 --limit "$LIMIT" --runner emulator/build/test_differential --run 2>&1 | tee "$log"; then
+                rc=1
+                {
+                  echo "## M5.55 failure: opcode ${op} mode ${mode}"
+                  echo '~~~text'
+                  tail -n 80 "$log"
+                  echo '~~~'
+                } >> "$GITHUB_STEP_SUMMARY"
+                break 2
+              fi
             done
           done
+          exit "$rc"
+      - name: Upload M5.55 diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m5-55-${{ matrix.chunk }}-diagnostics
+          path: m5-55-results/
+          if-no-files-found: ignore
