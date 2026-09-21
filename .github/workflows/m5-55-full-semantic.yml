@@ -4,6 +4,11 @@ on:
   push:
     paths:
       - ".github/workflows/m5-55-full-semantic.yml"
+      - "emulator/src/cpu.c"
+      - "emulator/src/memory.c"
+      - "emulator/include/**"
+      - "emulator/tests/differential_runner.c"
+      - "tools/processor_tests_feed.py"
   workflow_dispatch:
     inputs:
       limit:
