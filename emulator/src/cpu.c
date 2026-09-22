@@ -105,7 +105,7 @@ uint32_t k16_cpu_step(k16_cpu_t *c,k16_memory_t *m)
     case 0xb8:c->p&=(uint8_t)~K16_P_V;return 2; /* CLV */
     case 0xd8:c->p&=(uint8_t)~K16_P_D;return 2; /* CLD */
     case 0xf8:c->p|=K16_P_D;return 2; /* SED */
-    case 0x1b:c->sp=c->a;return 2; /* TCS */
+    case 0x1b:c->sp=c->emulation?(uint16_t)(0x0100u|(c->a&0x00ffu)):c->a;return 2; /* TCS */
     case 0x3b:c->a=c->sp;nz16(c,c->a);return 2; /* TSC */
     case 0x5b:c->d=c->a;nz16(c,c->d);return 2; /* TCD */
     case 0x7b:c->a=c->d;nz16(c,c->a);return 2; /* TDC */
