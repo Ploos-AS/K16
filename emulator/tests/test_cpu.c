@@ -249,7 +249,7 @@ int main(void)
     assert(k16_cpu_step(&cpu,&mem)==7);assert(k16_read8(&mem,0x022001)==0xbb);assert(cpu.a==0xffff);assert(cpu.x==0x1002);assert(cpu.y==0x2002);assert(cpu.pc==0xca03);
     cpu.a=1;cpu.x=0x1001;cpu.y=0x2101;cpu.pc=0xca10;cpu.stopped=0;
     k16_write8(&mem,0x031001,0xcc);k16_write8(&mem,0x031000,0xdd);
-    rom[0xa10]=0x44;rom[0xa11]=0x04;rom[0xa12]=0x03;k16_rom_load(&mem,rom,sizeof(rom));
+    rom[0xa10]=0x44;rom[0xa11]=0x03;rom[0xa12]=0x04;k16_rom_load(&mem,rom,sizeof(rom));
     assert(k16_cpu_step(&cpu,&mem)==7);assert(k16_read8(&mem,0x042101)==0xcc);assert(cpu.x==0x1000);assert(cpu.y==0x2100);assert(cpu.pc==0xca10);assert(cpu.dbr==4);
     assert(k16_cpu_step(&cpu,&mem)==7);assert(k16_read8(&mem,0x042100)==0xdd);assert(cpu.a==0xffff);assert(cpu.pc==0xca13);
     /* M5.33 WAI/STP conformance: WAI wakes on IRQ; STP only reset releases execution. */
