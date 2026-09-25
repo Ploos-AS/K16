@@ -547,7 +547,7 @@ int main(void)
     assert(k16_cpu_step(&cpu,&mem)==7);assert(k16_read8(&mem,0x03ffff)==0xaa);assert(cpu.dbr==0x03);assert(cpu.x==0x0000);assert(cpu.y==0x0000);assert(cpu.a==0x0000);assert(cpu.pc==0xcf50);
     assert(k16_cpu_step(&cpu,&mem)==7);assert(k16_read8(&mem,0x030000)==0xbb);assert(cpu.x==0x0001);assert(cpu.y==0x0001);assert(cpu.a==0xffff);assert(cpu.pc==0xcf53);
     /* MVP decrements X/Y, wraps at zero and repeats until A underflows to $ffff. */
-    cpu.pc=0xcf60;cpu.a=0x0001;cpu.x=0x0000;cpu.y=0x0000;rom[0xf60]=0x44;rom[0xf61]=0x05;rom[0xf62]=0x04;k16_rom_load(&mem,rom,sizeof(rom));k16_write8(&mem,0x040000,0x11);k16_write8(&mem,0x04ffff,0x22);
+    cpu.pc=0xcf60;cpu.a=0x0001;cpu.x=0x0000;cpu.y=0x0000;rom[0xf60]=0x44;rom[0xf61]=0x04;rom[0xf62]=0x05;k16_rom_load(&mem,rom,sizeof(rom));k16_write8(&mem,0x040000,0x11);k16_write8(&mem,0x04ffff,0x22);
     assert(k16_cpu_step(&cpu,&mem)==7);assert(k16_read8(&mem,0x050000)==0x11);assert(cpu.dbr==0x05);assert(cpu.x==0xffff);assert(cpu.y==0xffff);assert(cpu.a==0x0000);assert(cpu.pc==0xcf60);
     assert(k16_cpu_step(&cpu,&mem)==7);assert(k16_read8(&mem,0x05ffff)==0x22);assert(cpu.x==0xfffe);assert(cpu.y==0xfffe);assert(cpu.a==0xffff);assert(cpu.pc==0xcf63);
     /* A=$0000 means exactly one byte is moved before termination. */
