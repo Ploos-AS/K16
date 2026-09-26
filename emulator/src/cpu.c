@@ -324,7 +324,7 @@ uint32_t k16_cpu_step(k16_cpu_t *c,k16_memory_t *m)
        PC rewinds while A has not wrapped through FFFF, matching the
        interruptible/restartable instruction model. */
     case 0x54:{uint8_t dst=fetch8(c,m),src=fetch8(c,m);uint32_t s=((uint32_t)src<<16)|c->x,d=((uint32_t)dst<<16)|c->y;k16_write8(m,d,k16_read8(m,s));c->dbr=dst;c->x++;c->y++;c->a--;if(c->a!=0xffffu)c->pc=(uint16_t)(c->pc-3u);return 7;} /* MVN */
-    case 0x44:{uint8_t src=fetch8(c,m),dst=fetch8(c,m);uint32_t s=((uint32_t)src<<16)|c->x,d=((uint32_t)dst<<16)|c->y;k16_write8(m,d,k16_read8(m,s));c->dbr=dst;c->x--;c->y--;c->a--;if(c->a!=0xffffu)c->pc=(uint16_t)(c->pc-3u);return 7;} /* MVP */
+    case 0x44:{uint8_t dst=fetch8(c,m),src=fetch8(c,m);uint32_t s=((uint32_t)src<<16)|c->x,d=((uint32_t)dst<<16)|c->y;k16_write8(m,d,k16_read8(m,s));c->dbr=dst;c->x--;c->y--;c->a--;if(c->a!=0xffffu)c->pc=(uint16_t)(c->pc-3u);return 7;} /* MVP */
     case 0x42:fetch8(c,m);return 2; /* WDM reserved */
     case 0xcb:c->waiting=1;return 3; /* WAI: wait until interrupt */
     case 0xad:{uint16_t a=fetch16(c,m);uint32_t d=((uint32_t)c->dbr<<16)|a;if(c->p&K16_P_M){uint8_t v=k16_read8(m,d);c->a=(uint16_t)((c->a&0xff00u)|v);nz8(c,v);return 4;}else{c->a=read16(m,d);nz16(c,c->a);return 5;}} /* LDA abs */
