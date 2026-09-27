@@ -32,7 +32,20 @@ int main(int argc,char **argv){
  c.pc=v[0];c.sp=v[1];c.p=v[2];c.a=v[3];c.x=v[4];c.y=v[5];c.dbr=v[6];c.d=v[7];c.pbr=v[8];c.emulation=v[9];if(c.emulation)c.sp=(uint16_t)(0x0100u|(c.sp&0x00ffu));
  e.pc=v[10];e.sp=v[11];e.p=v[12];e.a=v[13];e.x=v[14];e.y=v[15];e.dbr=v[16];e.d=v[17];e.pbr=v[18];e.emulation=v[19];
  char *p,*tok; if(strcmp(argv[22],"-")!=0)for(p=argv[22],tok=strtok(p,",");tok;tok=strtok(NULL,",")){char *eq=strchr(tok,'=');if(!eq){k16_memory_destroy(&m);return 2;}*eq=0;k16_write8(&m,(uint32_t)strtoul(tok,0,0),(uint8_t)strtoul(eq+1,0,0));}
+ uint16_t instruction_pc=c.pc; uint8_t instruction_pbr=c.pbr;
+ uint8_t opcode=k16_read8(&m,((uint32_t)c.pbr<<16)|c.pc);
  (void)k16_cpu_step(&c,&m);
+ /* ProcessorTests models MVN/MVP as one completed instruction, while the
+  * emulator deliberately exposes their hardware-like 7-cycle byte steps.
+  * Complete repeated block-move iterations here so the differential adapter
+  * compares matching instruction boundaries without changing CPU stepping. */
+ if(opcode==0x44u||opcode==0x54u){
+  unsigned guard=0;
+  while(c.pbr==instruction_pbr&&c.pc==instruction_pc){
+   if(++guard>65536u){fprintf(stderr,"%s: block-move adapter guard tripped\n",argv[1]);k16_memory_destroy(&m);return 1;}
+   (void)k16_cpu_step(&c,&m);
+  }
+ }
  if(!same_cpu(&c,&e)){fprintf(stderr,"%s: CPU mismatch pc=%04x/%04x sp=%04x/%04x p=%02x/%02x a=%04x/%04x x=%04x/%04x y=%04x/%04x dbr=%02x/%02x d=%04x/%04x pbr=%02x/%02x e=%u/%u initial_p=%02x initial_a=%04x initial_x=%04x initial_y=%04x initial_d=%04x initial_dbr=%02x initial_pbr=%02x initial_sp=%04x\n",argv[1],c.pc,e.pc,c.sp,e.sp,c.p,e.p,c.a,e.a,c.x,e.x,c.y,e.y,c.dbr,e.dbr,c.d,e.d,c.pbr,e.pbr,c.emulation,e.emulation,(unsigned)v[2],(unsigned)v[3],(unsigned)v[4],(unsigned)v[5],(unsigned)v[7],(unsigned)v[6],(unsigned)v[8],(unsigned)v[1]);fprintf(stderr,"%s: initial_ram=%s expected_ram=%s\n",argv[1],argv[22],argv[23]);k16_memory_destroy(&m);return 1;}
  if(strcmp(argv[23],"-")!=0)for(p=argv[23],tok=strtok(p,",");tok;tok=strtok(NULL,",")){char *eq=strchr(tok,'=');uint32_t ad;uint8_t want,got;if(!eq){k16_memory_destroy(&m);return 2;}*eq=0;ad=(uint32_t)strtoul(tok,0,0);want=(uint8_t)strtoul(eq+1,0,0);got=k16_read8(&m,ad);if(got!=want){fprintf(stderr,"%s: RAM mismatch %06x=%02x/%02x initial pc=%04lx sp=%04lx p=%02lx a=%04lx x=%04lx y=%04lx dbr=%02lx d=%04lx pbr=%02lx e=%lu final pc=%04x sp=%04x pbr=%02x\n",argv[1],ad,got,want,v[0],v[1],v[2],v[3],v[4],v[5],v[6],v[7],v[8],v[9],c.pc,c.sp,c.pbr);k16_memory_destroy(&m);return 1;}}
  k16_memory_destroy(&m);return 0;
