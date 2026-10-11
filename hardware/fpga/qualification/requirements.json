@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "estimated_io": 220,
+  "minimum_usable_io": 240,
+  "preferred_usable_io": 260,
+  "limits": {
+    "logic_percent": 65,
+    "ff_percent": 65,
+    "bram_percent": 70,
+    "dsp_percent": 55
+  },
+  "scene_max": {
+    "objects": 512,
+    "scaled_objects": 128,
+    "particles": 4096,
+    "audio_voices": 16,
+    "dma_channels": 8
+  },
+  "scene_memory": {
+    "width_bits": 32,
+    "clock_mhz_target": 166,
+    "raw_bandwidth_mb_s_approx": 664,
+    "estimated_workload_mb_s": 407,
+    "minimum_shr": 3
+  },
+  "note": "Estimates are not measurements. Qualification requires measured routed timing, bank legality and runtime evidence."
+}
