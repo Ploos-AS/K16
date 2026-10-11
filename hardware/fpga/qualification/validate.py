@@ -11,6 +11,7 @@ limits = requirements["limits"]
 failed = False
 for c in candidates["candidates"]:
     issues = []
+    candidate_failed = False
     if not c.get("device"): issues.append("device missing")
     if not c.get("package"): issues.append("exact package pending")
     io = c.get("usable_io")
@@ -18,6 +19,7 @@ for c in candidates["candidates"]:
     elif not isinstance(io, int) or io < requirements["minimum_usable_io"]:
         issues.append("usable I/O below minimum")
         failed = True
+        candidate_failed = True
     measurements = c.get("measurements")
     if not isinstance(measurements, dict):
         issues.append("routed utilization, timing and runtime evidence pending")
@@ -31,7 +33,9 @@ for c in candidates["candidates"]:
         for gate in ("bank_legal", "timing_pass", "scene_max_pass", "shr_pass", "passive_thermal_pass"):
             if measurements.get(gate) is not True:
                 issues.append(f"{gate} not demonstrated")
-                if measurements.get(gate) is False: failed = True
-    status = "FAIL" if any("below minimum" in x or "exceeds limit" in x for x in issues) else "PENDING" if issues else "PASS"
+                if measurements.get(gate) is False:
+                    failed = True
+                    candidate_failed = True
+    status = "FAIL" if candidate_failed else "PENDING" if issues else "PASS"
     print(f"{c['id']}: {status} — " + ("; ".join(issues) if issues else "all evidence present"))
 raise SystemExit(1 if failed else 0)
